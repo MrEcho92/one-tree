@@ -1,17 +1,12 @@
-
-import { Navigate, RouteObject } from "react-router-dom";
+import { Navigate, RouteObject } from 'react-router-dom';
 
 export function App() {
-  return (
-    <div>
-        App level
-    </div>
-  );
+  return <div>App level</div>;
 }
 
 export const protectRoutes: RouteObject[] = [
   {
-    path: "",
+    path: '',
     element: <App />,
     children: [
       {
@@ -19,7 +14,7 @@ export const protectRoutes: RouteObject[] = [
         element: <div>Home page</div>,
       },
       {
-        path: "*",
+        path: '*',
         element: <Navigate to="/" replace />,
       },
     ],

@@ -1,8 +1,8 @@
-import React from "react";
-import { useRoutes } from "react-router-dom";
-import { publicRoutes,  protectRoutes } from "./routes";
-import "./App.scss";
-import "../src/core";
+import React from 'react';
+import { useRoutes } from 'react-router-dom';
+import { publicRoutes, protectRoutes } from './routes';
+import './App.scss';
+import '../src/core';
 
 function App() {
   // const element = useRoutes([...publicRoutes, ...protectRoutes]);
