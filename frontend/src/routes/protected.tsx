@@ -6,7 +6,7 @@ export function App() {
 
 export const protectRoutes: RouteObject[] = [
   {
-    path: '',
+    path: '/app',
     element: <App />,
     children: [
       {

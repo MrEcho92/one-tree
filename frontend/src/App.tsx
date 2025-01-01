@@ -5,8 +5,8 @@ import './App.scss';
 import '../src/core';
 
 function App() {
-  // const element = useRoutes([...publicRoutes, ...protectRoutes]);
-  return <div className="App">Welcome!!</div>;
+  const element = useRoutes([...publicRoutes, ...protectRoutes]);
+  return <div className="App">{element}</div>;
 }
 
 export default App;
