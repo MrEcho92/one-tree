@@ -58,6 +58,12 @@ The project is divided into two main parts:
     npm start
     ```
 
+### Optionally
+Both frontend and backend could be started on the root directory using docker if it is set up locally.
+    ```bash
+    docker-compose up
+    ```
+
 ## Usage
 
 - The FastAPI backend will be running at `http://localhost:8000`.
