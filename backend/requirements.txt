@@ -3,9 +3,14 @@ fastapi==0.109.1
 pydantic==2.7.1
 python-dotenv==1.0.0
 httpx==0.26.0
+mypy==0.910
 
 # dev packages
 pytest==7.4.3
 black==23.12.1
 flake8==7.0.0
 isort==5.13.2
+
+# storage
+google-cloud-firestore
+google-cloud-storage
