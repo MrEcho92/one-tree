@@ -9,7 +9,7 @@ on:
       - 'backend/**'
 
 jobs:
-  build and test:
+  build_and_test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
