@@ -14,3 +14,4 @@ isort==5.13.2
 # storage
 google-cloud-firestore
 google-cloud-storage
+firebase-admin
