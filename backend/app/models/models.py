@@ -1,13 +1,16 @@
+import uuid
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class AbstractBaseModel(BaseModel):
-    id: str
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     created_by: str
     created_at: datetime
+    updateed_by: Optional[str] = None
+    updated_at: Optional[datetime] = None
 
 
 class UserProfile(BaseModel):
