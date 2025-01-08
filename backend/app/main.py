@@ -1,11 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core.config import settings
+from app.core.database import lifespan
 from app.routes.v1.routes import api_router
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan, title=settings.PROJECT_NAME)
 
-app.include_router(api_router, prefix="/v1")
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 # Configure CORS
 app.add_middleware(
@@ -15,11 +17,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.get("/")
-async def read_root():
-    return {"message": "Hello, world!"}
 
 
 @app.get("/health")
