@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
+
+from app.core.database import get_db
+from app.models.models import MigrationEvent, MigrationRecord
 
 router = APIRouter()
 

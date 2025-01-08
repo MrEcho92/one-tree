@@ -20,18 +20,37 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv(
 )
 
 
+def get_db() -> firestore.Client:
+    """
+    Returns the global database instance.
+    Raises an exception if the database is not initialized.
+    """
+    if db is None:
+        raise RuntimeError(
+            "Database not initialized. Ensure the application has started properly."
+        )
+    return db
+
+
+def set_db(database: firestore.Client) -> None:
+    """Sets the global database instance."""
+    global db
+    db = database
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting up event")
     try:
-        global db
         cred = credentials.ApplicationDefault()
         firebase_admin.initialize_app(cred)
 
-        db = firestore.Client()
+        firestore_client = firestore.Client()
+        set_db(firestore_client)
 
         print("✅ Connected to Firestore")
         logger.info("✅ Connected to Firestore")
+
         yield
     except Exception as e:
         print(f"❌ Error connecting to Firestore: {e}")
@@ -39,7 +58,7 @@ async def lifespan(app: FastAPI):
         raise e
     finally:
         # Shutdown event
-        if db:
-            db.close()
+        if get_db():
+            get_db().close()
             print("🔄 Closed Firestore connection")
             logger.info("🔄 Closed Firestore connection")
