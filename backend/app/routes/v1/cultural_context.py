@@ -60,6 +60,7 @@ async def create_context(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
+
 @router.put(
     "/contexts/{context_id}",
     response_model=CulturalContext,
@@ -77,6 +78,7 @@ async def update_context(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
+
 
 @router.delete(
     "/contexts/{context_id}",

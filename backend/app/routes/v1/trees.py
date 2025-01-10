@@ -23,6 +23,7 @@ async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTree]:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
+
 @router.get(
     "/trees/{tree_id}", response_model=FamilyTree, status_code=status.HTTP_200_OK
 )
@@ -85,7 +86,9 @@ async def add_member_tree(
                 if relation_doc.exists:
                     relation_data = relation_doc.to_dict()
                     if field == "spouse_id":
-                        relation_data[field]= relation_data.get(field, []) + [person_ref.id]
+                        relation_data[field] = relation_data.get(field, []) + [
+                            person_ref.id
+                        ]
                     else:
                         relation_data[field] = person_ref.id
                     relation_ref.set(relation_data)
@@ -95,7 +98,7 @@ async def add_member_tree(
         update_relation(person.mother_id, "children_id")
         for spouse_id in person.spouse_id:
             update_relation(spouse_id, "spouse_id")
-        
+
         # Update children
         if person.children_id:
             for child_id in person.children_id:
@@ -115,6 +118,7 @@ async def add_member_tree(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
+
 
 @router.delete("/trees/{tree_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
@@ -139,6 +143,7 @@ async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
+
 @router.put(
     "/members/{person_id}",
     response_model=Person,
@@ -160,19 +165,22 @@ async def update_member(
         updated_data["updated_by"] = member.updated_by
         updated_data["updated_at"] = firestore.SERVER_TIMESTAMP
         person_ref.update(updated_data)
-        
+
         return Person.from_dict(person_ref)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
+
 @router.post(
     "/add_collaborators/{tree_id}",
     response_model=FamilyTree,
     status_code=status.HTTP_200_OK,
 )
-async def add_collaborator(tree_id: str, collaborators: List[str], db=Depends(get_db)) -> FamilyTree:
+async def add_collaborator(
+    tree_id: str, collaborators: List[str], db=Depends(get_db)
+) -> FamilyTree:
     """Add collaborators to a family tree"""
     try:
         tree_ref = db.collection("familyTrees").document(tree_id)
