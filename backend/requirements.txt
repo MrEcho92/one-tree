@@ -4,6 +4,8 @@ pydantic==2.7.1
 python-dotenv==1.0.0
 httpx==0.26.0
 mypy==0.910
+pydantic-settings==2.2.1
+pydantic[email]
 
 # dev packages
 pytest==7.4.3
@@ -14,3 +16,4 @@ isort==5.13.2
 # storage
 google-cloud-firestore
 google-cloud-storage
+firebase-admin
