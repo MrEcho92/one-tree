@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import queryClient from './core/http/react-query';
 import './index.scss';
 import App from './App';
+import "./i18n";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
