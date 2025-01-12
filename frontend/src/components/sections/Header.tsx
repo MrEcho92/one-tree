@@ -1,6 +1,8 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { Avatar, Box, Button, Stack } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useState, MouseEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -8,6 +10,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Logout from '@mui/icons-material/Logout';
 
 export function Header() {
+  const theme = useTheme();
+  const { t } = useTranslation(['common', 'header']);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -16,14 +20,16 @@ export function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <Box
       component="header"
       sx={{
-        backgroundColor: '#1976D2',
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
         position: 'fixed',
         width: '100%',
-        zIndex: (theme) => theme.zIndex.appBar,
+        zIndex: theme.zIndex.appBar,
       }}
     >
       <Stack
@@ -40,14 +46,15 @@ export function Header() {
             to="/"
             sx={{
               height: 24,
+              color: 'inherit',
             }}
           >
-            One tree
+            Onetree
           </Box>
         </Stack>
         <Stack alignItems="center" direction="row" spacing={2}>
           <Button variant="outlined" color="secondary">
-            Sign in
+            {t('common:signIn')}
           </Button>
           <IconButton
             onClick={handleClick}
