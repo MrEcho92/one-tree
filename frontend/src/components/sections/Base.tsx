@@ -25,7 +25,7 @@ export function PublicBase() {
   return (
     <Base>
       <Suspense fallback={<CircularProgress />}>
-        <Box sx={{ pt: 10 }}>
+        <Box sx={{ backgroundColor: 'background.default' }}>
           <Outlet />
         </Box>
       </Suspense>
@@ -37,7 +37,7 @@ export function ProtectedBase() {
   return (
     <Base>
       <Suspense fallback={<CircularProgress />}>
-        <Box sx={{ pt: 10 }}>
+        <Box>
           <Outlet />
         </Box>
       </Suspense>

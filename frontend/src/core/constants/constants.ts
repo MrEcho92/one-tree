@@ -1,1 +1,3 @@
-export {};
+export const AppConfig = {
+  appName: 'Onetree',
+};

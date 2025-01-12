@@ -8,6 +8,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Logout from '@mui/icons-material/Logout';
+import { AppConfig } from '../../core/constants';
 
 export function Header() {
   const theme = useTheme();
@@ -22,22 +23,13 @@ export function Header() {
   };
 
   return (
-    <Box
-      component="header"
-      sx={{
-        backgroundColor: theme.palette.primary.main,
-        color: theme.palette.primary.contrastText,
-        position: 'fixed',
-        width: '100%',
-        zIndex: theme.zIndex.appBar,
-      }}
-    >
+    <Box component="header" className="header-container">
       <Stack
         direction="row"
         justifyContent="space-between"
         sx={{
           minHeight: '80px',
-          px: 3,
+          px: 5,
         }}
       >
         <Stack alignItems="center" direction="row" spacing={3}>
@@ -49,12 +41,20 @@ export function Header() {
               color: 'inherit',
             }}
           >
-            Onetree
+            {AppConfig.appName}
           </Box>
         </Stack>
+        <Stack alignItems="center" direction="row" spacing={3}>
+          <Box>Home</Box>
+          <Box>Our features</Box>
+          <Box>About us</Box>
+        </Stack>
         <Stack alignItems="center" direction="row" spacing={2}>
-          <Button variant="outlined" color="secondary">
-            {t('common:signIn')}
+          <Button variant="text" color="secondary">
+            {t('common:login')}
+          </Button>
+          <Button variant="text" color="secondary">
+            {t('common:signUp')}
           </Button>
           <IconButton
             onClick={handleClick}

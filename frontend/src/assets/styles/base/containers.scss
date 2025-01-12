@@ -1,0 +1,9 @@
+@import '../helpers/colors.scss';
+
+.header-container {
+  background-color: $app-primary-color;
+  color: $app-primary-contract-color;
+  position: 'fixed';
+  width: '100%';
+  z-index: 9999;
+}
