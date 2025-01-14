@@ -25,7 +25,7 @@ export function PublicBase() {
   return (
     <Base>
       <Suspense fallback={<CircularProgress />}>
-        <Box sx={{ backgroundColor: 'background.default' }}>
+        <Box className="base-container">
           <Outlet />
         </Box>
       </Suspense>

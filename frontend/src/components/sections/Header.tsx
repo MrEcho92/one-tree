@@ -59,7 +59,6 @@ export function Header() {
             justifyContent: 'space-between',
             alignItems: 'center',
             display: 'flex',
-            minHeight: '74px !important',
           }}
         >
           <Typography

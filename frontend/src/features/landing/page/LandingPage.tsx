@@ -1,9 +1,10 @@
 import Box from '@mui/material/Box';
+import { Hero } from '../components/Hero';
 
 export function LandingPage() {
   return (
     <Box>
-      <h1>Landing Page</h1>
+      <Hero />
     </Box>
   );
 }
