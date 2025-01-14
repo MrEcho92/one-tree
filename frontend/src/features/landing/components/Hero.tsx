@@ -1,17 +1,20 @@
-import * as React from 'react';
+import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 export function Hero() {
+  const { palette, typography } = useTheme();
+  const { t } = useTranslation('landing');
   return (
     <Box
       id="hero"
-      sx={({ palette }) => ({
+      sx={{
         width: '100%',
         backgroundColor: palette.primary.main,
-      })}
+      }}
     >
       <Container
         sx={{
@@ -30,20 +33,34 @@ export function Hero() {
               flexDirection: { xs: 'column', md: 'row' },
               alignSelf: 'center',
               textAlign: 'center',
-              fontSize: 'clamp(3.5rem, 10vw, 4rem)',
-              color: 'background.default',
+              fontSize: {
+                xs: typography.h3.fontSize,
+                md: typography.h1.fontSize,
+              },
+              fontWeight: {
+                xs: typography.h3.fontWeight,
+                md: typography.h1.fontWeight,
+              },
+              color: palette.background.default,
             }}
           >
-            Reconnect with Your Roots. Celebrate Your Heritage.
+            {t('landing:hero.title')}
           </Typography>
           <Typography
             textAlign="center"
             color="text.primary"
-            sx={{ alignSelf: 'center', width: { sm: '100%', md: '80%' } }}
+            sx={{
+              alignSelf: 'center',
+              width: { sm: '100%', md: '80%' },
+              color: palette.secondary.main,
+              fontSize: {
+                xs: typography.fontSize,
+                md: typography.body1.fontSize,
+              },
+              fontWeight: { xs: 'none', md: typography.h3.fontWeight },
+            }}
           >
-            An interactive platform to help African diaspora families explore
-            their history, preserve cultural traditions, and collaborate across
-            generations.
+            {t('landing:hero.subTitle')}
           </Typography>
         </Stack>
       </Container>
