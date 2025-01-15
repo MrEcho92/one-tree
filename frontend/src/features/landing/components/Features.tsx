@@ -1,82 +1,302 @@
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import Divider from '@mui/material/Divider';
+import Grid from '@mui/material/Grid2';
 
 export function Features() {
   const { palette, typography } = useTheme();
   const { t } = useTranslation('landing');
   return (
-    <Box
-      id="section2"
-      sx={{
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexDirection: { xs: 'column', md: 'row' },
-      }}
-    >
-      <Box
+    <Box id="features">
+      <Container
         sx={{
-          flexBasis: { xs: '100%', md: '50%' },
+          pt: { xs: 4, sm: 12 },
+          pb: { xs: 8, sm: 16 },
+          position: 'relative',
           display: 'flex',
-          justifyContent: 'center',
+          flexDirection: 'column',
           alignItems: 'center',
-          height: 400,
-          py: { xs: 2, md: 0 }
+          gap: { xs: 2, sm: 4 },
         }}
       >
-        <img
-          srcSet={`https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-          src={`https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=164&h=164&fit=crop&auto=format`}
-          alt="Family Tree"
-          loading="lazy"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      </Box>
-      <Stack
-        spacing={2}
-        useFlexGap
-        sx={{
-          flexBasis: { xs: '100%', md: '50%' },
-          py: { xs: 4, md: 4 },
-          textAlign: 'center',
-        }}
-      >
-        <Typography
+        <Box
           sx={{
-            textAlign: 'center',
-            fontSize: {
-              xs: typography.h4.fontSize,
-              md: typography.h3.fontSize,
-            },
-            fontWeight: {
-              xs: typography.h3.fontWeight,
-              md: typography.h3.fontWeight,
-            },
-            color: palette.text.primary,
+            width: { sm: '100%', md: '60%' },
+            textAlign: { sm: 'left', md: 'center' },
           }}
         >
-          {t('landing:sectionTwo.title')}
-        </Typography>
-        <Button
-          variant="contained"
-          color="secondary"
-          sx={{
-            alignSelf: 'center',
-            width: 'auto',
-          }}
-        >
-          {t('landing:sectionTwo.btnCTA')}
-        </Button>
-      </Stack>
+          <Typography
+            sx={{
+              textAlign: 'center',
+              fontSize: {
+                xs: typography.h4.fontSize,
+                md: typography.h3.fontSize,
+              },
+              fontWeight: {
+                xs: typography.h3.fontWeight,
+                md: typography.h3.fontWeight,
+              },
+              color: palette.text.primary,
+            }}
+          >
+            {t('landing:features.title')}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ color: palette.text.secondary, py: { xs: 1, md: 2 } }}
+          >
+            {t('landing:features.subTitle')}
+          </Typography>
+        </Box>
+        <Grid container spacing={3} alignItems="center" justifyContent="center">
+          <Grid size={{ xs: 12, sm: 12, md: 4 }}>
+            <Card
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                background: palette.primary.main,
+              }}
+            >
+              <CardContent>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    color: palette.primary.contrastText,
+                  }}
+                >
+                  <Typography component="h3" variant="h6">
+                    {t('landing:features.familyTree.title')}
+                  </Typography>
+                </Box>
+                <Divider
+                  sx={{
+                    my: 2,
+                    opacity: 0.2,
+                    borderColor: palette.primary.contrastText,
+                  }}
+                />
+                <Box
+                  sx={{
+                    py: 1,
+                    display: 'flex',
+                    gap: 1.5,
+                    alignItems: 'center',
+                  }}
+                >
+                  <CheckCircleRoundedIcon
+                    sx={{
+                      width: 20,
+                      color: palette.secondary.main,
+                    }}
+                  />
+                  <Typography
+                    component="text"
+                    variant="subtitle2"
+                    sx={{
+                      color: palette.primary.contrastText,
+                    }}
+                  >
+                    {t('landing:features.familyTree.option1')}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    py: 1,
+                    display: 'flex',
+                    gap: 1.5,
+                    alignItems: 'center',
+                  }}
+                >
+                  <CheckCircleRoundedIcon
+                    sx={{
+                      width: 20,
+                      color: palette.secondary.main,
+                    }}
+                  />
+                  <Typography
+                    component="text"
+                    variant="subtitle2"
+                    sx={{
+                      color: palette.primary.contrastText,
+                    }}
+                  >
+                    {t('landing:features.familyTree.option2')}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 12, md: 4 }}>
+            <Card
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                background: palette.primary.main,
+              }}
+            >
+              <CardContent>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    color: palette.primary.contrastText,
+                  }}
+                >
+                  <Typography component="h3" variant="h6">
+                    {t('landing:features.culturalHeritage.title')}
+                  </Typography>
+                </Box>
+                <Divider
+                  sx={{
+                    my: 2,
+                    opacity: 0.2,
+                    borderColor: palette.primary.contrastText,
+                  }}
+                />
+                <Box
+                  sx={{
+                    py: 1,
+                    display: 'flex',
+                    gap: 1.5,
+                    alignItems: 'center',
+                  }}
+                >
+                  <CheckCircleRoundedIcon
+                    sx={{
+                      width: 20,
+                      color: palette.secondary.main,
+                    }}
+                  />
+                  <Typography
+                    component="text"
+                    variant="subtitle2"
+                    sx={{
+                      color: palette.primary.contrastText,
+                    }}
+                  >
+                    {t('landing:features.culturalHeritage.option1')}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    py: 1,
+                    display: 'flex',
+                    gap: 1.5,
+                    alignItems: 'center',
+                  }}
+                >
+                  <CheckCircleRoundedIcon
+                    sx={{
+                      width: 20,
+                      color: palette.secondary.main,
+                    }}
+                  />
+                  <Typography
+                    component="text"
+                    variant="subtitle2"
+                    sx={{
+                      color: palette.primary.contrastText,
+                    }}
+                  >
+                    {t('landing:features.culturalHeritage.option2')}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 12, md: 4 }}>
+            <Card
+              sx={{
+                p: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                background: palette.primary.main,
+              }}
+            >
+              <CardContent>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    color: palette.primary.contrastText,
+                  }}
+                >
+                  <Typography component="h3" variant="h6">
+                    {t('landing:features.migrationTracking.title')}
+                  </Typography>
+                </Box>
+                <Divider
+                  sx={{
+                    my: 2,
+                    opacity: 0.2,
+                    borderColor: palette.primary.contrastText,
+                  }}
+                />
+                <Box
+                  sx={{
+                    py: 1,
+                    display: 'flex',
+                    gap: 1.5,
+                    alignItems: 'center',
+                  }}
+                >
+                  <CheckCircleRoundedIcon
+                    sx={{
+                      width: 20,
+                      color: palette.secondary.main,
+                    }}
+                  />
+                  <Typography
+                    component="text"
+                    variant="subtitle2"
+                    sx={{
+                      color: palette.primary.contrastText,
+                    }}
+                  >
+                    {t('landing:features.migrationTracking.option1')}
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    py: 1,
+                    display: 'flex',
+                    gap: 1.5,
+                    alignItems: 'center',
+                  }}
+                >
+                  <CheckCircleRoundedIcon
+                    sx={{
+                      width: 20,
+                      color: palette.secondary.main,
+                    }}
+                  />
+                  <Typography
+                    component="text"
+                    variant="subtitle2"
+                    sx={{
+                      color: palette.primary.contrastText,
+                    }}
+                  >
+                    {t('landing:features.migrationTracking.option2')}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
     </Box>
   );
 }

@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import familyLogo from '../assets/black-family.png';
 
 export function SectionTwo() {
   const { palette, typography } = useTheme();
@@ -26,13 +27,12 @@ export function SectionTwo() {
           justifyContent: 'center',
           alignItems: 'center',
           height: 400,
-          py: { xs: 2, md: 0 }
+          py: { xs: 2, md: 0 },
         }}
       >
         <img
-          srcSet={`https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-          src={`https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=164&h=164&fit=crop&auto=format`}
-          alt="Family Tree"
+          src={familyLogo}
+          alt="photo of beautiful family smiling"
           loading="lazy"
           style={{
             width: '100%',

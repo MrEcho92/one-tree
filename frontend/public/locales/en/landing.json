@@ -6,5 +6,24 @@
     "sectionTwo": {
         "title": "Your family’s story, visualized and preserved for generations to come.",
         "btnCTA": "Start Your Family Tree"
+    },
+    "features": {
+        "title": "Bridging Generations, Preserving Culture",
+        "subTitle": "Discover a unique platform built for African diaspora families to.",
+        "familyTree": {
+            "title": "Family Tree Visualization",
+            "option1": "Create family tree to map relationships, add photos and document family stories.",
+            "option2": "Invite family members to collaborate, edit, and grow the tree together."
+        },
+        "culturalHeritage": {
+            "title": "Cultural Heritage Hub",
+            "option1": "Upload and share stories, traditions, and recipes unique to your family and heritage.",
+            "option2": "Choose to keep content private for your family or share it with a wider community."
+        },
+        "migrationTracking": {
+            "title": "Migration History Tracking",
+            "option1": "Document your family’s migration journey with a timeline.",
+            "option2": "Visualize routes and milestones using an interactive map."
+        }
     }
 }
