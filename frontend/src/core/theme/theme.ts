@@ -5,6 +5,7 @@ const themeOptions: ThemeOptions = {
     primary: {
       main: '#086A33', // Deep Green
       contrastText: '#FFFFFF', // White text for buttons, headers
+      dark: '#6E7783',
     },
     secondary: {
       main: '#FBB13C', // Golden Yellow

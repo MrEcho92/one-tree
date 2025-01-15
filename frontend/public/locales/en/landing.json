@@ -25,5 +25,13 @@
             "option1": "Document your family’s migration journey with a timeline.",
             "option2": "Visualize routes and milestones using an interactive map."
         }
+    },
+    "instructions": {
+        "gettingStarted": "Getting Started is Simple",
+        "steps": {
+            "stepOne": "Sign Up: Create an account and invite family members." ,
+            "stepTwo": "Build Your Tree: Start mapping relationships, adding photos, and recording stories.",
+            "stepThree": "Share and Collaborate: Work with family members to enrich your heritage archive."
+        }
     }
 }
