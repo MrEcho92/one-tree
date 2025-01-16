@@ -33,5 +33,20 @@
             "stepTwo": "Build Your Tree: Start mapping relationships, adding photos, and recording stories.",
             "stepThree": "Share and Collaborate: Work with family members to enrich your heritage archive."
         }
+    }, 
+    "feedbacks": {
+        "title": "Testimonials",
+        "feedbackOne": {
+            "description": "This platform brought my family closer than ever. Seeing our migration journey on a timeline was powerful!",
+            "givenBy": "Kwame, London"
+        },
+        "feedbackTwo": {
+            "description": "Sharing recipes from my grandmother with my cousins abroad has been such a joy. This tool makes preserving culture easy!",
+            "givenBy": "Fatima, Manchester"
+        },
+        "feedbackThree": {
+            "description": "This is an amazing platform. Compared to other platforms, this one stands out for its innovative features. It's clear that the makers put a lot of thought into creating a solution that truly addresses user needs.",
+            "givenBy": "Obi, London"
+        } 
     }
 }

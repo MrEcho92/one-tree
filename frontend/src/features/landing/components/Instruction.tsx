@@ -79,7 +79,9 @@ export function Instructions() {
                   {t('landing:instructions.steps.stepThree')}
                 </Typography>
               </Box>
-              <Button variant="text">{t('common:signUp')}</Button>
+              <Button variant="contained" color="info">
+                {t('common:signUp')}
+              </Button>
             </Box>
           </Grid>
         </Grid>

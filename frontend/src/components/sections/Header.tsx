@@ -90,6 +90,7 @@ export function Header() {
             <Button
               variant="text"
               size="small"
+              onClick={() => scrollToSection('features')}
               sx={{
                 color() {
                   return theme.palette.primary.contrastText;
@@ -218,7 +219,9 @@ export function Header() {
                   }}
                 ></Box>
                 <MenuItem onClick={() => {}}>Home</MenuItem>
-                <MenuItem onClick={() => {}}>Our features</MenuItem>
+                <MenuItem onClick={() => scrollToSection('features')}>
+                  Our features
+                </MenuItem>
                 <MenuItem onClick={() => {}}>About us</MenuItem>
                 <Divider />
                 <MenuItem>
