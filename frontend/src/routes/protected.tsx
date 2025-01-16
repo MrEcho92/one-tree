@@ -1,13 +1,14 @@
 import { Navigate, RouteObject } from 'react-router-dom';
+import { ProtectedBase } from '../components/sections';
 
 export function App() {
   return <div>App level</div>;
 }
 
-export const protectRoutes: RouteObject[] = [
+export const protectedRoutes: RouteObject[] = [
   {
     path: '/app',
-    element: <App />,
+    element: <ProtectedBase />,
     children: [
       {
         index: true,

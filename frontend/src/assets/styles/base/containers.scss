@@ -1,0 +1,15 @@
+@import '../helpers/colors.scss';
+
+.header-container {
+  background-color: $app-primary-color;
+  color: $app-primary-contract-color;
+  position: 'fixed';
+  width: '100%';
+  z-index: 9999;
+  min-height: 64px;
+  box-shadow: none !important;
+}
+
+.base-container {
+  margin-top: 0;
+}

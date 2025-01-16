@@ -1,22 +1,26 @@
 import { RouteObject } from 'react-router-dom';
+import { PublicBase } from '../components/sections';
+import { LandingRoutes } from '../features/landing/routes';
+import { AuthRoutes } from '../features/auth';
+import { NotFoundPage } from '../components/common/NotFoundPage';
 
 export const publicRoutes: RouteObject[] = [
   {
     path: '/',
-    element: <div>Base layout</div>,
+    element: <PublicBase />,
     children: [
       {
         index: true,
-        element: <div>Landing page</div>,
+        element: <LandingRoutes />,
       },
     ],
   },
   {
     path: '/auth/*',
-    element: <div>Auth</div>,
+    element: <AuthRoutes />,
   },
   {
     path: '*',
-    element: <div>Not found</div>,
+    element: <NotFoundPage />,
   },
 ];

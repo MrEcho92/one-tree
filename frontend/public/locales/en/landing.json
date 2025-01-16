@@ -1,0 +1,57 @@
+{
+    "hero": {
+        "title": "Reconnect with Your Roots. Celebrate Your Heritage.",
+        "subTitle": "An interactive platform to help African diaspora families explore their history, preserve cultural traditions, and collaborate across generations."
+    },
+    "sectionTwo": {
+        "title": "Your family’s story, visualized and preserved for generations to come.",
+        "btnCTA": "Start Your Family Tree"
+    },
+    "features": {
+        "title": "Bridging Generations, Preserving Culture",
+        "subTitle": "Discover a unique platform built for African diaspora families to.",
+        "familyTree": {
+            "title": "Family Tree Visualization",
+            "option1": "Create family tree to map relationships, add photos and document family stories.",
+            "option2": "Invite family members to collaborate, edit, and grow the tree together."
+        },
+        "culturalHeritage": {
+            "title": "Cultural Heritage Hub",
+            "option1": "Upload and share stories, traditions, and recipes unique to your family and heritage.",
+            "option2": "Choose to keep content private for your family or share it with a wider community."
+        },
+        "migrationTracking": {
+            "title": "Migration History Tracking",
+            "option1": "Document your family’s migration journey with a timeline.",
+            "option2": "Visualize routes and milestones using an interactive map."
+        }
+    },
+    "instructions": {
+        "gettingStarted": "Getting Started is Simple",
+        "steps": {
+            "stepOne": "Sign Up: Create an account and invite family members." ,
+            "stepTwo": "Build Your Tree: Start mapping relationships, adding photos, and recording stories.",
+            "stepThree": "Share and Collaborate: Work with family members to enrich your heritage archive."
+        }
+    }, 
+    "feedbacks": {
+        "title": "Testimonials",
+        "feedbackOne": {
+            "description": "This platform brought my family closer than ever. Seeing our migration journey on a timeline was powerful!",
+            "givenBy": "Kwame, London"
+        },
+        "feedbackTwo": {
+            "description": "Sharing recipes from my grandmother with my cousins abroad has been such a joy. This tool makes preserving culture easy!",
+            "givenBy": "Fatima, Manchester"
+        },
+        "feedbackThree": {
+            "description": "This is an amazing platform. Compared to other platforms, this one stands out for its innovative features. It's clear that the makers put a lot of thought into creating a solution that truly addresses user needs.",
+            "givenBy": "Obi, London"
+        } 
+    },
+    "heritage": {
+        "title": "Your Heritage, Your Story",
+        "subTitle": "Don’t let your family’s history fade. Join a growing community of families documenting and celebrating their heritage.",
+        "btnTitle": "Start Your Journey"
+    }
+}
