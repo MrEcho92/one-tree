@@ -3,11 +3,6 @@ import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid2';
 import Button from '@mui/material/Button';
 
 export function Heritage() {
@@ -28,8 +23,7 @@ export function Heritage() {
         <Box
           sx={{
             width: { sm: '100%', md: '60%' },
-            textAlign: { sm: 'left', md: 'center' },
-            gap: 2
+            textAlign: 'center',
           }}
         >
           <Typography
@@ -46,17 +40,19 @@ export function Heritage() {
               color: palette.primary.contrastText,
             }}
           >
-            Your Heritage, Your Story
+            {t('landing:heritage.title')}
           </Typography>
           <Typography
             variant="body1"
-            sx={{ color: palette.background.default, py: { xs: 1, md: 2 } }}
+            sx={{ color: palette.background.default, py: { xs: 1, md: 2 }, fontSize: {
+                xs: typography.body2.fontSize,
+                md: typography.body1.fontSize
+            }}}
           >
-            Don’t let your family’s history fade. Join a growing community of
-            families documenting and celebrating their heritage.
+            {t('landing:heritage.subTitle')}
           </Typography>
           <Button variant="contained" color="secondary">
-            Start Your Journey
+            {t('landing:heritage.btnTitle')}
           </Button>
         </Box>
       </Container>

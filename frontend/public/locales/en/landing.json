@@ -48,5 +48,10 @@
             "description": "This is an amazing platform. Compared to other platforms, this one stands out for its innovative features. It's clear that the makers put a lot of thought into creating a solution that truly addresses user needs.",
             "givenBy": "Obi, London"
         } 
+    },
+    "heritage": {
+        "title": "Your Heritage, Your Story",
+        "subTitle": "Don’t let your family’s history fade. Join a growing community of families documenting and celebrating their heritage.",
+        "btnTitle": "Start Your Journey"
     }
 }
