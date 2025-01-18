@@ -44,10 +44,14 @@ export function Heritage() {
           </Typography>
           <Typography
             variant="body1"
-            sx={{ color: palette.background.default, py: { xs: 1, md: 2 }, fontSize: {
+            sx={{
+              color: palette.background.default,
+              py: { xs: 1, md: 2 },
+              fontSize: {
                 xs: typography.body2.fontSize,
-                md: typography.body1.fontSize
-            }}}
+                md: typography.body1.fontSize,
+              },
+            }}
           >
             {t('landing:heritage.subTitle')}
           </Typography>

@@ -16,8 +16,8 @@ export const publicRoutes: RouteObject[] = [
       },
       {
         path: '/hub',
-        element: <CulturalRoutes />
-      }
+        element: <CulturalRoutes />,
+      },
     ],
   },
   {

@@ -5,6 +5,8 @@ import { CircularProgress } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { SideMenu } from './SideBar';
+import { AppNavBar } from './AppMenu';
 
 type BaseProps = {
   children: React.ReactNode;
@@ -14,9 +16,7 @@ export function Base({ children }: BaseProps) {
   return (
     <Box>
       <CssBaseline />
-      <Header />
       {children}
-      <Footer />
     </Box>
   );
 }
@@ -25,9 +25,11 @@ export function PublicBase() {
   return (
     <Base>
       <Suspense fallback={<CircularProgress />}>
-        <Box className="base-container">
+        <Header />
+        <Box>
           <Outlet />
         </Box>
+        <Footer />
       </Suspense>
     </Base>
   );
@@ -37,8 +39,12 @@ export function ProtectedBase() {
   return (
     <Base>
       <Suspense fallback={<CircularProgress />}>
-        <Box>
-          <Outlet />
+        <Box display="flex">
+          <SideMenu />
+          <AppNavBar />
+          <Box>
+            <Outlet />
+          </Box>
         </Box>
       </Suspense>
     </Base>
