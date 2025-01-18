@@ -42,7 +42,7 @@ export function ProtectedBase() {
         <Box display="flex">
           <SideMenu />
           <AppNavBar />
-          <Box>
+          <Box flexGrow={1}>
             <Outlet />
           </Box>
         </Box>
