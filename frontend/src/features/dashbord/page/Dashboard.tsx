@@ -11,17 +11,20 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { Header } from '../components';
 import Divider from '@mui/material/Divider';
+import { Header } from '../components';
+import { useModal } from '../../../components/common';
 
 const data = [
   {
+    id: 'family-tree',
     title: 'Family tree',
     description: 'Create your family tree to map relationships',
     btnTitle: 'Create a family tree',
     icon: <AccountTreeIcon />,
   },
   {
+    id: 'hub',
     title: 'Cultural story',
     description:
       'Upload and share stories, traditions, and recipes unique to your heritage',
@@ -29,6 +32,7 @@ const data = [
     icon: <AutoStoriesIcon />,
   },
   {
+    id: 'migration-tracker',
     title: 'Migration tracker',
     description: 'Document your familys migration journey',
     btnTitle: 'Create a migration journey',
@@ -38,6 +42,7 @@ const data = [
 
 export function DashboardPage() {
   const theme = useTheme();
+  const { openModal, closeModal } = useModal();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
@@ -62,7 +67,7 @@ export function DashboardPage() {
             sx={{ mb: (theme) => theme.spacing(2) }}
           >
             {data.map((data, index) => (
-              <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
+              <Grid key={`dashboard_${index}`} size={{ xs: 12, sm: 6, lg: 3 }}>
                 <Card
                   variant="outlined"
                   sx={{ height: '100%', flexGrow: 1, borderRadius: 4 }}
@@ -86,6 +91,10 @@ export function DashboardPage() {
                       color="primary"
                       endIcon={<ChevronRightRoundedIcon />}
                       fullWidth={isSmallScreen}
+                      onClick={() => {
+                        if (data.id === 'family-tree')
+                          openModal(<div>Open family tree</div>);
+                      }}
                     >
                       {data?.btnTitle}
                     </Button>

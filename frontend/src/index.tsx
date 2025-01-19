@@ -8,6 +8,7 @@ import queryClient from './core/http/react-query';
 import './index.scss';
 import App from './App';
 import { theme } from './core/theme/theme';
+import { ModalProvider } from './components/common/modal/ModalContext';
 import './i18n';
 
 const root = ReactDOM.createRoot(
@@ -20,7 +21,9 @@ root.render(
       <BrowserRouter>
         <ReactQueryDevtools initialIsOpen={false} />
         <ThemeProvider theme={theme}>
-          <App />
+          <ModalProvider>
+            <App />
+          </ModalProvider>
         </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>
