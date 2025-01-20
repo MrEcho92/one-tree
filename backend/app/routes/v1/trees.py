@@ -9,6 +9,9 @@ from app.schemas.schemas import AddPersonSchema, CreateFamilyTreeSchema
 
 router = APIRouter()
 
+FAMILY_TREE = "familyTrees"
+PEOPLE = "people"
+
 
 @router.get(
     "/trees/{user_id}", response_model=List[FamilyTree], status_code=status.HTTP_200_OK
@@ -16,7 +19,7 @@ router = APIRouter()
 async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTree]:
     """Get all family trees created by a user"""
     try:
-        trees = db.collection("familyTrees").where("created_by", "==", user_id).stream()
+        trees = db.collection(FAMILY_TREE).where("created_by", "==", user_id).stream()
         return [FamilyTree.from_dict(tree.to_dict()) for tree in trees]
     except Exception as e:
         raise HTTPException(
@@ -29,7 +32,7 @@ async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTree]:
 )
 async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
     """Get a family tree by ID"""
-    tree = db.collection("familyTrees").document(tree_id).get()
+    tree = db.collection(FAMILY_TREE).document(tree_id).get()
     if not tree.exists:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
@@ -38,13 +41,43 @@ async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
 
 
 @router.post("/trees", response_model=FamilyTree, status_code=status.HTTP_201_CREATED)
-async def create_tree(
+async def create_tree_with_members(
     family_tree: CreateFamilyTreeSchema, db=Depends(get_db)
 ) -> FamilyTree:
-    """Create a new family tree"""
+    """Create a new family tree with root member, father, and mother"""
     try:
         tree = FamilyTree(**family_tree.dict())
-        db.collection("familyTrees").document(tree.id).set(tree.to_dict())
+        db.collection(FAMILY_TREE).document(tree.id).set(tree.to_dict())
+
+        def add_member(member_data: dict, tree_id: str) -> str:
+            """Helper function to add a member"""
+            member = Person(**member_data.dict(), tree_id=tree_id)
+            db.collection(PEOPLE).document(member.id).set(member.to_dict())
+            return member.id
+
+        # Add members
+        root_id = add_member(family_tree.root_member, tree_id=tree.id)
+        father_id = (
+            add_member(family_tree.father, tree_id=tree.id)
+            if family_tree.father
+            else None
+        )
+        mother_id = (
+            add_member(family_tree.mother, tree_id=tree.id)
+            if family_tree.mother
+            else None
+        )
+
+        # Update root member with parent ids
+        root_ref = db.collection(PEOPLE).document(root_id)
+        root_ref.update({"father_id": father_id, "mother_id": mother_id})
+
+        # Update tree with members IDs
+        tree_ref = db.collection(FAMILY_TREE).document(tree.id)
+        tree_ref.update(
+            {"members": firestore.ArrayUnion([root_id, father_id, mother_id])}
+        )
+
         return tree
     except Exception as e:
         raise HTTPException(
@@ -62,7 +95,7 @@ async def add_member_tree(
 ) -> FamilyTree:
     """Add a new member to a family tree"""
     try:
-        tree_ref = db.collection("familyTrees").document(tree_id)
+        tree_ref = db.collection(FAMILY_TREE).document(tree_id)
         tree = tree_ref.get()
         if not tree.exists:
             raise HTTPException(
@@ -70,7 +103,7 @@ async def add_member_tree(
             )
 
         person = Person(**member.dict())
-        person_ref = db.collection("people").document(person.id)
+        person_ref = db.collection(PEOPLE).document(person.id)
         person_ref.set(person.to_dict())
 
         tree_ref.update(
@@ -81,7 +114,7 @@ async def add_member_tree(
 
         def update_relation(relation_id, field) -> None:
             if relation_id:
-                relation_ref = db.collection("people").document(relation_id)
+                relation_ref = db.collection(PEOPLE).document(relation_id)
                 relation_doc = relation_ref.get()
                 if relation_doc.exists:
                     relation_data = relation_doc.to_dict()
@@ -124,7 +157,7 @@ async def add_member_tree(
 async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
     """Delete a family tree"""
     try:
-        tree_ref = db.collection("familyTrees").document(tree_id)
+        tree_ref = db.collection(FAMILY_TREE).document(tree_id)
         tree = tree_ref.get()
         if not tree.exists:
             raise HTTPException(
@@ -132,7 +165,7 @@ async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
             )
 
         # Delete all members of the tree
-        people_query = db.collection("people").where("tree_id", "==", tree_id).stream()
+        people_query = db.collection(PEOPLE).where("tree_id", "==", tree_id).stream()
         for person in people_query:
             person.reference.delete()
 
@@ -154,7 +187,7 @@ async def update_member(
 ) -> Person:
     """Update a family member"""
     try:
-        person_ref = db.collection("people").document(person_id)
+        person_ref = db.collection(PEOPLE).document(person_id)
         person = person_ref.get()
         if not person.exists:
             raise HTTPException(
@@ -183,7 +216,7 @@ async def add_collaborator(
 ) -> FamilyTree:
     """Add collaborators to a family tree"""
     try:
-        tree_ref = db.collection("familyTrees").document(tree_id)
+        tree_ref = db.collection(FAMILY_TREE).document(tree_id)
         tree = tree_ref.get()
         if not tree.exists:
             raise HTTPException(

@@ -14,6 +14,7 @@ import { useTheme } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 import { Header } from '../components';
 import { useModal } from '../../../components/common';
+import CreateTree from '../../family-tree/components/CreateTree';
 
 const data = [
   {
@@ -93,7 +94,7 @@ export function DashboardPage() {
                       fullWidth={isSmallScreen}
                       onClick={() => {
                         if (data.id === 'family-tree')
-                          openModal(<div>Open family tree</div>);
+                          openModal(<CreateTree />);
                       }}
                     >
                       {data?.btnTitle}

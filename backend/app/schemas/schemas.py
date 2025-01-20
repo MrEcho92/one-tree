@@ -9,7 +9,11 @@ from pydantic import BaseModel, EmailStr, Field
 class CreateFamilyTreeSchema(BaseModel):
     name: str
     description: Optional[str] = None
+    is_public: bool
     created_by: str
+    root_member: dict
+    father: Optional[dict] = None
+    mother: Optional[dict] = None
 
 
 class AddPersonSchema(BaseModel):

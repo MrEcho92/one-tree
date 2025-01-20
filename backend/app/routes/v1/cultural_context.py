@@ -8,6 +8,8 @@ from app.schemas.schemas import CreateCulturalContextSchema
 
 router = APIRouter()
 
+CULTURAL_CONTEXT = "culturalContext"
+
 
 @router.get(
     "/contexts", response_model=List[CulturalContext], status_code=status.HTTP_200_OK
@@ -15,7 +17,7 @@ router = APIRouter()
 async def get_contexts(db=Depends(get_db)) -> List[CulturalContext]:
     """Get all cultural contexts"""
     try:
-        contexts = db.collection("culturalContext").stream()
+        contexts = db.collection(CULTURAL_CONTEXT).stream()
         return [CulturalContext.from_dict(context.to_dict()) for context in contexts]
     except Exception as e:
         raise HTTPException(
@@ -31,7 +33,7 @@ async def get_contexts(db=Depends(get_db)) -> List[CulturalContext]:
 async def get_context_by_id(context_id: str, db=Depends(get_db)) -> CulturalContext:
     """Get a cultural context by ID"""
     try:
-        context = db.collection("culturalContext").document(context_id).get()
+        context = db.collection(CULTURAL_CONTEXT).document(context_id).get()
         if not context.exists:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -53,7 +55,7 @@ async def create_context(
     """Create a new cultural context"""
     try:
         context = CulturalContext(**context.dict())
-        db.collection("culturalContext").document(context.id).set(context.to_dict())
+        db.collection(CULTURAL_CONTEXT).document(context.id).set(context.to_dict())
         return context
     except Exception as e:
         raise HTTPException(
@@ -72,7 +74,7 @@ async def update_context(
     """Update a cultural context by ID"""
     try:
         context = CulturalContext(**context.dict())
-        db.collection("culturalContext").document(context_id).set(context.to_dict())
+        db.collection(CULTURAL_CONTEXT).document(context_id).set(context.to_dict())
         return context
     except Exception as e:
         raise HTTPException(
@@ -88,7 +90,7 @@ async def update_context(
 async def delete_context(context_id: str, db=Depends(get_db)) -> None:
     """Delete a cultural context by ID"""
     try:
-        db.collection("culturalContext").document(context_id).delete()
+        db.collection(CULTURAL_CONTEXT).document(context_id).delete()
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)

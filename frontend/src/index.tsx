@@ -5,6 +5,9 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@mui/material';
 import queryClient from './core/http/react-query';
+import { SnackbarProvider } from 'notistack';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import './index.scss';
 import App from './App';
 import { theme } from './core/theme/theme';
@@ -20,11 +23,15 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ReactQueryDevtools initialIsOpen={false} />
-        <ThemeProvider theme={theme}>
-          <ModalProvider>
-            <App />
-          </ModalProvider>
-        </ThemeProvider>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <ThemeProvider theme={theme}>
+            <ModalProvider>
+              <SnackbarProvider maxSnack={3}>
+                <App />
+              </SnackbarProvider>
+            </ModalProvider>
+          </ThemeProvider>
+        </LocalizationProvider>
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>,
