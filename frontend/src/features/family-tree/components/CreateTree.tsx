@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@mui/material';
+import { Divider, useTheme } from '@mui/material';
 import {
   Button,
   Checkbox,
@@ -102,6 +102,7 @@ export default function CreateTree() {
         sx={{
           fontWeight: typography.h1.fontWeight,
           fontSize: { xs: typography.h4.fontSize, md: typography.h3.fontSize },
+          color: palette.text.primary,
         }}
       >
         Create Family Tree
@@ -116,13 +117,14 @@ export default function CreateTree() {
         control={<Checkbox {...register('is_public')} />}
         label="Make tree public?"
       />
-
+      <Divider />
       <Typography
         sx={{
           fontSize: {
             xs: typography.body1.fontSize,
             md: typography.h4.fontSize,
           },
+          color: palette.text.secondary
         }}
       >
         Root Member (Me)
@@ -171,13 +173,14 @@ export default function CreateTree() {
         control={<Checkbox {...register('root_is_alive')} />}
         label="Is Deceased?"
       />
-
+      <Divider />
       <Typography
         sx={{
           fontSize: {
             xs: typography.body1.fontSize,
             md: typography.h4.fontSize,
           },
+          color: palette.text.secondary
         }}
       >
         Father
@@ -218,13 +221,14 @@ export default function CreateTree() {
         control={<Checkbox {...register('father_is_alive')} />}
         label="Is Deceased?"
       />
-
+      <Divider />
       <Typography
         sx={{
           fontSize: {
             xs: typography.body1.fontSize,
             md: typography.h4.fontSize,
           },
+          color: palette.text.secondary
         }}
       >
         Mother
