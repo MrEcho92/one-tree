@@ -25,11 +25,11 @@ root.render(
         <ReactQueryDevtools initialIsOpen={false} />
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <ThemeProvider theme={theme}>
-            <ModalProvider>
-              <SnackbarProvider maxSnack={3}>
+            <SnackbarProvider maxSnack={3}>
+              <ModalProvider>
                 <App />
-              </SnackbarProvider>
-            </ModalProvider>
+              </ModalProvider>
+            </SnackbarProvider>
           </ThemeProvider>
         </LocalizationProvider>
       </BrowserRouter>

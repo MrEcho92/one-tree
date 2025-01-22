@@ -3,14 +3,12 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from google.cloud import firestore
 
+from app.core.constants import FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
 from app.schemas.schemas import AddPersonSchema, CreateFamilyTreeSchema
 
 router = APIRouter()
-
-FAMILY_TREE = "familyTrees"
-PEOPLE = "people"
 
 
 @router.get(
@@ -46,26 +44,29 @@ async def create_tree_with_members(
 ) -> FamilyTree:
     """Create a new family tree with root member, father, and mother"""
     try:
-        tree = FamilyTree(**family_tree.dict())
+        tree = FamilyTree(
+            name=family_tree.name,
+            description=family_tree.description,
+            is_public=family_tree.is_public,
+            created_by=family_tree.created_by,
+        )
         db.collection(FAMILY_TREE).document(tree.id).set(tree.to_dict())
 
         def add_member(member_data: dict, tree_id: str) -> str:
             """Helper function to add a member"""
-            member = Person(**member_data.dict(), tree_id=tree_id)
+            member = Person(
+                **member_data, tree_id=tree_id, created_by=family_tree.created_by
+            )
             db.collection(PEOPLE).document(member.id).set(member.to_dict())
             return member.id
 
         # Add members
-        root_id = add_member(family_tree.root_member, tree_id=tree.id)
+        root_id = add_member(family_tree.root_member, tree.id)
         father_id = (
-            add_member(family_tree.father, tree_id=tree.id)
-            if family_tree.father
-            else None
+            add_member(family_tree.father, tree.id) if family_tree.father else None
         )
         mother_id = (
-            add_member(family_tree.mother, tree_id=tree.id)
-            if family_tree.mother
-            else None
+            add_member(family_tree.mother, tree.id) if family_tree.mother else None
         )
 
         # Update root member with parent ids

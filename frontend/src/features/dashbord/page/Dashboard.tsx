@@ -43,7 +43,7 @@ const data = [
 
 export function DashboardPage() {
   const theme = useTheme();
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>

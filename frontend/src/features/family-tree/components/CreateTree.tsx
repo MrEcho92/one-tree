@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Divider, useTheme } from '@mui/material';
+import { useModal } from '../../../components/common';
 import {
   Button,
   Checkbox,
@@ -14,39 +15,19 @@ import {
   Typography,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
-interface CreateTreeFormValues {
-  name: string;
-  description?: string;
-  is_public: boolean;
-  root_first_name: string;
-  root_last_name: string;
-  root_date_of_birth?: string;
-  root_gender: string;
-  root_is_alive: boolean;
-  father_first_name?: string;
-  father_last_name?: string;
-  father_date_of_birth?: string;
-  father_gender?: string;
-  father_is_alive?: boolean;
-  mother_first_name?: string;
-  mother_last_name?: string;
-  mother_date_of_birth?: string;
-  mother_gender?: string;
-  mother_is_alive?: boolean;
-}
+import {
+  CreateFamilyTreePayload,
+  CreateTreeFormValues,
+} from '../../../types/tree';
+import { useCreateFamilyTree } from '../../../hooks/tree-hooks';
+import { ApiResponse } from '../../../types/api';
 
 export default function CreateTree() {
   const { typography, palette } = useTheme();
-  const {
-    control,
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm<CreateTreeFormValues>({
+  const { closeModal } = useModal();
+  const { control, handleSubmit, register } = useForm<CreateTreeFormValues>({
     defaultValues: {
       is_public: false,
-      root_is_alive: true,
       father_is_alive: true,
       mother_is_alive: true,
     },
@@ -54,17 +35,20 @@ export default function CreateTree() {
 
   const navigate = useNavigate();
 
+  const mutation = useCreateFamilyTree();
+
   const onSubmit = async (data: CreateTreeFormValues) => {
-    const payload = {
+    const payload: CreateFamilyTreePayload = {
       name: data.name,
       description: data.description,
       is_public: data.is_public,
+      // TODO: Update with user details
+      created_by: '123@gmail.com',
       root_member: {
         first_name: data.root_first_name,
         last_name: data.root_last_name,
         date_of_birth: data.root_date_of_birth,
         gender: data.root_gender,
-        is_alive: data.root_is_alive,
       },
       father: {
         first_name: data.father_first_name,
@@ -82,7 +66,19 @@ export default function CreateTree() {
       },
     };
 
-    console.log('payload', payload);
+    mutation.mutate(payload, {
+      onSuccess: (response: ApiResponse<{ id: string }>) => {
+        if ('id' in response) {
+          navigate(`/app/tree/${response.id}`);
+        } else if (response.data && 'id' in response.data) {
+          navigate(`/app/tree/${response.data.id}`);
+        }
+        closeModal?.();
+      },
+      onError: (error) => {
+        console.error('Error creating family tree:', error);
+      },
+    });
   };
 
   return (
@@ -124,7 +120,7 @@ export default function CreateTree() {
             xs: typography.body1.fontSize,
             md: typography.h4.fontSize,
           },
-          color: palette.text.secondary
+          color: palette.text.secondary,
         }}
       >
         Root Member (Me)
@@ -169,10 +165,6 @@ export default function CreateTree() {
           )}
         />
       </FormControl>
-      <FormControlLabel
-        control={<Checkbox {...register('root_is_alive')} />}
-        label="Is Deceased?"
-      />
       <Divider />
       <Typography
         sx={{
@@ -180,7 +172,7 @@ export default function CreateTree() {
             xs: typography.body1.fontSize,
             md: typography.h4.fontSize,
           },
-          color: palette.text.secondary
+          color: palette.text.secondary,
         }}
       >
         Father
@@ -228,7 +220,7 @@ export default function CreateTree() {
             xs: typography.body1.fontSize,
             md: typography.h4.fontSize,
           },
-          color: palette.text.secondary
+          color: palette.text.secondary,
         }}
       >
         Mother
