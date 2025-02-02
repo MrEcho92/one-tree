@@ -57,3 +57,23 @@ export interface FamilyTree {
   collaborators: string[];
   members: string[];
 }
+
+export interface Person {
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  date_of_birth?: string;
+  gender?: string;
+  is_alive?: boolean;
+  birth_place?: string;
+  death_date?: string;
+  bio?: string;
+  photo_url?: string;
+  father_id?: string;
+  mother_id?: string;
+  spouse_id?: any[];
+  children_id?: any[];
+  tree_id: string;
+  created_by?: string;
+  updated_by?: string;
+}

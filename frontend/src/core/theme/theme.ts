@@ -22,6 +22,9 @@ const themeOptions: ThemeOptions = {
     info: {
       main: '#118AB2', // Teal Blue for informative or secondary actions
     },
+    common: {
+      white: '#EEEEE',
+    },
   },
   typography: {
     fontFamily: '"Roboto", "Arial", sans-serif',

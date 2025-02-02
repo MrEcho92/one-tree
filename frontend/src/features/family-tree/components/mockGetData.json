@@ -1,0 +1,15 @@
+{
+  "id": "11f58fad-9a27-4586-a71d-d604401bb1ca",
+  "created_by": "123@gmail.com",
+  "created_at": "25 January 2025 at 20:40:56 UTC",
+  "upated_at": "25 January 2025 at 20:40:56 UTC",
+  "name": "Ye family tree",
+  "is_public": false,
+  "description": "Kanye west tree",
+  "collaborators": [
+    "fb8053c2-9e74-4912-b848-1c38ca2469a5",
+    "86c96a08-3146-42b6-a895-6fdb9cfed388",
+    "f7aa38ab-d815-4287-96e2-1c1feeaa88f8"
+  ],
+  "members": []
+}

@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import { TreePage } from '../page';
+import { TreePage } from '../page/treePage';
 
 export function TreeRoutes() {
   return (

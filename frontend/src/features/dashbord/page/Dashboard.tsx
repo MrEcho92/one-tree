@@ -56,7 +56,7 @@ export function DashboardPage() {
           mt: { xs: 8, md: 0 },
         }}
       >
-        <Header />
+        <Header title="Home" headerName="Dashboard" />
         <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
           <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
             Overview
