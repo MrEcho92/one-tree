@@ -1,9 +1,11 @@
 import React, { useCallback } from 'react';
-import { Box } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import type { ExtNode } from 'relatives-tree/lib/types';
 import { deepOrange, grey } from '@mui/material/colors';
 import { useTheme } from '@mui/material';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import { theme } from '../../../core';
 
 interface FamilyNodeProps {
   node: ExtNode;
@@ -70,16 +72,21 @@ export const FamilyNode = React.memo(function FamilyNode({
           sx={{
             position: 'absolute',
             top: '6px',
-            right: '14px',
+            right: '24px',
             width: '14px',
             height: '10px',
-            border: '1px solid black',
-            borderRadius: '4px 0',
-            background: 'white',
-            cursor: 'pointer',
           }}
-          onClick={clickSubHandler}
-        />
+        >
+          <IconButton
+            onClick={clickSubHandler}
+            sx={{
+              backgroundColor: palette.info.main,
+              color: 'palette.common.white',
+            }}
+          >
+            <AccountTreeIcon />
+          </IconButton>
+        </Box>
       )}
     </Box>
   );

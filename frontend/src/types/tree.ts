@@ -77,3 +77,12 @@ export interface Person {
   created_by?: string;
   updated_by?: string;
 }
+
+export interface AddMemberTreeForm {
+  [key: string]: {
+    first_name?: string;
+    last_name?: string;
+    date_of_birth?: string;
+    gender?: string;
+  };
+}

@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   TextField,
   Button,
   MenuItem,
@@ -13,12 +9,9 @@ import {
   Typography,
   Tooltip,
   IconButton,
-  Stack,
   Menu,
   Divider,
   FormControl,
-  InputLabel,
-  Select,
   FormLabel,
   RadioGroup,
   FormControlLabel,
@@ -31,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import AddMemberDialog from './AddMemberDialog';
 
 type EditFamilyMemberProps = {
   defaultValues: any;
@@ -83,7 +77,20 @@ export function EditFamilyMember({
     <Box>
       {isEditing ? (
         <>
-          <Typography variant="h4">Edit details</Typography>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h4" py={1}>
+              Edit details
+            </Typography>
+            <Tooltip title="Close">
+              <IconButton onClick={() => setIsEditing(false)}>
+                <ClearIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
           <form onSubmit={() => {}}>
             <Controller
               name="photo_url"
@@ -104,6 +111,7 @@ export function EditFamilyMember({
                 gap: 1,
                 overflowY: 'scroll',
                 maxHeight: 650,
+                pt: { xs: 1 },
               }}
             >
               <Controller
@@ -227,21 +235,21 @@ export function EditFamilyMember({
                 )}
               />
             </Box>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2 }}
+            <Box
+              sx={{
+                display: 'flex',
+                mt: 2,
+                gap: 1,
+                justifyContent: 'space-between',
+              }}
             >
-              Save Changes
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{ mt: 2, ml: 2 }}
-              onClick={() => setIsEditing(false)}
-            >
-              Cancel
-            </Button>
+              <Button type="submit" variant="contained" color="primary">
+                Save
+              </Button>
+              <Button variant="outlined" onClick={() => setIsEditing(false)}>
+                Cancel
+              </Button>
+            </Box>
           </form>
         </>
       ) : (
@@ -254,7 +262,7 @@ export function EditFamilyMember({
             }}
           >
             <Typography variant="h6" gutterBottom>
-              {`${defaultValues.first_name} ${defaultValues.last_name}`}
+              {`${defaultValues.first_name ?? 'No'} ${defaultValues.last_name ?? 'Name'}`}
             </Typography>
             <Tooltip title="Close">
               <IconButton onClick={closeDrawer}>
@@ -309,19 +317,19 @@ export function EditFamilyMember({
                   'aria-labelledby': 'basic-button',
                 }}
               >
-                <MenuItem onClick={() => handleOpenAddMember('Father')}>
+                <MenuItem onClick={() => handleOpenAddMember('father')}>
                   Father
                 </MenuItem>
-                <MenuItem onClick={() => handleOpenAddMember('Mother')}>
+                <MenuItem onClick={() => handleOpenAddMember('mother')}>
                   Mother
                 </MenuItem>
-                <MenuItem onClick={() => handleOpenAddMember('Spouse')}>
+                <MenuItem onClick={() => handleOpenAddMember('spouse')}>
                   Spouse/ Ex
                 </MenuItem>
-                <MenuItem onClick={() => handleOpenAddMember('Sibling')}>
+                <MenuItem onClick={() => handleOpenAddMember('sibling')}>
                   Sibling
                 </MenuItem>
-                <MenuItem onClick={() => handleOpenAddMember('Child')}>
+                <MenuItem onClick={() => handleOpenAddMember('child')}>
                   Child
                 </MenuItem>
               </Menu>
@@ -351,61 +359,12 @@ export function EditFamilyMember({
           </Typography>
         </Box>
       )}
-      <Dialog open={isAddMemberOpen} onClose={() => setIsAddMemberOpen(false)}>
-        <DialogTitle>Add New Family Member - {familyType}</DialogTitle>
-        <DialogContent>
-          <form onSubmit={handleSubmit(handleAddMember)}>
-            <Box>
-              <Controller
-                name="first_name"
-                control={control}
-                render={({ field }) => (
-                  <TextField {...field} label="First Name" fullWidth />
-                )}
-              />
-              <Controller
-                name="last_name"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Last Name"
-                    fullWidth
-                    sx={{ my: 2 }}
-                  />
-                )}
-              />
-              <Controller
-                name="date_of_birth"
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    label="Date of Death"
-                    format="dd/MM/yyyy"
-                    value={field.value ? new Date(field.value) : null}
-                    onChange={(date) =>
-                      field.onChange(date ? date.toISOString() : null)
-                    }
-                    slots={{ textField: TextField }}
-                    slotProps={{ textField: { fullWidth: true } }}
-                  />
-                )}
-              />
-            </Box>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{ my: 1 }}
-          >
-            Add Member
-          </Button>
-          <Button onClick={() => setIsAddMemberOpen(false)}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
+      <AddMemberDialog
+        isAddMemberOpen={isAddMemberOpen}
+        setIsAddMemberOpen={setIsAddMemberOpen}
+        familyType={familyType}
+        handleAddMember={handleAddMember}
+      />
     </Box>
   );
 }
