@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
 import FitScreenIcon from '@mui/icons-material/FitScreen';
 import Tooltip from '@mui/material/Tooltip';
-import { fitEdges } from '../../../utils';
+import { fitEdges } from '../../../utils/treeGraph';
 
 export const Navigation = ({
   zoomIn,

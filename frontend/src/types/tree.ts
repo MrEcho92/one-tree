@@ -55,10 +55,11 @@ export interface FamilyTree {
   is_public: boolean;
   description: string;
   collaborators: string[];
-  members: string[];
+  members: Person[];
 }
 
 export interface Person {
+  id: string;
   first_name?: string;
   middle_name?: string;
   last_name?: string;
@@ -73,6 +74,7 @@ export interface Person {
   mother_id?: string;
   spouse_id?: any[];
   children_id?: any[];
+  sibling_id?: any[];
   tree_id: string;
   created_by?: string;
   updated_by?: string;

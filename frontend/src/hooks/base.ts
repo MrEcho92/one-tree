@@ -19,8 +19,8 @@ export const useApiQuery = <TData>(
     queryKey,
     queryFn: async () => {
       try {
-        const { data } = await HTTPInstance.get<ApiResponse<TData>>(url);
-        return data;
+        const response = await HTTPInstance.get<ApiResponse<TData>>(url);
+        return response.data;
       } catch (error: any) {
         enqueueSnackbar(`Error fetching data: ${error.message}`, {
           variant: 'error',

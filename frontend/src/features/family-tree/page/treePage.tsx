@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Stack from '@mui/material/Stack';
@@ -9,32 +9,15 @@ import Typography from '@mui/material/Typography';
 import { useParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Header } from '../../dashbord/components';
-import {
-  Avatar,
-  Button,
-  Drawer,
-  IconButton,
-  Menu,
-  MenuItem,
-  TextField,
-  Tooltip,
-} from '@mui/material';
+import { Drawer } from '@mui/material';
 import ReactFamilyTree from 'react-family-tree';
 import { useTheme } from '@mui/material';
-import ClearIcon from '@mui/icons-material/Clear';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import type {
   Node,
   ExtNode,
-  Gender,
-  RelType,
-  Relation,
 } from 'relatives-tree/lib/types';
 import { FamilyNode } from '../components/FamilyNode';
 import {
-  DEFAULT_SOURCE,
-  SOURCES,
   MAX_SCALE,
   MIN_SCALE,
   NODE_HEIGHT,
@@ -42,6 +25,9 @@ import {
 } from '../components/constants';
 import { TreeWrapper } from '../components/TreeWrapper';
 import { EditFamilyMember } from '../components/EditFamilyMember';
+import { useGetFamilyTrees } from '../../../hooks/tree-hooks';
+import { FamilyTree, Person } from '../../../types/tree';
+import { transformNodeData } from '../../../utils/transformTree';
 
 export function TreePage() {
   const { treeId } = useParams();
@@ -51,11 +37,9 @@ export function TreePage() {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [drawerData, setDrawerData] = useState({ name: '', relationship: '' });
 
-  const [source, setSource] = useState(DEFAULT_SOURCE);
-  const [nodes, setNodes] = useState(SOURCES[source]);
+  const [nodes, setNodes] = useState<Node[]>([]);
 
-  const firstNodeId = useMemo(() => nodes[0].id, [nodes]);
-  const [rootId, setRootId] = useState(firstNodeId);
+  const [rootId, setRootId] = useState<string>("abc");
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -79,6 +63,27 @@ export function TreePage() {
     setAnchorEl(null);
   };
 
+  const { data, isLoading, isError } = useGetFamilyTrees(treeId ?? '');
+
+  if (isLoading) {
+    return <Box>Loading...</Box>;
+  }
+
+  if (isError) {
+    return <Box>Error occured</Box>;
+  }
+
+  let familyTree: FamilyTree | null = null;
+
+  if (data && !nodes.length) {
+    familyTree = data as any;
+    const members = familyTree?.members ?? [];
+    const nodesData = transformNodeData(members);
+    setNodes(nodesData);
+    const rootId = members?.filter((item: Person) => item.father_id && item.mother_id)[0].id
+    setRootId(rootId);
+  }
+
   return (
     <Box
       component="section"
@@ -94,7 +99,7 @@ export function TreePage() {
         }}
       >
         <Header
-          title="Ye family"
+          title={familyTree?.name ?? ''}
           headerName="Family tree"
           allowSideIcon={false}
         />
