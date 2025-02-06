@@ -6,19 +6,21 @@ from google.cloud import firestore
 from app.core.constants import FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
-from app.schemas.schemas import AddPersonSchema, CreateFamilyTreeSchema
+from app.schemas.schemas import AddPersonSchema, CreateFamilyTreeSchema, FamilyTrees
 
 router = APIRouter()
 
 
 @router.get(
-    "/trees/{user_id}", response_model=List[FamilyTree], status_code=status.HTTP_200_OK
+    "/trees/{user_id}/user",
+    response_model=List[FamilyTrees],
+    status_code=status.HTTP_200_OK,
 )
-async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTree]:
+async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTrees]:
     """Get all family trees created by a user"""
     try:
         trees = db.collection(FAMILY_TREE).where("created_by", "==", user_id).stream()
-        return [FamilyTree.from_dict(tree.to_dict()) for tree in trees]
+        return [FamilyTrees(**tree.to_dict()) for tree in trees]
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
@@ -26,16 +28,33 @@ async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTree]:
 
 
 @router.get(
-    "/trees/{tree_id}", response_model=FamilyTree, status_code=status.HTTP_200_OK
+    "/trees/{tree_id}/tree", response_model=FamilyTree, status_code=status.HTTP_200_OK
 )
 async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
     """Get a family tree by ID"""
-    tree = db.collection(FAMILY_TREE).document(tree_id).get()
-    if not tree.exists:
+    try:
+        tree = db.collection(FAMILY_TREE).document(tree_id).get()
+        if not tree.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+            )
+
+        tree_data = tree.to_dict()
+
+        # Fetch members details
+        members = []
+        for member_id in tree_data.get("members", []):
+            member = db.collection(PEOPLE).document(member_id).get()
+            if member.exists:
+                members.append(Person.from_dict(member.to_dict()))
+
+        tree_data["members"] = members
+
+        return FamilyTree.from_dict(tree_data)
+    except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
-    return FamilyTree.from_dict(tree.to_dict())
 
 
 @router.post("/trees", response_model=FamilyTree, status_code=status.HTTP_201_CREATED)
@@ -72,6 +91,14 @@ async def create_tree_with_members(
         # Update root member with parent ids
         root_ref = db.collection(PEOPLE).document(root_id)
         root_ref.update({"father_id": father_id, "mother_id": mother_id})
+
+        # Update father and mother with root member as their child
+        if father_id:
+            father_ref = db.collection(PEOPLE).document(father_id)
+            father_ref.update({"children_id": firestore.ArrayUnion([root_id])})
+        if mother_id:
+            mother_ref = db.collection(PEOPLE).document(mother_id)
+            mother_ref.update({"children_id": firestore.ArrayUnion([root_id])})
 
         # Update tree with members IDs
         tree_ref = db.collection(FAMILY_TREE).document(tree.id)

@@ -50,6 +50,7 @@ class Person(AbstractBaseModel):
     mother_id: Optional[str] = None
     spouse_id: Optional[List[str]] = []
     children_id: Optional[List[str]] = []
+    sibling_id: Optional[List[str]] = []
     tree_id: str
 
 

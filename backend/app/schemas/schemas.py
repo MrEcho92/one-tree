@@ -31,6 +31,7 @@ class AddPersonSchema(BaseModel):
     mother_id: Optional[str] = None
     spouse_id: Optional[List[str]] = []
     children_id: Optional[List[str]] = []
+    sibling_id: Optional[List[str]] = []
     tree_id: str
     created_by: str
     updated_by: Optional[str] = None
@@ -43,3 +44,14 @@ class CreateCulturalContextSchema(BaseModel):
     tags: List[str] = []
     country: str
     created_by: str
+
+
+class FamilyTrees(BaseModel):
+    id: str
+    name: str
+    description: Optional[str] = None
+    is_public: bool
+    created_by: str
+    created_at: datetime
+    updated_by: Optional[str] = None
+    updated_at: Optional[datetime] = None
