@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Stack from '@mui/material/Stack';
@@ -9,13 +9,10 @@ import Typography from '@mui/material/Typography';
 import { useParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Header } from '../../dashbord/components';
-import { Drawer } from '@mui/material';
+import { Button, Drawer } from '@mui/material';
 import ReactFamilyTree from 'react-family-tree';
 import { useTheme } from '@mui/material';
-import type {
-  Node,
-  ExtNode,
-} from 'relatives-tree/lib/types';
+import type { Node, ExtNode } from 'relatives-tree/lib/types';
 import { FamilyNode } from '../components/FamilyNode';
 import {
   MAX_SCALE,
@@ -34,12 +31,13 @@ export function TreePage() {
   const { palette } = useTheme();
   const [value, setValue] = useState('1');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+
   const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [drawerData, setDrawerData] = useState({ name: '', relationship: '' });
 
   const [nodes, setNodes] = useState<Node[]>([]);
 
-  const [rootId, setRootId] = useState<string>("abc");
+  const [firstRootId, setFirstRootId] = useState<string>('');
+  const [rootId, setRootId] = useState<string>(firstRootId);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -65,6 +63,22 @@ export function TreePage() {
 
   const { data, isLoading, isError } = useGetFamilyTrees(treeId ?? '');
 
+  const familyTree = useMemo(() => {
+    if (data) {
+      const tree = data as any;
+      const members = tree?.members ?? [];
+      const nodesData = transformNodeData(members);
+      setNodes(nodesData);
+      const rootId = members?.filter(
+        (person: Person) => person.father_id && person.mother_id,
+      )[0]?.id;
+      setFirstRootId(rootId);
+      setRootId(rootId);
+      return tree;
+    }
+    return null;
+  }, [data, setNodes, setFirstRootId]);
+
   if (isLoading) {
     return <Box>Loading...</Box>;
   }
@@ -73,17 +87,7 @@ export function TreePage() {
     return <Box>Error occured</Box>;
   }
 
-  let familyTree: FamilyTree | null = null;
-
-  if (data && !nodes.length) {
-    familyTree = data as any;
-    const members = familyTree?.members ?? [];
-    const nodesData = transformNodeData(members);
-    setNodes(nodesData);
-    const rootId = members?.filter((item: Person) => item.father_id && item.mother_id)[0].id
-    setRootId(rootId);
-  }
-
+  console.log('familyTree', familyTree);
   return (
     <Box
       component="section"
@@ -109,7 +113,7 @@ export function TreePage() {
             variant="h6"
             sx={{ mb: 2, display: { md: 'none' } }}
           >
-            Ye family
+            {familyTree?.name ?? ''}
           </Typography>
           <TabContext value={value}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -123,7 +127,14 @@ export function TreePage() {
               </TabList>
             </Box>
             <TabPanel value="1">
-              <Box sx={{ width: '100%', height: '80vh' }}></Box>
+              <Box sx={{ width: '100%', height: '80vh' }}>
+                <Typography>{familyTree?.description}</Typography>
+                <Button>Add collaborators</Button>
+                <Box>
+                  List of family members - maybe on click open pop out of person
+                  profile
+                </Box>
+              </Box>
             </TabPanel>
             <TabPanel value="2" sx={{ p: { xs: '0' } }}>
               <Box
@@ -178,6 +189,9 @@ export function TreePage() {
                                 <FamilyNode
                                   key={node.id}
                                   node={node}
+                                  nodeDetails={familyTree?.members?.find(
+                                    (member: Person) => member.id === node.id,
+                                  )}
                                   isRoot={node.id === rootId}
                                   // isHover={node.id === hoverId}
                                   onClick={openDrawer}
@@ -213,7 +227,12 @@ export function TreePage() {
             sx: { width: { xs: 250, md: 400 }, padding: 2 },
           }}
         >
-          <EditFamilyMember defaultValues={{}} closeDrawer={closeDrawer} />
+          <EditFamilyMember
+            defaultValues={familyTree?.members.find(
+              (member: Person) => member.id === selectedNode,
+            )}
+            closeDrawer={closeDrawer}
+          />
         </Drawer>
       </Stack>
     </Box>

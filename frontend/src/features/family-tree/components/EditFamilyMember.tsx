@@ -25,9 +25,11 @@ import ClearIcon from '@mui/icons-material/Clear';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AddMemberDialog from './AddMemberDialog';
+import { Person } from '../../../types/tree';
+import { transformDate } from '../../../utils/transformDate';
 
 type EditFamilyMemberProps = {
-  defaultValues: any;
+  defaultValues: Person;
   closeDrawer: () => void;
 };
 
@@ -159,19 +161,14 @@ export function EditFamilyMember({
                   render={({ field }) => (
                     <RadioGroup {...field} row>
                       <FormControlLabel
-                        value="Male"
+                        value="male"
                         control={<Radio />}
                         label="Male"
                       />
                       <FormControlLabel
-                        value="Female"
+                        value="female"
                         control={<Radio />}
                         label="Female"
-                      />
-                      <FormControlLabel
-                        value="Other"
-                        control={<Radio />}
-                        label="Other"
                       />
                     </RadioGroup>
                   )}
@@ -261,8 +258,8 @@ export function EditFamilyMember({
               alignItems: 'center',
             }}
           >
-            <Typography variant="h6" gutterBottom>
-              {`${defaultValues.first_name ?? 'No'} ${defaultValues.last_name ?? 'Name'}`}
+            <Typography variant="h6" gutterBottom fontWeight="600">
+              {`${defaultValues.first_name} ${defaultValues.last_name}`}
             </Typography>
             <Tooltip title="Close">
               <IconButton onClick={closeDrawer}>
@@ -272,8 +269,8 @@ export function EditFamilyMember({
           </Box>
           <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
             <Avatar
-              sx={{ width: 56, height: 56 }}
-              src={defaultValues.photo_url}
+              sx={{ width: 80, height: 80 }}
+              src={defaultValues?.photo_url}
             >
               H
             </Avatar>
@@ -287,7 +284,7 @@ export function EditFamilyMember({
             }}
           >
             <Tooltip title="Edit details">
-              <IconButton onClick={() => setIsEditing(true)}>
+              <IconButton onClick={() => setIsEditing(true)} color="primary">
                 <EditNoteIcon />
               </IconButton>
             </Tooltip>
@@ -306,7 +303,7 @@ export function EditFamilyMember({
                 endIcon={<KeyboardArrowDownIcon />}
                 onClick={handleClick}
               >
-                Add family member
+                Add family members
               </Button>
               <Menu
                 id="basic-menu"
@@ -336,27 +333,37 @@ export function EditFamilyMember({
             </Box>
           </Box>
           <Divider />
-          <Typography variant="h5">
-            {defaultValues.first_name} {defaultValues.last_name}
-          </Typography>
-          <Typography variant="subtitle1">
-            Born: {defaultValues.date_of_birth}
-          </Typography>
-          <Typography variant="subtitle1">
-            Gender: {defaultValues.gender}
-          </Typography>
-          <Typography variant="subtitle1">Bio: {defaultValues.bio}</Typography>
-          <Typography variant="subtitle1">
-            Birth place: {defaultValues.birth_place || 'N/A'}
-          </Typography>
-          <Typography variant="subtitle1">
-            {defaultValues.is_alive
-              ? 'Alive'
-              : `Died: ${defaultValues.death_date}`}
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            {defaultValues.bio || 'No bio available.'}
-          </Typography>
+          <Button color="warning" variant="text" size="small" sx={{ mt: 2 }}>
+            Show tree from here
+          </Button>
+          <Box sx={{ overflowY: 'scroll', maxHeight: 250 }}>
+            <Typography variant="h6" py={1} fontWeight="500">
+              Information
+            </Typography>
+            <Typography variant="subtitle1">
+              Born:{' '}
+              {defaultValues?.date_of_birth
+                ? transformDate(defaultValues.date_of_birth)
+                : ''}
+            </Typography>
+            {!defaultValues.is_alive ? (
+              <Typography variant="subtitle1">
+                Death date:{' '}
+                {defaultValues.death_date
+                  ? transformDate(defaultValues.death_date)
+                  : ''}
+              </Typography>
+            ) : null}
+            <Typography variant="subtitle1">
+              Gender: {defaultValues?.gender}
+            </Typography>
+            <Typography variant="subtitle1">
+              Birth place: {defaultValues.birth_place}
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              {defaultValues.bio || 'No bio available.'}
+            </Typography>
+          </Box>
         </Box>
       )}
       <AddMemberDialog

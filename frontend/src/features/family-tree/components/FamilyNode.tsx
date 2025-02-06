@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import type { ExtNode } from 'relatives-tree/lib/types';
 import { deepOrange, grey } from '@mui/material/colors';
 import { useTheme } from '@mui/material';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import { theme } from '../../../core';
+import { transformDate } from '../../../utils/transformDate';
+import { Person } from '../../../types/tree';
 
 interface FamilyNodeProps {
   node: ExtNode;
@@ -14,6 +15,7 @@ interface FamilyNodeProps {
   onClick?: (id: string) => void;
   onSubClick: (id: string) => void;
   style?: React.CSSProperties;
+  nodeDetails?: Person;
 }
 
 export const FamilyNode = React.memo(function FamilyNode({
@@ -23,8 +25,9 @@ export const FamilyNode = React.memo(function FamilyNode({
   onClick,
   onSubClick,
   style,
+  nodeDetails,
 }: FamilyNodeProps) {
-  const { palette } = useTheme();
+  const { palette, typography } = useTheme();
   const clickHandler = useCallback(() => {
     if (onClick) {
       onClick(node.id);
@@ -59,13 +62,36 @@ export const FamilyNode = React.memo(function FamilyNode({
         onClick={clickHandler}
       >
         <Avatar
-          sx={{ bgcolor: deepOrange[500], width: 60, height: 60 }}
+          sx={{
+            bgcolor: deepOrange[500],
+            width: 100,
+            height: 100,
+          }}
           alt="Remy Sharp"
           src="/broken-image.jpg"
         >
-          B
+          {nodeDetails?.gender === 'male' ? 'M' : 'F'}
         </Avatar>
-        <Box>{node.id}</Box>
+        <Box
+          p={1}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: {
+                xs: typography.body1.fontSize,
+                md: typography.h4.fontSize,
+              },
+              fontWeight: typography.h1.fontWeight,
+            }}
+          >{`${nodeDetails?.first_name} ${nodeDetails?.last_name}`}</Typography>
+          <Typography>{`${nodeDetails?.date_of_birth ? transformDate(nodeDetails.date_of_birth) : ''}${!nodeDetails?.is_alive && nodeDetails?.death_date ? ` - ${transformDate(nodeDetails.death_date)}` : ''}`}</Typography>
+        </Box>
       </Box>
       {node.hasSubTree && (
         <Box
