@@ -138,7 +138,7 @@ export function EditFamilyMember({
                 flexDirection: 'column',
                 gap: 2,
                 overflowY: 'scroll',
-                maxHeight: 650,
+                minHeight: 650,
                 pt: { xs: 1 },
               }}
             >
