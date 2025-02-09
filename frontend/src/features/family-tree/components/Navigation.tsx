@@ -31,21 +31,26 @@ export const Navigation = ({
         },
       }}
     >
-      <Fab size="small" color="secondary" aria-label="Zoom in">
+      <Fab size="small" color="secondary" aria-label="Zoom in" component="div">
         <Tooltip title="Zoom in" placement="right">
           <IconButton onClick={() => zoomIn()}>
             <AddIcon />
           </IconButton>
         </Tooltip>
       </Fab>
-      <Fab size="small" color="secondary" aria-label="Zoom out">
+      <Fab size="small" color="secondary" aria-label="Zoom out" component="div">
         <Tooltip title="Zoom out" placement="right">
           <IconButton onClick={() => zoomOut()}>
             <RemoveIcon />
           </IconButton>
         </Tooltip>
       </Fab>
-      <Fab size="small" color="secondary" aria-label="Center tree">
+      <Fab
+        size="small"
+        color="secondary"
+        aria-label="Center tree"
+        component="div"
+      >
         <Tooltip title="Center tree" placement="right">
           <IconButton onClick={() => resetTransform()}>
             <CenterFocusStrongIcon />
@@ -82,7 +87,12 @@ function FitScreen({ setTransform, drawingHeight, drawingWidth }: any) {
     });
   };
   return (
-    <Fab size="small" color="secondary" aria-label="Fit tree to screen">
+    <Fab
+      size="small"
+      color="secondary"
+      aria-label="Fit tree to screen"
+      component="div"
+    >
       <Tooltip title="Fit tree to screen" placement="right">
         <IconButton onClick={onFitTreeHandle}>
           <FitScreenIcon />

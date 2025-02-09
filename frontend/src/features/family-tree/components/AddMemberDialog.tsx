@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -12,14 +12,26 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { Radio } from '@mui/material';
+import {
+  Divider,
+  MenuItem,
+  Radio,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
 import { AddMemberTreeForm } from '../../../types/tree';
+import { capitalize } from '../../../utils/capitalize';
+import { getMemberNames } from '../../../utils/getMembers';
+import { MemberId } from '../../../types/tree';
+import { Person } from '../../../types/tree';
 
 type AddMemberDialogProps = {
   isAddMemberOpen: boolean;
   setIsAddMemberOpen: Dispatch<SetStateAction<boolean>>;
   familyType?: string;
   handleAddMember: (data: any) => void;
+  selectedPerson: Person;
+  spouseMembers: any;
 };
 
 export default function AddMemberDialog({
@@ -27,29 +39,80 @@ export default function AddMemberDialog({
   setIsAddMemberOpen,
   familyType,
   handleAddMember,
+  spouseMembers,
+  selectedPerson,
 }: AddMemberDialogProps) {
-  const { control, handleSubmit, register, reset } = useForm<AddMemberTreeForm>(
-    {
-      defaultValues: {},
+  const { control, handleSubmit, register, reset } = useForm<AddMemberTreeForm>({
+    defaultValues: {
+      gender: 'male',
     },
-  );
+  });
+
+  useEffect(() => {
+    reset({
+      gender: familyType === 'mother' ? 'female' : 'male',
+    });
+  }, [familyType, reset]);
+
+  const [spouseNames, setSpouseNames] = useState<MemberId[]>([]);
+  const [selectedSpouse, setSelectedSpouse] = useState<MemberId | null>(null);
+
   function onSubmit(data: AddMemberTreeForm) {
     const payload = {
-      [familyType as string]: data,
+      member: {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        date_of_birth: data.date_of_birth,
+        gender: data.gender,
+        created_by: '123@gmail.com',
+      },
+      relation: {
+        primary_user_id: selectedPerson?.id,
+        primary_user_gender: selectedPerson?.gender,
+        rel: familyType,
+        ...(familyType === 'child'
+          ? {
+              primary_spouse_id: selectedSpouse?.id,
+              primary_spouse_gender: selectedSpouse?.gender,
+            }
+          : null),
+      },
     };
-    console.log('data', payload);
-    reset();
+
+    handleAddMember(payload);
+
+    reset({
+      first_name: '',
+      last_name: '',
+      date_of_birth: null,
+      gender:
+        familyType === 'father'
+          ? 'male'
+          : familyType === 'mother'
+            ? 'female'
+            : 'male',
+    } as any);
   }
+
+  useEffect(() => {
+    if (spouseMembers && isAddMemberOpen) {
+      const spouse = getMemberNames(spouseMembers, selectedPerson?.spouse_id || []);
+      setSpouseNames(spouse);
+    }
+  }, [spouseMembers, isAddMemberOpen]);
+
   return (
     <Dialog
       open={isAddMemberOpen}
       onClose={() => setIsAddMemberOpen(false)}
       maxWidth="sm"
     >
-      <DialogTitle>Add New Family Member - {familyType}</DialogTitle>
+      <DialogTitle>
+        Add New Family Member - {capitalize(familyType!)}
+      </DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 1 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
             <TextField
               label="First Name"
               {...register('first_name', { required: true })}
@@ -65,7 +128,7 @@ export default function AddMemberDialog({
               control={control}
               render={({ field }) => (
                 <DatePicker
-                  label="Date of Death"
+                  label="Date of Birth"
                   format="dd/MM/yyyy"
                   value={field.value ? new Date(field.value as string) : null}
                   onChange={(date) =>
@@ -76,46 +139,71 @@ export default function AddMemberDialog({
                 />
               )}
             />
+            <FormControl component="fieldset" required>
+              <FormLabel>Gender</FormLabel>
+              <Controller
+                name={'gender'}
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup
+                    {...field}
+                    row
+                    value={
+                      field.value
+                    }
+                  >
+                    <FormControlLabel
+                      value="male"
+                      control={<Radio />}
+                      label="Male"
+                    />
+                    <FormControlLabel
+                      value="female"
+                      control={<Radio />}
+                      label="Female"
+                    />
+                  </RadioGroup>
+                )}
+              />
+            </FormControl>
+            {familyType === 'child' && (
+              <>
+                <Divider />
+                <FormControl sx={{ m: 1, width: 300 }}>
+                  <FormLabel>Add parent with ++</FormLabel>
+                  <div>
+                    when no parent is selected, you are adding child without
+                    parent
+                  </div>
+                  <Select
+                    labelId="demo-select-small-label"
+                    id="demo-select-small"
+                    value={selectedSpouse?.fullName}
+                    label="Spouse"
+                    onChange={(event: SelectChangeEvent) => {
+                      const value = event.target.value;
+                      if (value === '') setSelectedSpouse(null);
+                      setSelectedSpouse(
+                        spouseNames?.find(
+                          (name: MemberId) => name.id === value,
+                        ) || null,
+                      );
+                    }}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {spouseNames.map((member: MemberId) => (
+                      <MenuItem value={member.id}>{member.fullName}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
+            )}
           </Box>
-          <FormControl component="fieldset">
-            <FormLabel>Gender</FormLabel>
-            <Controller
-              name={'gender'}
-              control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  {...field}
-                  row
-                  defaultValue={
-                    familyType == 'father'
-                      ? 'male'
-                      : familyType == 'mother'
-                        ? 'female'
-                        : null
-                  }
-                >
-                  <FormControlLabel
-                    value="male"
-                    control={<Radio />}
-                    label="Male"
-                  />
-                  <FormControlLabel
-                    value="female"
-                    control={<Radio />}
-                    label="Female"
-                  />
-                </RadioGroup>
-              )}
-            />
-          </FormControl>
           <DialogActions>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              sx={{ my: 1 }}
-            >
-              Add Member
+            <Button type="submit" variant="contained" color="primary">
+              Add
             </Button>
             <Button onClick={() => setIsAddMemberOpen(false)}>Cancel</Button>
           </DialogActions>

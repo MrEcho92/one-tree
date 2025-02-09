@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
   TextField,
@@ -20,36 +20,38 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSnackbar } from 'notistack';
-import { useNavigate } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AddMemberDialog from './AddMemberDialog';
-import { Person } from '../../../types/tree';
+import { Person, UpdateMemberPayload } from '../../../types/tree';
 import { transformDate } from '../../../utils/transformDate';
+import { useUpdatePerson } from '../../../hooks/treeHooks';
 
 type EditFamilyMemberProps = {
   defaultValues: Person;
   closeDrawer: () => void;
+  onAddMember: (data: any) => void;
+  treeMembers?: ReadonlyArray<any>;
 };
 
 export function EditFamilyMember({
   defaultValues,
   closeDrawer,
+  onAddMember,
+  treeMembers,
 }: EditFamilyMemberProps) {
-  const { control, handleSubmit, reset, watch, setValue } = useForm({
+  const { enqueueSnackbar } = useSnackbar();
+  const { control, handleSubmit, reset, watch } = useForm<Person>({
     defaultValues,
   });
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isAddMemberOpen, setIsAddMemberOpen] = useState<boolean>(false);
   const [familyType, setFamilyType] = useState<string>('');
-
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const isAlive = watch('is_alive', true);
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -57,17 +59,41 @@ export function EditFamilyMember({
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const [updatedData, setUpdatedData] = useState<any>(defaultValues);
 
-  //   useEffect(() => {
-  //     reset(defaultValues); // Reset form when data changes
-  //   }, [defaultValues, reset]);
+  useEffect(() => {
+    if (updatedData) {
+      reset(updatedData);
+    }
+  }, [updatedData, reset]);
+
+  const updateMutation = useUpdatePerson(defaultValues?.id);
 
   const handleUpdate = (data: any) => {
-    console.log('update data: ', data);
+    const payload: UpdateMemberPayload = {
+      ...data,
+      updated_by: '123@gmail.com',
+    };
+    updateMutation.mutate(payload, {
+      onSuccess: (updatedPerson) => {
+        enqueueSnackbar('Family member details updated successfully!', {
+          variant: 'success',
+        });
+        setIsEditing(false);
+        setUpdatedData(updatedPerson);
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to update family member details', {
+          variant: 'error',
+        });
+        console.error('Error updating member:', error);
+      },
+    });
   };
 
   const handleAddMember = (data: any) => {
-    console.log('add member: ', data);
+    onAddMember(data);
+    setIsAddMemberOpen(false);
   };
 
   const handleOpenAddMember = (type: string) => {
@@ -93,7 +119,7 @@ export function EditFamilyMember({
               </IconButton>
             </Tooltip>
           </Box>
-          <form onSubmit={() => {}}>
+          <form onSubmit={handleSubmit(handleUpdate)}>
             <Controller
               name="photo_url"
               control={control}
@@ -110,7 +136,7 @@ export function EditFamilyMember({
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 1,
+                gap: 2,
                 overflowY: 'scroll',
                 maxHeight: 650,
                 pt: { xs: 1 },
@@ -135,6 +161,13 @@ export function EditFamilyMember({
                 control={control}
                 render={({ field }) => (
                   <TextField {...field} label="Last Name" fullWidth />
+                )}
+              />
+              <Controller
+                name="last_name_at_birth"
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} label="Last Name at Birth" fullWidth />
                 )}
               />
               <Controller
@@ -259,7 +292,7 @@ export function EditFamilyMember({
             }}
           >
             <Typography variant="h6" gutterBottom fontWeight="600">
-              {`${defaultValues.first_name} ${defaultValues.last_name}`}
+              {`${updatedData.first_name} ${updatedData.last_name}`}
             </Typography>
             <Tooltip title="Close">
               <IconButton onClick={closeDrawer}>
@@ -268,10 +301,7 @@ export function EditFamilyMember({
             </Tooltip>
           </Box>
           <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
-            <Avatar
-              sx={{ width: 80, height: 80 }}
-              src={defaultValues?.photo_url}
-            >
+            <Avatar sx={{ width: 80, height: 80 }} src={updatedData?.photo_url}>
               H
             </Avatar>
           </Box>
@@ -295,16 +325,11 @@ export function EditFamilyMember({
                 alignItems: 'center',
               }}
             >
-              <Button
-                id="basic-button"
-                aria-controls={open ? 'basic-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                endIcon={<KeyboardArrowDownIcon />}
-                onClick={handleClick}
-              >
-                Add family members
-              </Button>
+              <Tooltip title="Add family members">
+                <IconButton onClick={handleClick} color="primary">
+                  <GroupAddIcon />
+                </IconButton>
+              </Tooltip>
               <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
@@ -314,12 +339,16 @@ export function EditFamilyMember({
                   'aria-labelledby': 'basic-button',
                 }}
               >
-                <MenuItem onClick={() => handleOpenAddMember('father')}>
-                  Father
-                </MenuItem>
-                <MenuItem onClick={() => handleOpenAddMember('mother')}>
-                  Mother
-                </MenuItem>
+                {!updatedData?.father_id && (
+                  <MenuItem onClick={() => handleOpenAddMember('father')}>
+                    Father
+                  </MenuItem>
+                )}
+                {!updatedData?.mother_id && (
+                  <MenuItem onClick={() => handleOpenAddMember('mother')}>
+                    Mother
+                  </MenuItem>
+                )}
                 <MenuItem onClick={() => handleOpenAddMember('spouse')}>
                   Spouse/ Ex
                 </MenuItem>
@@ -333,36 +362,101 @@ export function EditFamilyMember({
             </Box>
           </Box>
           <Divider />
-          <Button color="warning" variant="text" size="small" sx={{ mt: 2 }}>
+          <Button
+            color="warning"
+            variant="outlined"
+            size="small"
+            sx={{ mt: 2 }}
+          >
             Show tree from here
           </Button>
           <Box sx={{ overflowY: 'scroll', maxHeight: 250 }}>
-            <Typography variant="h6" py={1} fontWeight="500">
+            <Typography variant="h5" py={1} fontWeight="500">
               Information
             </Typography>
-            <Typography variant="subtitle1">
-              Born:{' '}
-              {defaultValues?.date_of_birth
-                ? transformDate(defaultValues.date_of_birth)
-                : ''}
-            </Typography>
-            {!defaultValues.is_alive ? (
-              <Typography variant="subtitle1">
-                Death date:{' '}
-                {defaultValues.death_date
-                  ? transformDate(defaultValues.death_date)
-                  : ''}
-              </Typography>
-            ) : null}
-            <Typography variant="subtitle1">
-              Gender: {defaultValues?.gender}
-            </Typography>
-            <Typography variant="subtitle1">
-              Birth place: {defaultValues.birth_place}
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              {defaultValues.bio || 'No bio available.'}
-            </Typography>
+            {updatedData?.middle_name && (
+              <Box display={'flex'} gap={2} alignItems={'center'}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Middle name
+                </Typography>
+                <Typography>{updatedData?.middle_name}</Typography>
+              </Box>
+            )}
+            {updatedData?.last_name_at_birth && (
+              <Box display={'flex'} gap={2} alignItems={'center'}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Last Name at Birth
+                </Typography>
+                <Typography>{updatedData?.middle_name}</Typography>
+              </Box>
+            )}
+            {updatedData?.date_of_birth && (
+              <Box display={'flex'} gap={2} alignItems={'center'}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Born
+                </Typography>
+                <Typography>
+                  {transformDate(updatedData?.date_of_birth)}
+                </Typography>
+              </Box>
+            )}
+            {!updatedData?.is_alive && (
+              <Box display={'flex'} gap={2} alignItems={'center'}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Death date
+                </Typography>
+                <Typography>
+                  {transformDate(updatedData?.death_date)}
+                </Typography>
+              </Box>
+            )}
+            {updatedData?.gender && (
+              <Box display={'flex'} gap={2} alignItems={'center'}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Gender
+                </Typography>
+                <Typography>{updatedData?.gender}</Typography>
+              </Box>
+            )}
+            {updatedData?.gender && (
+              <Box display={'flex'} gap={2} alignItems={'center'}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Birth place
+                </Typography>
+                <Typography>{updatedData.birth_place}</Typography>
+              </Box>
+            )}
+            {updatedData?.bio && (
+              <Box display={'flex'} flexDirection={'column'} gap={1}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Bio
+                </Typography>
+                <Typography variant="body2">
+                  {updatedData?.bio || 'No bio available.'}
+                </Typography>
+              </Box>
+            )}
           </Box>
         </Box>
       )}
@@ -371,6 +465,8 @@ export function EditFamilyMember({
         setIsAddMemberOpen={setIsAddMemberOpen}
         familyType={familyType}
         handleAddMember={handleAddMember}
+        selectedPerson={defaultValues}
+        spouseMembers={treeMembers}
       />
     </Box>
   );

@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -6,9 +7,17 @@ from google.cloud import firestore
 from app.core.constants import FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
-from app.schemas.schemas import AddPersonSchema, CreateFamilyTreeSchema, FamilyTrees
+from app.schemas.schemas import (
+    AddPersonSchema,
+    CreateFamilyTreeSchema,
+    FamilyTrees,
+    RelationToMemberSchema,
+    RelationType,
+    UpdatePersonSchema,
+)
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 @router.get(
@@ -92,13 +101,23 @@ async def create_tree_with_members(
         root_ref = db.collection(PEOPLE).document(root_id)
         root_ref.update({"father_id": father_id, "mother_id": mother_id})
 
-        # Update father and mother with root member as their child
+        # Update father and mother with root member as their child & spouse ids
         if father_id:
             father_ref = db.collection(PEOPLE).document(father_id)
-            father_ref.update({"children_id": firestore.ArrayUnion([root_id])})
+            father_ref.update(
+                {
+                    "children_id": firestore.ArrayUnion([root_id]),
+                    "spouse_id": firestore.ArrayUnion([mother_id]),
+                }
+            )
         if mother_id:
             mother_ref = db.collection(PEOPLE).document(mother_id)
-            mother_ref.update({"children_id": firestore.ArrayUnion([root_id])})
+            mother_ref.update(
+                {
+                    "children_id": firestore.ArrayUnion([root_id]),
+                    "spouse_id": firestore.ArrayUnion([father_id]),
+                }
+            )
 
         # Update tree with members IDs
         tree_ref = db.collection(FAMILY_TREE).document(tree.id)
@@ -113,69 +132,231 @@ async def create_tree_with_members(
         )
 
 
+# @router.post(
+#     "/add-member-tree/{tree_id}",
+#     response_model=FamilyTree,
+#     status_code=status.HTTP_201_CREATED,
+# )
+# async def add_member_tree(
+#     tree_id: str,
+#     member: AddPersonSchema,
+#     relation: RelationToMemberSchema,
+#     db=Depends(get_db),
+# ) -> FamilyTree:
+#     """
+#     Add a new member to a family tree
+#     - **tree_id**: tree_id
+#     - **member**: a new member to add
+#     - **relation**: relationship of new member to person profile adding member from UI
+#     """
+#     try:
+#         tree_ref = db.collection(FAMILY_TREE).document(tree_id)
+#         tree = tree_ref.get()
+#         if not tree.exists:
+#             raise HTTPException(
+#                 status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+#             )
+
+#         person = Person(
+#             **member.model_dump(),
+#             tree_id=tree_id,
+#         )
+#         person_ref = db.collection(PEOPLE).document(person.id)
+#         person_ref.set(person.to_dict())
+
+#         tree_ref.update(
+#             {
+#                 "members": firestore.ArrayUnion([person_ref.id]),
+#             }
+#         )
+
+#         def update_relation(relation_id, field, profile_id) -> None:
+#             if relation_id:
+#                 relation_ref = db.collection(PEOPLE).document(relation_id)
+#                 relation_doc = relation_ref.get()
+#                 if relation_doc.exists:
+#                     relation_data = relation_doc.to_dict()
+#                     if field in ["spouse_id", "children_id", "sibling_id"]:
+#                         relation_data[field] = relation_data.get(field, []) + [
+#                             profile_id
+#                         ]
+#                     else:
+#                         relation_data[field] = profile_id
+#                     relation_ref.set(relation_data)
+
+#         relation_mapping = {
+#             RelationType.FATHER: ("children_id", "father_id"),
+#             RelationType.MOTHER: ("children_id", "mother_id"),
+#             RelationType.SPOUSE: ("spouse_id", "spouse_id"),
+#             RelationType.SIBLING: ("sibling_id", "sibling_id"),
+#             RelationType.CHILD: (
+#                 "children_id",
+#                 "father_id" if relation.primary_user_gender == "male" else "mother_id",
+#             ),
+#         }
+
+#         if relation.rel in relation_mapping:
+#             new_person_field, primary_user_field = relation_mapping[relation.rel]
+#             # update_relation(person_ref.id, new_person_field, relation.primary_user_id)
+#             update_relation(relation.primary_user_id, new_person_field, person_ref.id)
+#             # update_relation(relation.primary_user_id, primary_user_field, person_ref.id)
+#             update_relation(person_ref.id, primary_user_field, person_ref.id)
+
+
+#         tree_data = tree_ref.get().to_dict()
+
+#         # Fetch members details
+#         members = []
+#         for member_id in tree_data.get("members", []):
+#             member = db.collection(PEOPLE).document(member_id).get()
+#             if member.exists:
+#                 members.append(Person.from_dict(member.to_dict()))
+
+#         tree_data["members"] = members
+#         return FamilyTree.from_dict(tree_data)
+#     except Exception as e:
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+#         )
+
+
 @router.post(
-    "/add_member_tree",
+    "/add-member-tree/{tree_id}",
     response_model=FamilyTree,
     status_code=status.HTTP_201_CREATED,
 )
 async def add_member_tree(
-    member: AddPersonSchema, tree_id: str, db=Depends(get_db)
+    tree_id: str,
+    member: AddPersonSchema,
+    relation: RelationToMemberSchema,
+    db=Depends(get_db),
 ) -> FamilyTree:
-    """Add a new member to a family tree"""
+    """
+    Add a new member to a family tree
+    - **tree_id**: Family tree ID
+    - **member**: New member details
+    - **relation**: Relationship of new member to the primary user
+    """
     try:
+        # Fetch the tree document
         tree_ref = db.collection(FAMILY_TREE).document(tree_id)
         tree = tree_ref.get()
         if not tree.exists:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
-            )
+            raise HTTPException(status_code=404, detail="Family tree not found")
 
-        person = Person(**member.dict())
+        # Create a new person entry
+        person = Person(
+            **member.model_dump(),
+            tree_id=tree_id,
+        )
         person_ref = db.collection(PEOPLE).document(person.id)
         person_ref.set(person.to_dict())
 
-        tree_ref.update(
-            {
-                "members": firestore.ArrayUnion([person_ref.id]),
-            }
-        )
+        # Update the tree to include the new member
+        tree_ref.update({"members": firestore.ArrayUnion([person_ref.id])})
 
-        def update_relation(relation_id, field) -> None:
+        def update_relation(relation_id, field, profile_id):
+            """Updates relationships bi-directionally in Firestore"""
             if relation_id:
                 relation_ref = db.collection(PEOPLE).document(relation_id)
                 relation_doc = relation_ref.get()
+
                 if relation_doc.exists:
                     relation_data = relation_doc.to_dict()
-                    if field == "spouse_id":
-                        relation_data[field] = relation_data.get(field, []) + [
-                            person_ref.id
-                        ]
+
+                    if field in ["spouse_id", "children_id", "sibling_id"]:
+                        if profile_id not in relation_data.get(
+                            field, []
+                        ):  # Prevent duplicates
+                            relation_data[field] = relation_data.get(field, []) + [
+                                profile_id
+                            ]
                     else:
-                        relation_data[field] = person_ref.id
+                        relation_data[field] = profile_id
+
                     relation_ref.set(relation_data)
 
-        # Update relations (father, mother, spouse, children)
-        update_relation(person.father_id, "children_id")
-        update_relation(person.mother_id, "children_id")
-        for spouse_id in person.spouse_id:
-            update_relation(spouse_id, "spouse_id")
+        relation_mapping = {
+            RelationType.FATHER: ("father_id","children_id"),
+            RelationType.MOTHER: ("mother_id", "children_id"),
+            RelationType.SPOUSE: ("spouse_id", "spouse_id"),
+            RelationType.SIBLING: (
+                "sibling_id",
+                "sibling_id",
+            ),  # No parent-child reverse needed
+            RelationType.CHILD: (
+                "children_id",
+                "father_id" if relation.primary_user_gender == "male" else "mother_id",
+            ),
+        }
 
-        # Update children
-        if person.children_id:
-            for child_id in person.children_id:
-                child_ref = db.collection("people").document(child_id)
-                child_doc = child_ref.get()
-                if child_doc.exists:
-                    child_data = child_doc.to_dict()
-                    if person.gender == "Male":
-                        child_data["father_id"] = person_ref.id
-                    else:
-                        child_data["mother_id"] = person_ref.id
-                    child_ref.set(child_data)
+        if relation.rel in relation_mapping:
+            new_person_field, primary_user_field = relation_mapping[
+                relation.rel
+            ]
+            # Prevent self-referencing
+            if relation.primary_user_id == person.id:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="A person cannot be their own relative.",
+                )
+            # Update primary user's relationship with the new member
+            update_relation(
+                relation.primary_user_id, new_person_field, person.id
+            )
+            # Update new member's relationship with the primary user
+            update_relation(person.id, primary_user_field, relation.primary_user_id)
 
-        return Person.from_dict(person)
+        # Additional logic for SIBLINGS - Assign parents
+        if relation.rel == RelationType.SIBLING:
+            primary_user_ref = db.collection(PEOPLE).document(relation.primary_user_id)
+            primary_user_doc = primary_user_ref.get()
+            if primary_user_doc.exists:
+                primary_user_data = primary_user_doc.to_dict()
+                father_id = primary_user_data.get("father_id")
+                mother_id = primary_user_data.get("mother_id")
 
+                # Assign same parents to the new sibling
+                update_relation(person.id, "father_id", father_id)
+                update_relation(person.id, "mother_id", mother_id)
+                if father_id:
+                    update_relation(father_id, "children_id", person.id)
+                if mother_id:
+                    update_relation(mother_id, "children_id", person.id)
+
+        # Additional logic for CHILD - Update spouse children_id field
+        if relation.rel == RelationType.CHILD and relation.primary_spouse_id:
+            update_relation(relation.primary_spouse_id, "children_id", person.id)
+            update_relation(
+                person.id, relation.primary_spouse_gender, relation.primary_spouse_id
+            )
+        # Handle case where there is parent_ids in primary user
+        if relation.rel in (RelationType.FATHER, RelationType.MOTHER):
+            primary_user_ref = db.collection(PEOPLE).document(relation.primary_user_id)
+            primary_user_doc = primary_user_ref.get()
+            if primary_user_doc.exists:
+                primary_user_data = primary_user_doc.to_dict()
+                # parent field to look for in primary_user_data
+                field_id ="mother_id" if relation.rel == RelationType.FATHER else "father_id"
+                spouse_id = primary_user_data.get(field_id)
+                if spouse_id is not None:
+                    # update spouse fields
+                    update_relation(person.id, "spouse_id", spouse_id)
+                    update_relation(spouse_id, "spouse_id", person.id)
+                
+
+        # Fetch updated tree members
+        tree_data = tree_ref.get().to_dict()
+        members = []
+        for member_id in tree_data.get("members", []):
+            member_doc = db.collection(PEOPLE).document(member_id).get()
+            if member_doc.exists:
+                members.append(Person.from_dict(member_doc.to_dict()))
+
+        tree_data["members"] = members
+        return FamilyTree.from_dict(tree_data)
     except Exception as e:
+        logger.error(f"Unexpected error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
@@ -211,7 +392,7 @@ async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
     status_code=status.HTTP_200_OK,
 )
 async def update_member(
-    member: AddPersonSchema, person_id: str, db=Depends(get_db)
+    member: UpdatePersonSchema, person_id: str, db=Depends(get_db)
 ) -> Person:
     """Update a family member"""
     try:
@@ -221,13 +402,12 @@ async def update_member(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Family member not found"
             )
-
-        updated_data = member.dict(exclude_unset=True)
+        updated_data = member.model_dump(exclude_unset=True)
         updated_data["updated_by"] = member.updated_by
         updated_data["updated_at"] = firestore.SERVER_TIMESTAMP
         person_ref.update(updated_data)
 
-        return Person.from_dict(person_ref)
+        return Person.from_dict(person_ref.get().to_dict())
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
@@ -235,7 +415,7 @@ async def update_member(
 
 
 @router.post(
-    "/add_collaborators/{tree_id}",
+    "/add-collaborators/{tree_id}",
     response_model=FamilyTree,
     status_code=status.HTTP_200_OK,
 )

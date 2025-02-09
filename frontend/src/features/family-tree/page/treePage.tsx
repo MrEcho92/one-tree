@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Stack from '@mui/material/Stack';
@@ -12,6 +12,7 @@ import { Header } from '../../dashbord/components';
 import { Button, Drawer } from '@mui/material';
 import ReactFamilyTree from 'react-family-tree';
 import { useTheme } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import type { Node, ExtNode } from 'relatives-tree/lib/types';
 import { FamilyNode } from '../components/FamilyNode';
 import {
@@ -22,17 +23,21 @@ import {
 } from '../components/constants';
 import { TreeWrapper } from '../components/TreeWrapper';
 import { EditFamilyMember } from '../components/EditFamilyMember';
-import { useGetFamilyTrees } from '../../../hooks/tree-hooks';
-import { FamilyTree, Person } from '../../../types/tree';
+import {
+  useGetFamilyTrees,
+  useAddMemberFamilyTree,
+} from '../../../hooks/treeHooks';
+import { FamilyTree, Person, AddMemberPayload } from '../../../types/tree';
 import { transformNodeData } from '../../../utils/transformTree';
 
 export function TreePage() {
   const { treeId } = useParams();
   const { palette } = useTheme();
-  const [value, setValue] = useState('1');
+  const { enqueueSnackbar } = useSnackbar();
+  const [value, setValue] = useState<string>('1');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const [nodes, setNodes] = useState<Node[]>([]);
 
@@ -52,16 +57,8 @@ export function TreePage() {
     setDrawerOpen(false);
   };
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const { data, isLoading, isError } = useGetFamilyTrees(treeId ?? '');
+  const mutation = useAddMemberFamilyTree(treeId ?? '');
 
   const familyTree = useMemo(() => {
     if (data) {
@@ -79,6 +76,11 @@ export function TreePage() {
     return null;
   }, [data, setNodes, setFirstRootId]);
 
+  const resetRootHandler = useCallback(
+    () => setRootId(firstRootId),
+    [firstRootId],
+  );
+
   if (isLoading) {
     return <Box>Loading...</Box>;
   }
@@ -87,7 +89,26 @@ export function TreePage() {
     return <Box>Error occured</Box>;
   }
 
+  function handleAddMember(payload: AddMemberPayload): void {
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        enqueueSnackbar('Family member added successfully!', {
+          variant: 'success',
+        });
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to add family member', {
+          variant: 'error',
+        });
+        console.error('Error adding member:', error);
+      },
+    });
+  }
+  console.log('rootId', rootId);
   console.log('familyTree', familyTree);
+  console.log('familyTree nodes', nodes);
+  // const jsonString = JSON.stringify(nodes);
+  // console.log(jsonString)
   return (
     <Box
       component="section"
@@ -115,6 +136,9 @@ export function TreePage() {
           >
             {familyTree?.name ?? ''}
           </Typography>
+          {rootId !== firstRootId && (
+            <Button onClick={resetRootHandler}>Reset</Button>
+          )}
           <TabContext value={value}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <TabList
@@ -180,7 +204,9 @@ export function TreePage() {
                               alignContent: 'flex-start',
                             }}
                           >
+                            {rootId}
                             <ReactFamilyTree
+                              key={rootId}
                               nodes={nodes}
                               rootId={rootId}
                               width={NODE_WIDTH}
@@ -193,7 +219,6 @@ export function TreePage() {
                                     (member: Person) => member.id === node.id,
                                   )}
                                   isRoot={node.id === rootId}
-                                  // isHover={node.id === hoverId}
                                   onClick={openDrawer}
                                   onSubClick={setRootId}
                                   style={{
@@ -232,6 +257,8 @@ export function TreePage() {
               (member: Person) => member.id === selectedNode,
             )}
             closeDrawer={closeDrawer}
+            onAddMember={handleAddMember}
+            treeMembers={familyTree.members}
           />
         </Drawer>
       </Stack>

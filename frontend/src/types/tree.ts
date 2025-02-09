@@ -63,6 +63,7 @@ export interface Person {
   first_name?: string;
   middle_name?: string;
   last_name?: string;
+  last_name_at_birth?: string;
   date_of_birth?: string;
   gender?: string;
   is_alive?: boolean;
@@ -81,10 +82,46 @@ export interface Person {
 }
 
 export interface AddMemberTreeForm {
-  [key: string]: {
-    first_name?: string;
-    last_name?: string;
-    date_of_birth?: string;
-    gender?: string;
+  first_name: string;
+  last_name: string;
+  date_of_birth?: string;
+  gender: string;
+}
+
+export interface UpdateMemberPayload {
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  last_name_at_birth?: string;
+  date_of_birth?: string;
+  gender?: string;
+  is_alive?: boolean;
+  birth_place?: string;
+  death_date?: string;
+  bio?: string;
+  photo_url?: string;
+  updated_by?: string;
+}
+
+export interface AddMemberPayload {
+  member: {
+    first_name: string;
+    last_name: string;
+    date_of_birth: string;
+    gender: string;
+    created_by: string;
   };
+  relation: {
+    primary_user_id: string;
+    primary_user_gender: string;
+    rel: string;
+    primary_spouse_id?: string;
+    primary_spouse_gender?: string;
+  };
+}
+
+export interface MemberId {
+  id: string;
+  fullName: string;
+  gender: string;
 }

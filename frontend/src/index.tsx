@@ -25,7 +25,7 @@ root.render(
         <ReactQueryDevtools initialIsOpen={false} />
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <ThemeProvider theme={theme}>
-            <SnackbarProvider maxSnack={3}>
+            <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
               <ModalProvider>
                 <App />
               </ModalProvider>

@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel
 
 
 class CreateFamilyTreeSchema(BaseModel):
@@ -17,9 +17,11 @@ class CreateFamilyTreeSchema(BaseModel):
 
 
 class AddPersonSchema(BaseModel):
+    created_by: str
     first_name: str
     middle_name: Optional[str] = None
     last_name: str
+    last_name_at_birth: Optional[str] = None
     date_of_birth: Optional[datetime] = None
     gender: Optional[str] = None
     is_alive: Optional[bool] = True
@@ -32,8 +34,20 @@ class AddPersonSchema(BaseModel):
     spouse_id: Optional[List[str]] = []
     children_id: Optional[List[str]] = []
     sibling_id: Optional[List[str]] = []
-    tree_id: str
-    created_by: str
+
+
+class UpdatePersonSchema(BaseModel):
+    first_name: str
+    middle_name: Optional[str] = None
+    last_name: str
+    last_name_at_birth: Optional[str] = None
+    date_of_birth: Optional[datetime] = None
+    gender: Optional[str] = None
+    is_alive: Optional[bool] = True
+    birth_place: Optional[str] = None
+    death_date: Optional[datetime] = None
+    bio: Optional[str] = None
+    photo_url: Optional[str] = None
     updated_by: Optional[str] = None
 
 
@@ -55,3 +69,19 @@ class FamilyTrees(BaseModel):
     created_at: datetime
     updated_by: Optional[str] = None
     updated_at: Optional[datetime] = None
+
+
+class RelationType(Enum):
+    FATHER = "father"
+    MOTHER = "mother"
+    SIBLING = "sibling"
+    SPOUSE = "spouse"
+    CHILD = "child"
+
+
+class RelationToMemberSchema(BaseModel):
+    primary_user_id: str
+    primary_user_gender: str
+    rel: RelationType
+    primary_spouse_id: Optional[str] = None
+    primary_spouse_gender: Optional[str] = None

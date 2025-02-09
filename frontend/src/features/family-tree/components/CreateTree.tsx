@@ -1,14 +1,13 @@
 import Box from '@mui/material/Box';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Divider, useTheme } from '@mui/material';
+import { Divider, FormLabel, useTheme } from '@mui/material';
 import { useModal } from '../../../components/common';
 import {
   Button,
   Checkbox,
   FormControl,
   FormControlLabel,
-  InputLabel,
   MenuItem,
   Select,
   TextField,
@@ -19,7 +18,7 @@ import {
   CreateFamilyTreePayload,
   CreateTreeFormValues,
 } from '../../../types/tree';
-import { useCreateFamilyTree } from '../../../hooks/tree-hooks';
+import { useCreateFamilyTree } from '../../../hooks/treeHooks';
 import { ApiResponse } from '../../../types/api';
 
 export default function CreateTree() {
@@ -151,8 +150,8 @@ export default function CreateTree() {
           />
         )}
       />
-      <FormControl>
-        <InputLabel>Gender</InputLabel>
+      <FormControl component="fieldset" required>
+        <FormLabel>Gender</FormLabel>
         <Controller
           name="root_gender"
           control={control}
@@ -194,8 +193,8 @@ export default function CreateTree() {
           />
         )}
       />
-      <FormControl>
-        <InputLabel>Gender</InputLabel>
+      <FormControl component="fieldset" required>
+        <FormLabel>Gender</FormLabel>
         <Controller
           name="father_gender"
           control={control}
@@ -203,7 +202,6 @@ export default function CreateTree() {
             <Select {...field}>
               <MenuItem value="male">Male</MenuItem>
               <MenuItem value="female">Female</MenuItem>
-              <MenuItem value="other">Other</MenuItem>
             </Select>
           )}
         />
@@ -242,8 +240,8 @@ export default function CreateTree() {
           />
         )}
       />
-      <FormControl>
-        <InputLabel>Gender</InputLabel>
+      <FormControl component="fieldset" required>
+        <FormLabel>Gender</FormLabel>
         <Controller
           name="mother_gender"
           control={control}
@@ -251,7 +249,6 @@ export default function CreateTree() {
             <Select {...field}>
               <MenuItem value="male">Male</MenuItem>
               <MenuItem value="female">Female</MenuItem>
-              <MenuItem value="other">Other</MenuItem>
             </Select>
           )}
         />

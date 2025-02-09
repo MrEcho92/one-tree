@@ -39,6 +39,7 @@ class Person(AbstractBaseModel):
     first_name: str
     middle_name: Optional[str] = None
     last_name: str
+    last_name_at_birth: Optional[str] = None
     date_of_birth: Optional[datetime] = None
     gender: Optional[str] = None
     is_alive: Optional[bool] = True

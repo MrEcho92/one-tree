@@ -1,5 +1,11 @@
 import { useApiMutation, useApiQuery } from './base';
-import { CreateFamilyTreePayload, FamilyTree } from '../types/tree';
+import {
+  CreateFamilyTreePayload,
+  FamilyTree,
+  UpdateMemberPayload,
+  Person,
+  AddMemberPayload,
+} from '../types/tree';
 
 export const useGetFamilyTreesByUser = (userId: string) => {
   return useApiQuery<FamilyTree[]>(
@@ -25,4 +31,18 @@ export const useGetFamilyTrees = (treeId: string) => {
 
 export const useCreateFamilyTree = () => {
   return useApiMutation<FamilyTree, CreateFamilyTreePayload>('/trees', 'POST');
+};
+
+export const useUpdatePerson = (personId: string) => {
+  return useApiMutation<Person, UpdateMemberPayload>(
+    `/members/${personId}`,
+    'PUT',
+  );
+};
+
+export const useAddMemberFamilyTree = (treeId: string) => {
+  return useApiMutation<FamilyTree, AddMemberPayload>(
+    `/add-member-tree/${treeId}`,
+    'POST',
+  );
 };
