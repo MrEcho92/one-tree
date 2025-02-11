@@ -33,6 +33,7 @@ type EditFamilyMemberProps = {
   closeDrawer: () => void;
   onAddMember: (data: any) => void;
   treeMembers?: ReadonlyArray<any>;
+  setRootId?: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export function EditFamilyMember({
@@ -40,6 +41,7 @@ export function EditFamilyMember({
   closeDrawer,
   onAddMember,
   treeMembers,
+  setRootId,
 }: EditFamilyMemberProps) {
   const { enqueueSnackbar } = useSnackbar();
   const { control, handleSubmit, reset, watch } = useForm<Person>({
@@ -367,6 +369,10 @@ export function EditFamilyMember({
             variant="outlined"
             size="small"
             sx={{ mt: 2 }}
+            onClick={() => {
+              if (setRootId) setRootId(defaultValues.id);
+              closeDrawer();
+            }}
           >
             Show tree from here
           </Button>

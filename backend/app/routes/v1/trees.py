@@ -277,7 +277,7 @@ async def add_member_tree(
                     relation_ref.set(relation_data)
 
         relation_mapping = {
-            RelationType.FATHER: ("father_id","children_id"),
+            RelationType.FATHER: ("father_id", "children_id"),
             RelationType.MOTHER: ("mother_id", "children_id"),
             RelationType.SPOUSE: ("spouse_id", "spouse_id"),
             RelationType.SIBLING: (
@@ -291,9 +291,7 @@ async def add_member_tree(
         }
 
         if relation.rel in relation_mapping:
-            new_person_field, primary_user_field = relation_mapping[
-                relation.rel
-            ]
+            new_person_field, primary_user_field = relation_mapping[relation.rel]
             # Prevent self-referencing
             if relation.primary_user_id == person.id:
                 raise HTTPException(
@@ -301,9 +299,7 @@ async def add_member_tree(
                     detail="A person cannot be their own relative.",
                 )
             # Update primary user's relationship with the new member
-            update_relation(
-                relation.primary_user_id, new_person_field, person.id
-            )
+            update_relation(relation.primary_user_id, new_person_field, person.id)
             # Update new member's relationship with the primary user
             update_relation(person.id, primary_user_field, relation.primary_user_id)
 
@@ -325,11 +321,23 @@ async def add_member_tree(
                     update_relation(mother_id, "children_id", person.id)
 
         # Additional logic for CHILD - Update spouse children_id field
-        if relation.rel == RelationType.CHILD and relation.primary_spouse_id:
-            update_relation(relation.primary_spouse_id, "children_id", person.id)
-            update_relation(
-                person.id, relation.primary_spouse_gender, relation.primary_spouse_id
-            )
+        if relation.rel == RelationType.CHILD:
+            if relation.primary_spouse_id:
+                update_relation(relation.primary_spouse_id, "children_id", person.id)
+                update_relation(
+                    person.id,
+                    "father_id"
+                    if relation.primary_spouse_gender == "male"
+                    else "mother_id",
+                    relation.primary_spouse_id,
+                )
+
+            if relation.primary_children_id:
+                for child_id in relation.primary_children_id:
+                    if child_id != person.id:
+                        update_relation(child_id, "sibling_id", person.id)
+                        update_relation(person.id, "sibling_id", child_id)
+
         # Handle case where there is parent_ids in primary user
         if relation.rel in (RelationType.FATHER, RelationType.MOTHER):
             primary_user_ref = db.collection(PEOPLE).document(relation.primary_user_id)
@@ -337,13 +345,14 @@ async def add_member_tree(
             if primary_user_doc.exists:
                 primary_user_data = primary_user_doc.to_dict()
                 # parent field to look for in primary_user_data
-                field_id ="mother_id" if relation.rel == RelationType.FATHER else "father_id"
+                field_id = (
+                    "mother_id" if relation.rel == RelationType.FATHER else "father_id"
+                )
                 spouse_id = primary_user_data.get(field_id)
                 if spouse_id is not None:
                     # update spouse fields
                     update_relation(person.id, "spouse_id", spouse_id)
                     update_relation(spouse_id, "spouse_id", person.id)
-                
 
         # Fetch updated tree members
         tree_data = tree_ref.get().to_dict()
@@ -356,7 +365,7 @@ async def add_member_tree(
         tree_data["members"] = members
         return FamilyTree.from_dict(tree_data)
     except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
+        logger.error(f"Unexpected error from adding a member: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )

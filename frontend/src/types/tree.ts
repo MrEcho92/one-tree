@@ -117,6 +117,7 @@ export interface AddMemberPayload {
     rel: string;
     primary_spouse_id?: string;
     primary_spouse_gender?: string;
+    primary_children_id?: string[];
   };
 }
 

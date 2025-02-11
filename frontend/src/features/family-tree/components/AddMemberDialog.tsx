@@ -42,17 +42,26 @@ export default function AddMemberDialog({
   spouseMembers,
   selectedPerson,
 }: AddMemberDialogProps) {
-  const { control, handleSubmit, register, reset } = useForm<AddMemberTreeForm>({
-    defaultValues: {
-      gender: 'male',
+  const { control, handleSubmit, register, reset } = useForm<AddMemberTreeForm>(
+    {
+      defaultValues: {
+        gender: 'male',
+      },
     },
-  });
+  );
 
   useEffect(() => {
-    reset({
-      gender: familyType === 'mother' ? 'female' : 'male',
-    });
-  }, [familyType, reset]);
+    if (familyType) {
+      reset({
+        gender: familyType === 'mother' ? 'female' : 'male',
+      });
+    }
+    if (selectedPerson) {
+      reset({
+        gender: selectedPerson.gender === 'female' ? 'male' : 'female',
+      });
+    }
+  }, [familyType, selectedPerson, reset]);
 
   const [spouseNames, setSpouseNames] = useState<MemberId[]>([]);
   const [selectedSpouse, setSelectedSpouse] = useState<MemberId | null>(null);
@@ -74,6 +83,7 @@ export default function AddMemberDialog({
           ? {
               primary_spouse_id: selectedSpouse?.id,
               primary_spouse_gender: selectedSpouse?.gender,
+              primary_children_id: selectedPerson?.children_id || [],
             }
           : null),
       },
@@ -96,7 +106,10 @@ export default function AddMemberDialog({
 
   useEffect(() => {
     if (spouseMembers && isAddMemberOpen) {
-      const spouse = getMemberNames(spouseMembers, selectedPerson?.spouse_id || []);
+      const spouse = getMemberNames(
+        spouseMembers,
+        selectedPerson?.spouse_id || [],
+      );
       setSpouseNames(spouse);
     }
   }, [spouseMembers, isAddMemberOpen]);
@@ -145,13 +158,7 @@ export default function AddMemberDialog({
                 name={'gender'}
                 control={control}
                 render={({ field }) => (
-                  <RadioGroup
-                    {...field}
-                    row
-                    value={
-                      field.value
-                    }
-                  >
+                  <RadioGroup {...field} row value={field.value}>
                     <FormControlLabel
                       value="male"
                       control={<Radio />}
@@ -194,7 +201,9 @@ export default function AddMemberDialog({
                       <em>None</em>
                     </MenuItem>
                     {spouseNames.map((member: MemberId) => (
-                      <MenuItem value={member.id}>{member.fullName}</MenuItem>
+                      <MenuItem key={member.id} value={member.id}>
+                        {member.fullName}
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>

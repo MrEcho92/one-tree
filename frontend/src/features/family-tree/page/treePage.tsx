@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Stack from '@mui/material/Stack';
@@ -29,6 +29,7 @@ import {
 } from '../../../hooks/treeHooks';
 import { FamilyTree, Person, AddMemberPayload } from '../../../types/tree';
 import { transformNodeData } from '../../../utils/transformTree';
+import queryClient from '../../../core/http/react-query';
 
 export function TreePage() {
   const { treeId } = useParams();
@@ -41,8 +42,8 @@ export function TreePage() {
 
   const [nodes, setNodes] = useState<Node[]>([]);
 
-  const [firstRootId, setFirstRootId] = useState<string>('');
-  const [rootId, setRootId] = useState<string>(firstRootId);
+  const [firstRootId, setFirstRootId] = useState<string | null>(null);
+  const [rootId, setRootId] = useState<string | null>(null);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -60,7 +61,7 @@ export function TreePage() {
   const { data, isLoading, isError } = useGetFamilyTrees(treeId ?? '');
   const mutation = useAddMemberFamilyTree(treeId ?? '');
 
-  const familyTree = useMemo(() => {
+  useEffect(() => {
     if (data) {
       const tree = data as any;
       const members = tree?.members ?? [];
@@ -71,10 +72,15 @@ export function TreePage() {
       )[0]?.id;
       setFirstRootId(rootId);
       setRootId(rootId);
-      return tree;
+    }
+  }, [data]);
+
+  const familyTree = useMemo(() => {
+    if (data) {
+      return data as any;
     }
     return null;
-  }, [data, setNodes, setFirstRootId]);
+  }, [data]);
 
   const resetRootHandler = useCallback(
     () => setRootId(firstRootId),
@@ -95,6 +101,10 @@ export function TreePage() {
         enqueueSnackbar('Family member added successfully!', {
           variant: 'success',
         });
+        queryClient.refetchQueries({
+          queryKey: ['familyTrees', treeId],
+          exact: true,
+        });
       },
       onError: (error) => {
         enqueueSnackbar('Failed to add family member', {
@@ -104,7 +114,7 @@ export function TreePage() {
       },
     });
   }
-  console.log('rootId', rootId);
+
   console.log('familyTree', familyTree);
   console.log('familyTree nodes', nodes);
   // const jsonString = JSON.stringify(nodes);
@@ -136,9 +146,6 @@ export function TreePage() {
           >
             {familyTree?.name ?? ''}
           </Typography>
-          {rootId !== firstRootId && (
-            <Button onClick={resetRootHandler}>Reset</Button>
-          )}
           <TabContext value={value}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <TabList
@@ -154,6 +161,7 @@ export function TreePage() {
               <Box sx={{ width: '100%', height: '80vh' }}>
                 <Typography>{familyTree?.description}</Typography>
                 <Button>Add collaborators</Button>
+                <Button>Delete tree</Button>
                 <Box>
                   List of family members - maybe on click open pop out of person
                   profile
@@ -167,76 +175,85 @@ export function TreePage() {
                   backgroundColor: palette.background.paper,
                 }}
               >
-                <Box sx={{ width: '100%', height: '80vh' }}>
-                  <TransformWrapper
-                    velocityAnimation={{
-                      disabled: true,
-                    }}
-                    alignmentAnimation={{
-                      disabled: true,
-                    }}
-                    zoomAnimation={{
-                      disabled: true,
-                    }}
-                    doubleClick={{
-                      disabled: true,
-                    }}
-                    limitToBounds={false}
-                    minScale={MIN_SCALE}
-                    maxScale={MAX_SCALE}
-                    wheel={{ step: 0.02 }}
-                  >
-                    {({ zoomIn, zoomOut, resetTransform, setTransform }) => (
-                      <TreeWrapper
-                        zoomIn={zoomIn}
-                        zoomOut={zoomOut}
-                        resetTransform={resetTransform}
-                        setTransform={setTransform}
-                      >
-                        <TransformComponent>
-                          <Box
-                            sx={{
-                              height: '100vh',
-                              width: '100vw',
-                              display: 'flex',
-                              flexDirection: 'row',
-                              flexWrap: 'wrap',
-                              alignContent: 'flex-start',
-                            }}
-                          >
-                            {rootId}
-                            <ReactFamilyTree
-                              key={rootId}
-                              nodes={nodes}
-                              rootId={rootId}
-                              width={NODE_WIDTH}
-                              height={NODE_HEIGHT}
-                              renderNode={(node: Readonly<ExtNode>) => (
-                                <FamilyNode
-                                  key={node.id}
-                                  node={node}
-                                  nodeDetails={familyTree?.members?.find(
-                                    (member: Person) => member.id === node.id,
+                {nodes.length > 0 ? (
+                  <Box sx={{ width: '100%', height: '80vh' }}>
+                    <TransformWrapper
+                      key={rootId}
+                      velocityAnimation={{
+                        disabled: true,
+                      }}
+                      alignmentAnimation={{
+                        disabled: true,
+                      }}
+                      zoomAnimation={{
+                        disabled: true,
+                      }}
+                      doubleClick={{
+                        disabled: true,
+                      }}
+                      limitToBounds={false}
+                      minScale={MIN_SCALE}
+                      maxScale={MAX_SCALE}
+                      wheel={{ step: 0.02 }}
+                    >
+                      {({ zoomIn, zoomOut, resetTransform, setTransform }) => (
+                        <TreeWrapper
+                          zoomIn={zoomIn}
+                          zoomOut={zoomOut}
+                          resetTransform={resetTransform}
+                          setTransform={setTransform}
+                          resetRootId={rootId !== firstRootId}
+                          resetRootHandler={resetRootHandler}
+                        >
+                          <TransformComponent>
+                            <Box
+                              sx={{
+                                height: '100vh',
+                                width: '100vw',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                alignContent: 'flex-start',
+                              }}
+                            >
+                              {rootId && (
+                                <ReactFamilyTree
+                                  key={`${rootId}-${nodes.length}`}
+                                  nodes={nodes}
+                                  rootId={rootId}
+                                  width={NODE_WIDTH}
+                                  height={NODE_HEIGHT}
+                                  renderNode={(node: Readonly<ExtNode>) => (
+                                    <FamilyNode
+                                      key={node.id}
+                                      node={node}
+                                      nodeDetails={familyTree?.members?.find(
+                                        (member: Person) =>
+                                          member.id === node.id,
+                                      )}
+                                      isRoot={node.id === rootId}
+                                      onClick={openDrawer}
+                                      onSubClick={setRootId}
+                                      style={{
+                                        width: NODE_WIDTH,
+                                        height: NODE_HEIGHT,
+                                        transform: `translate(${node.left * (NODE_WIDTH / 2)}px, ${
+                                          node.top * (NODE_HEIGHT / 2)
+                                        }px)`,
+                                      }}
+                                    />
                                   )}
-                                  isRoot={node.id === rootId}
-                                  onClick={openDrawer}
-                                  onSubClick={setRootId}
-                                  style={{
-                                    width: NODE_WIDTH,
-                                    height: NODE_HEIGHT,
-                                    transform: `translate(${node.left * (NODE_WIDTH / 2)}px, ${
-                                      node.top * (NODE_HEIGHT / 2)
-                                    }px)`,
-                                  }}
                                 />
                               )}
-                            />
-                          </Box>
-                        </TransformComponent>
-                      </TreeWrapper>
-                    )}
-                  </TransformWrapper>
-                </Box>
+                            </Box>
+                          </TransformComponent>
+                        </TreeWrapper>
+                      )}
+                    </TransformWrapper>
+                  </Box>
+                ) : (
+                  <Box>No tree</Box>
+                )}
               </Box>
             </TabPanel>
             <TabPanel value="3">
@@ -259,6 +276,7 @@ export function TreePage() {
             closeDrawer={closeDrawer}
             onAddMember={handleAddMember}
             treeMembers={familyTree.members}
+            setRootId={setRootId}
           />
         </Drawer>
       </Stack>

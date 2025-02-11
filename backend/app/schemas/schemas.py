@@ -85,3 +85,4 @@ class RelationToMemberSchema(BaseModel):
     rel: RelationType
     primary_spouse_id: Optional[str] = None
     primary_spouse_gender: Optional[str] = None
+    primary_children_id: Optional[List[str]] = None
