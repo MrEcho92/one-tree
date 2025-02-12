@@ -46,3 +46,11 @@ export const useAddMemberFamilyTree = (treeId: string) => {
     'POST',
   );
 };
+
+export const useDeleteFamilyTree = (treeId: string) => {
+  return useApiMutation<void, void>(`/trees/${treeId}`, 'DELETE');
+};
+
+export const useDeleteFamilyTreeMember = (treeId: string) => {
+  return useApiMutation<void, void>(`/trees/${treeId}`, 'DELETE')
+}

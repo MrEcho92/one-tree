@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import { useParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Header } from '../../dashbord/components';
-import { Button, Drawer } from '@mui/material';
+import { Drawer } from '@mui/material';
 import ReactFamilyTree from 'react-family-tree';
 import { useTheme } from '@mui/material';
 import { useSnackbar } from 'notistack';
@@ -22,30 +22,32 @@ import {
   NODE_WIDTH,
 } from '../components/constants';
 import { TreeWrapper } from '../components/TreeWrapper';
-import { EditFamilyMember } from '../components/EditFamilyMember';
+import EditFamilyMember from '../components/EditFamilyMember';
 import {
   useGetFamilyTrees,
   useAddMemberFamilyTree,
 } from '../../../hooks/treeHooks';
-import { FamilyTree, Person, AddMemberPayload } from '../../../types/tree';
+import { Person, AddMemberPayload } from '../../../types/tree';
 import { transformNodeData } from '../../../utils/transformTree';
 import queryClient from '../../../core/http/react-query';
+import TreeOverview from '../components/treeOverview';
+import { useModal } from '../../../components/common';
+import MemberSearch from '../components/MemberSearch';
 
 export function TreePage() {
   const { treeId } = useParams();
   const { palette } = useTheme();
   const { enqueueSnackbar } = useSnackbar();
+  const { openModal, closeModal } = useModal();
+
   const [value, setValue] = useState<string>('1');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
-
   const [nodes, setNodes] = useState<Node[]>([]);
-
   const [firstRootId, setFirstRootId] = useState<string | null>(null);
   const [rootId, setRootId] = useState<string | null>(null);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 
@@ -115,10 +117,16 @@ export function TreePage() {
     });
   }
 
-  console.log('familyTree', familyTree);
-  console.log('familyTree nodes', nodes);
-  // const jsonString = JSON.stringify(nodes);
-  // console.log(jsonString)
+  function openSearchModal() {
+    openModal(
+      <MemberSearch
+        closeModal={closeModal}
+        members={familyTree?.members}
+        setRootId={setRootId}
+      />,
+    );
+  }
+  
   return (
     <Box
       component="section"
@@ -158,15 +166,7 @@ export function TreePage() {
               </TabList>
             </Box>
             <TabPanel value="1">
-              <Box sx={{ width: '100%', height: '80vh' }}>
-                <Typography>{familyTree?.description}</Typography>
-                <Button>Add collaborators</Button>
-                <Button>Delete tree</Button>
-                <Box>
-                  List of family members - maybe on click open pop out of person
-                  profile
-                </Box>
-              </Box>
+              <TreeOverview description={familyTree?.description} />
             </TabPanel>
             <TabPanel value="2" sx={{ p: { xs: '0' } }}>
               <Box
@@ -204,6 +204,7 @@ export function TreePage() {
                           setTransform={setTransform}
                           resetRootId={rootId !== firstRootId}
                           resetRootHandler={resetRootHandler}
+                          openSearchModal={openSearchModal}
                         >
                           <TransformComponent>
                             <Box

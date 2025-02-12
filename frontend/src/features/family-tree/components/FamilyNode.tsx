@@ -91,7 +91,6 @@ export const FamilyNode = React.memo(function FamilyNode({
             }}
           >{`${nodeDetails?.first_name} ${nodeDetails?.last_name}`}</Typography>
           <Typography>{`${nodeDetails?.date_of_birth ? transformDate(nodeDetails.date_of_birth) : ''}${!nodeDetails?.is_alive && nodeDetails?.death_date ? ` - ${transformDate(nodeDetails.death_date)}` : ''}`}</Typography>
-          <Typography>{nodeDetails?.id}</Typography>
         </Box>
       </Box>
       {node.hasSubTree && (

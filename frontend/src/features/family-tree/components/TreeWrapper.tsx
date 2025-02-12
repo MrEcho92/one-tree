@@ -15,6 +15,7 @@ export const TreeWrapper = memo(
     setTransform,
     resetRootId,
     resetRootHandler,
+    openSearchModal,
     children,
   }: any) => {
     const wrapperRef = useRef(null);
@@ -68,6 +69,7 @@ export const TreeWrapper = memo(
           drawingHeight={drawingHeight}
           resetRootId={resetRootId}
           resetRootHandler={resetRootHandler}
+          openSearchModal={openSearchModal}
         />
       </Box>
     );

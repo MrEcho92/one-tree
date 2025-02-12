@@ -24,7 +24,7 @@ export function transformNodeData(data: Person[]): Node[] {
         : []),
     ],
     children:
-      person.children_id?.map((child) => ({
+      person?.children_id?.map((child) => ({
         id: child,
         type: 'blood' as RelType,
       })) ?? [],

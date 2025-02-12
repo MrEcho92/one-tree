@@ -36,7 +36,7 @@ type EditFamilyMemberProps = {
   setRootId?: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-export function EditFamilyMember({
+export default function EditFamilyMember({
   defaultValues,
   closeDrawer,
   onAddMember,

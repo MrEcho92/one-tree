@@ -131,94 +131,33 @@ async def create_tree_with_members(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
+@router.post(
+    "/add-collaborators/{tree_id}",
+    response_model=FamilyTree,
+    status_code=status.HTTP_200_OK,
+)
+async def add_collaborator(
+    tree_id: str, collaborators: List[str], db=Depends(get_db)
+) -> FamilyTree:
+    """Add collaborators to a family tree"""
+    try:
+        tree_ref = db.collection(FAMILY_TREE).document(tree_id)
+        tree = tree_ref.get()
+        if not tree.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+            )
 
-# @router.post(
-#     "/add-member-tree/{tree_id}",
-#     response_model=FamilyTree,
-#     status_code=status.HTTP_201_CREATED,
-# )
-# async def add_member_tree(
-#     tree_id: str,
-#     member: AddPersonSchema,
-#     relation: RelationToMemberSchema,
-#     db=Depends(get_db),
-# ) -> FamilyTree:
-#     """
-#     Add a new member to a family tree
-#     - **tree_id**: tree_id
-#     - **member**: a new member to add
-#     - **relation**: relationship of new member to person profile adding member from UI
-#     """
-#     try:
-#         tree_ref = db.collection(FAMILY_TREE).document(tree_id)
-#         tree = tree_ref.get()
-#         if not tree.exists:
-#             raise HTTPException(
-#                 status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
-#             )
-
-#         person = Person(
-#             **member.model_dump(),
-#             tree_id=tree_id,
-#         )
-#         person_ref = db.collection(PEOPLE).document(person.id)
-#         person_ref.set(person.to_dict())
-
-#         tree_ref.update(
-#             {
-#                 "members": firestore.ArrayUnion([person_ref.id]),
-#             }
-#         )
-
-#         def update_relation(relation_id, field, profile_id) -> None:
-#             if relation_id:
-#                 relation_ref = db.collection(PEOPLE).document(relation_id)
-#                 relation_doc = relation_ref.get()
-#                 if relation_doc.exists:
-#                     relation_data = relation_doc.to_dict()
-#                     if field in ["spouse_id", "children_id", "sibling_id"]:
-#                         relation_data[field] = relation_data.get(field, []) + [
-#                             profile_id
-#                         ]
-#                     else:
-#                         relation_data[field] = profile_id
-#                     relation_ref.set(relation_data)
-
-#         relation_mapping = {
-#             RelationType.FATHER: ("children_id", "father_id"),
-#             RelationType.MOTHER: ("children_id", "mother_id"),
-#             RelationType.SPOUSE: ("spouse_id", "spouse_id"),
-#             RelationType.SIBLING: ("sibling_id", "sibling_id"),
-#             RelationType.CHILD: (
-#                 "children_id",
-#                 "father_id" if relation.primary_user_gender == "male" else "mother_id",
-#             ),
-#         }
-
-#         if relation.rel in relation_mapping:
-#             new_person_field, primary_user_field = relation_mapping[relation.rel]
-#             # update_relation(person_ref.id, new_person_field, relation.primary_user_id)
-#             update_relation(relation.primary_user_id, new_person_field, person_ref.id)
-#             # update_relation(relation.primary_user_id, primary_user_field, person_ref.id)
-#             update_relation(person_ref.id, primary_user_field, person_ref.id)
-
-
-#         tree_data = tree_ref.get().to_dict()
-
-#         # Fetch members details
-#         members = []
-#         for member_id in tree_data.get("members", []):
-#             member = db.collection(PEOPLE).document(member_id).get()
-#             if member.exists:
-#                 members.append(Person.from_dict(member.to_dict()))
-
-#         tree_data["members"] = members
-#         return FamilyTree.from_dict(tree_data)
-#     except Exception as e:
-#         raise HTTPException(
-#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-#         )
-
+        tree_ref.update(
+            {
+                "collaborators": firestore.ArrayUnion(collaborators),
+            }
+        )
+        return FamilyTree.from_dict(tree_ref)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 @router.post(
     "/add-member-tree/{tree_id}",
@@ -369,31 +308,9 @@ async def add_member_tree(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
-
-
-@router.delete("/trees/{tree_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
-    """Delete a family tree"""
-    try:
-        tree_ref = db.collection(FAMILY_TREE).document(tree_id)
-        tree = tree_ref.get()
-        if not tree.exists:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
-            )
-
-        # Delete all members of the tree
-        people_query = db.collection(PEOPLE).where("tree_id", "==", tree_id).stream()
-        for person in people_query:
-            person.reference.delete()
-
-        # Delete the tree
-        tree_ref.delete()
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
-
+@router.put("/tree/{tree_id}/update")
+async def update_tree(tree_id: str, db=Depends(get_db)):
+    pass
 
 @router.put(
     "/members/{person_id}",
@@ -422,16 +339,9 @@ async def update_member(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
-
-@router.post(
-    "/add-collaborators/{tree_id}",
-    response_model=FamilyTree,
-    status_code=status.HTTP_200_OK,
-)
-async def add_collaborator(
-    tree_id: str, collaborators: List[str], db=Depends(get_db)
-) -> FamilyTree:
-    """Add collaborators to a family tree"""
+@router.delete("/trees/{tree_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
+    """Delete a family tree"""
     try:
         tree_ref = db.collection(FAMILY_TREE).document(tree_id)
         tree = tree_ref.get()
@@ -439,14 +349,90 @@ async def add_collaborator(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
             )
+        
+        # Delete all members of the tree
+        people_query = db.collection(PEOPLE).where("tree_id", "==", tree_id).stream()
+        for person in people_query:
+            person.reference.delete()
 
-        tree_ref.update(
-            {
-                "collaborators": firestore.ArrayUnion(collaborators),
-            }
-        )
-        return FamilyTree.from_dict(tree_ref)
+        # Delete the tree
+        tree_ref.delete()
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
+
+@router.delete("/trees/{tree_id}/member/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_tree_member(tree_id: str, user_id: str, root_id: str, db=Depends(get_db)):
+    """
+    Deletes a member from the family tree while updating relationships.
+
+    - **tree_id**: ID of the family tree.
+    - **user_id**: ID of the user to delete.
+    """
+    try:
+        transaction = db.transaction()
+        tree_ref = db.collection(FAMILY_TREE).document(tree_id)
+
+        @firestore.transactional
+        def process_delete(transaction):
+            tree = tree_ref.get(transaction=transaction)
+            if not tree.exists:
+                raise HTTPException(status_code=404, detail="Family tree not found")
+
+            # Fetch the user document
+            user_ref = db.collection(PEOPLE).document(user_id)
+            user_doc = user_ref.get(transaction=transaction)
+
+            if not user_doc.exists:
+                raise HTTPException(status_code=404, detail="User not found")
+
+            user_data = user_doc.to_dict()
+
+            # Prevent root user deletion if they still have children
+            if user_id == root_id and user_data.get("children"):
+                raise HTTPException(status_code=400, detail="Cannot delete root user until all children are removed.")
+
+            # Function to remove references from related users
+            def update_relation(relation_id, field):
+                if relation_id:
+                    relation_ref = db.collection(PEOPLE).document(relation_id)
+                    relation_doc = relation_ref.get(transaction=transaction)
+
+                    if relation_doc.exists:
+                        relation_data = relation_doc.to_dict()
+                        if isinstance(relation_data.get(field), list):
+                            relation_data[field] = [rel for rel in relation_data[field] if rel != user_id]
+                        else:
+                            relation_data.pop(field, None)  # Remove field if it's a direct reference
+
+                        transaction.set(relation_ref, relation_data)
+
+            # Update parents, siblings, spouses, and children
+            if user_data.get("father_id"):
+                update_relation(user_data.get("father_id"), "children_id")
+            if user_data.get("mother_id"):
+                update_relation(user_data.get("mother_id", "children_id"))
+
+            for child in user_data.get("children_id", []):
+                update_relation(child["id"], "father_id")
+                update_relation(child["id"], "mother_id")
+
+            for sibling in user_data.get("sibling_id", []):
+                update_relation(sibling["id"], "sibling_id")
+
+            for spouse in user_data.get("spouse_id", []):
+                update_relation(spouse["id"], "spouse_id")
+
+            # Remove user from family tree's member list
+            transaction.update(tree_ref, {"members": firestore.ArrayRemove([user_id])})
+
+            # Finally, delete the user document
+            transaction.delete(user_ref)
+
+        process_delete(transaction)
+
+        return {"message": "User deleted successfully", "deleted_user_id": user_id}
+    except Exception as e:
+        logging.error(f"Unexpected error when deleting user: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")

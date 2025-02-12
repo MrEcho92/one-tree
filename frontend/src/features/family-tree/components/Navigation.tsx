@@ -4,6 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import IconButton from '@mui/material/IconButton';
 import CenterFocusStrongIcon from '@mui/icons-material/CenterFocusStrong';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import FitScreenIcon from '@mui/icons-material/FitScreen';
 import Tooltip from '@mui/material/Tooltip';
 import { fitEdges } from '../../../utils/treeGraph';
@@ -15,6 +16,7 @@ export const Navigation = ({
   setTransform,
   drawingWidth,
   drawingHeight,
+  openSearchModal,
 }: any) => {
   return (
     <Box
@@ -31,6 +33,18 @@ export const Navigation = ({
         },
       }}
     >
+      <Fab
+        size="small"
+        color="secondary"
+        aria-label="Search tree"
+        component="div"
+      >
+        <Tooltip title="Search family tree" placement="right">
+          <IconButton onClick={openSearchModal}>
+            <PersonSearchIcon />
+          </IconButton>
+        </Tooltip>
+      </Fab>
       <Fab size="small" color="secondary" aria-label="Zoom in" component="div">
         <Tooltip title="Zoom in" placement="right">
           <IconButton onClick={() => zoomIn()}>
