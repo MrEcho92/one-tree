@@ -5,6 +5,7 @@ import {
   UpdateMemberPayload,
   Person,
   AddMemberPayload,
+  DeleteMemberPayload,
 } from '../types/tree';
 
 export const useGetFamilyTreesByUser = (userId: string) => {
@@ -33,7 +34,7 @@ export const useCreateFamilyTree = () => {
   return useApiMutation<FamilyTree, CreateFamilyTreePayload>('/trees', 'POST');
 };
 
-export const useUpdatePerson = (personId: string) => {
+export const useUpdateMember = (personId: string) => {
   return useApiMutation<Person, UpdateMemberPayload>(
     `/members/${personId}`,
     'PUT',
@@ -52,5 +53,8 @@ export const useDeleteFamilyTree = (treeId: string) => {
 };
 
 export const useDeleteFamilyTreeMember = (treeId: string) => {
-  return useApiMutation<void, void>(`/trees/${treeId}`, 'DELETE')
-}
+  return useApiMutation<void, DeleteMemberPayload>(
+    `/trees/${treeId}`,
+    'DELETE',
+  );
+};

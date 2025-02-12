@@ -126,3 +126,8 @@ export interface MemberId {
   fullName: string;
   gender: string;
 }
+
+export interface DeleteMemberPayload {
+  delete_member_id: string;
+  root_id: string;
+}

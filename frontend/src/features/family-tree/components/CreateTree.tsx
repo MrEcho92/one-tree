@@ -1,4 +1,5 @@
 import Box from '@mui/material/Box';
+import dayjs from 'dayjs';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Divider, FormLabel, useTheme } from '@mui/material';
@@ -139,6 +140,7 @@ export default function CreateTree() {
         control={control}
         render={({ field }) => (
           <DatePicker
+            minDate={dayjs('1850-01-01').toDate()}
             label="Date of Birth"
             format="dd/MM/yyyy"
             value={field.value ? new Date(field.value) : null}
@@ -182,6 +184,7 @@ export default function CreateTree() {
         control={control}
         render={({ field }) => (
           <DatePicker
+            minDate={dayjs('1850-01-01').toDate()}
             label="Date of Birth"
             format="dd/MM/yyyy"
             value={field.value ? new Date(field.value) : null}
@@ -229,6 +232,7 @@ export default function CreateTree() {
         control={control}
         render={({ field }) => (
           <DatePicker
+            minDate={dayjs('1850-01-01').toDate()}
             label="Date of Birth"
             format="dd/MM/yyyy"
             value={field.value ? new Date(field.value) : null}

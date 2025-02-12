@@ -86,3 +86,16 @@ class RelationToMemberSchema(BaseModel):
     primary_spouse_id: Optional[str] = None
     primary_spouse_gender: Optional[str] = None
     primary_children_id: Optional[List[str]] = None
+
+
+class UpdateTreeSchema(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    is_public: Optional[bool] = False
+    collaborators: Optional[List[str]] = []
+    updated_by: Optional[str] = None
+    updated_at: Optional[datetime] = None
+
+class DeleteMemberSchema(BaseModel):
+    delete_member_id: str
+    root_id: str

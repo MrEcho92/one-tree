@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 import { useForm, Controller } from 'react-hook-form';
 import {
   TextField,
@@ -22,11 +23,13 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useSnackbar } from 'notistack';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AddMemberDialog from './AddMemberDialog';
 import { Person, UpdateMemberPayload } from '../../../types/tree';
 import { transformDate } from '../../../utils/transformDate';
-import { useUpdatePerson } from '../../../hooks/treeHooks';
+import { useUpdateMember } from '../../../hooks/treeHooks';
+import queryClient from '../../../core/http/react-query';
 
 type EditFamilyMemberProps = {
   defaultValues: Person;
@@ -34,6 +37,9 @@ type EditFamilyMemberProps = {
   onAddMember: (data: any) => void;
   treeMembers?: ReadonlyArray<any>;
   setRootId?: React.Dispatch<React.SetStateAction<string | null>>;
+  openDeleteMemberModal: (name: string, nodeId: string) => void;
+  firstRootId: string;
+  treeId: string;
 };
 
 export default function EditFamilyMember({
@@ -42,6 +48,9 @@ export default function EditFamilyMember({
   onAddMember,
   treeMembers,
   setRootId,
+  openDeleteMemberModal,
+  firstRootId,
+  treeId
 }: EditFamilyMemberProps) {
   const { enqueueSnackbar } = useSnackbar();
   const { control, handleSubmit, reset, watch } = useForm<Person>({
@@ -69,7 +78,7 @@ export default function EditFamilyMember({
     }
   }, [updatedData, reset]);
 
-  const updateMutation = useUpdatePerson(defaultValues?.id);
+  const updateMutation = useUpdateMember(defaultValues?.id);
 
   const handleUpdate = (data: any) => {
     const payload: UpdateMemberPayload = {
@@ -83,6 +92,10 @@ export default function EditFamilyMember({
         });
         setIsEditing(false);
         setUpdatedData(updatedPerson);
+        queryClient.refetchQueries({
+          queryKey: ['familyTrees', treeId],
+          exact: true,
+        });
       },
       onError: (error) => {
         enqueueSnackbar('Failed to update family member details', {
@@ -102,6 +115,9 @@ export default function EditFamilyMember({
     setFamilyType(type);
     setIsAddMemberOpen(true);
   };
+
+  const MemberName =
+    `${updatedData.first_name} ${updatedData.last_name}` as const;
 
   return (
     <Box>
@@ -177,6 +193,7 @@ export default function EditFamilyMember({
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    minDate={dayjs('1850-01-01').toDate()}
                     label="Date of Birth"
                     format="dd/MM/yyyy"
                     value={field.value ? new Date(field.value) : null}
@@ -228,6 +245,7 @@ export default function EditFamilyMember({
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      minDate={dayjs('1850-01-01').toDate()}
                       label="Date of Death"
                       format="dd/MM/yyyy"
                       value={field.value ? new Date(field.value) : null}
@@ -294,7 +312,7 @@ export default function EditFamilyMember({
             }}
           >
             <Typography variant="h6" gutterBottom fontWeight="600">
-              {`${updatedData.first_name} ${updatedData.last_name}`}
+              {MemberName}
             </Typography>
             <Tooltip title="Close">
               <IconButton onClick={closeDrawer}>
@@ -362,6 +380,18 @@ export default function EditFamilyMember({
                 </MenuItem>
               </Menu>
             </Box>
+            {firstRootId !== updatedData.id && (
+              <Tooltip title="Delete member">
+                <IconButton
+                  onClick={() =>
+                    openDeleteMemberModal(MemberName, updatedData.id)
+                  }
+                  color="primary"
+                >
+                  <PersonRemoveIcon />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
           <Divider />
           <Button
@@ -376,7 +406,7 @@ export default function EditFamilyMember({
           >
             Show tree from here
           </Button>
-          <Box sx={{ overflowY: 'scroll', maxHeight: 250 }}>
+          <Box sx={{ overflowY: 'scroll', maxHeight: 650 }}>
             <Typography variant="h5" py={1} fontWeight="500">
               Information
             </Typography>

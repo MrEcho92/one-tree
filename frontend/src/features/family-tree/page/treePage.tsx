@@ -26,13 +26,19 @@ import EditFamilyMember from '../components/EditFamilyMember';
 import {
   useGetFamilyTrees,
   useAddMemberFamilyTree,
+  useDeleteFamilyTreeMember,
 } from '../../../hooks/treeHooks';
-import { Person, AddMemberPayload } from '../../../types/tree';
+import {
+  Person,
+  AddMemberPayload,
+  DeleteMemberPayload,
+} from '../../../types/tree';
 import { transformNodeData } from '../../../utils/transformTree';
 import queryClient from '../../../core/http/react-query';
 import TreeOverview from '../components/treeOverview';
 import { useModal } from '../../../components/common';
 import MemberSearch from '../components/MemberSearch';
+import DeleteMember from '../components/DeleteMember';
 
 export function TreePage() {
   const { treeId } = useParams();
@@ -62,6 +68,7 @@ export function TreePage() {
 
   const { data, isLoading, isError } = useGetFamilyTrees(treeId ?? '');
   const mutation = useAddMemberFamilyTree(treeId ?? '');
+  const deleteMutation = useDeleteFamilyTreeMember(treeId ?? '');
 
   useEffect(() => {
     if (data) {
@@ -117,7 +124,7 @@ export function TreePage() {
     });
   }
 
-  function openSearchModal() {
+  function openSearchModal(): void {
     openModal(
       <MemberSearch
         closeModal={closeModal}
@@ -126,7 +133,40 @@ export function TreePage() {
       />,
     );
   }
-  
+
+  function handleDeleteMember(payload: DeleteMemberPayload): void {
+    deleteMutation.mutate(payload, {
+      onSuccess: () => {
+        enqueueSnackbar('Family member deleted successfully!', {
+          variant: 'success',
+        });
+        queryClient.refetchQueries({
+          queryKey: ['familyTrees', treeId],
+          exact: true,
+        });
+        closeDrawer();
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to delete family member', {
+          variant: 'error',
+        });
+        console.error('Error deleting member:', error);
+      },
+    });
+  }
+
+  function openDeleteMemberModal(name: string, nodeId: string): void {
+    openModal(
+      <DeleteMember
+        closeModal={closeModal}
+        name={name}
+        nodeId={nodeId}
+        onDelete={handleDeleteMember}
+        rootId={firstRootId ?? ''}
+      />,
+    );
+  }
+
   return (
     <Box
       component="section"
@@ -278,6 +318,9 @@ export function TreePage() {
             onAddMember={handleAddMember}
             treeMembers={familyTree.members}
             setRootId={setRootId}
+            openDeleteMemberModal={openDeleteMemberModal}
+            firstRootId={firstRootId ?? ''}
+            treeId={treeId ?? ''}
           />
         </Drawer>
       </Stack>

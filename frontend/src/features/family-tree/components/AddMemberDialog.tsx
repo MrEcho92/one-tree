@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -141,6 +142,7 @@ export default function AddMemberDialog({
               control={control}
               render={({ field }) => (
                 <DatePicker
+                  minDate={dayjs('1850-01-01').toDate()}
                   label="Date of Birth"
                   format="dd/MM/yyyy"
                   value={field.value ? new Date(field.value as string) : null}

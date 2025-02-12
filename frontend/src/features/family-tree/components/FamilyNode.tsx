@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import type { ExtNode } from 'relatives-tree/lib/types';
-import { deepOrange, grey } from '@mui/material/colors';
+import { brown, grey, orange } from '@mui/material/colors';
 import { useTheme } from '@mui/material';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { transformDate } from '../../../utils/transformDate';
@@ -38,6 +38,17 @@ export const FamilyNode = React.memo(function FamilyNode({
     [node.id, onSubClick],
   );
 
+  function stringAvatar(name: string) {
+    return {
+      sx: {
+        bgcolor: nodeDetails?.gender === 'male' ? brown[500] : orange[500],
+        width: 100,
+        height: 100,
+      },
+      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    };
+  }
+
   return (
     <Box
       sx={{
@@ -62,16 +73,11 @@ export const FamilyNode = React.memo(function FamilyNode({
         onClick={clickHandler}
       >
         <Avatar
-          sx={{
-            bgcolor: deepOrange[500],
-            width: 100,
-            height: 100,
-          }}
           alt="Remy Sharp"
-          src="/broken-image.jpg"
-        >
-          {nodeDetails?.gender === 'male' ? 'M' : 'F'}
-        </Avatar>
+          {...stringAvatar(
+            `${nodeDetails?.first_name} ${nodeDetails?.last_name}`,
+          )}
+        />
         <Box
           p={1}
           sx={{
