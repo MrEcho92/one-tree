@@ -10,12 +10,12 @@ from app.models.models import FamilyStory, FamilyTree, Person
 from app.schemas.schemas import (
     AddPersonSchema,
     CreateFamilyTreeSchema,
+    DeleteMemberSchema,
     FamilyTrees,
     RelationToMemberSchema,
     RelationType,
     UpdatePersonSchema,
     UpdateTreeSchema,
-    DeleteMemberSchema,
 )
 
 router = APIRouter()
@@ -390,10 +390,12 @@ async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
                 status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
             )
 
-        # Delete all members of the tree
+        # Batch delete all members of the tree
+        batch = db.batch()
         people_query = db.collection(PEOPLE).where("tree_id", "==", tree_id).stream()
         for person in people_query:
-            person.reference.delete()
+            batch.delete(person.reference)
+        batch.commit()
 
         # Delete the tree
         tree_ref.delete()
@@ -403,9 +405,7 @@ async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
         )
 
 
-@router.delete(
-    "/trees/{tree_id}/member", status_code=status.HTTP_204_NO_CONTENT
-)
+@router.delete("/trees/{tree_id}/member", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tree_member(
     tree_id: str, item: DeleteMemberSchema, db=Depends(get_db)
 ):
@@ -431,9 +431,9 @@ async def delete_tree_member(
         user_data = user_doc.to_dict()
 
         # Prevent root user deletion if they still have children
-        if item.delete_member_id == item.root_id and user_data.get("children_id"):
+        if user_data.get("id") == item.root_id and user_data.get("children_id"):
             raise HTTPException(
-                status_code=400,
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Cannot delete root user until all children are removed.",
             )
 
@@ -445,24 +445,16 @@ async def delete_tree_member(
 
                 if relation_doc.exists:
                     relation_data = relation_doc.to_dict()
-                    related_person = Person(**relation_data)
-
-                    if isinstance(getattr(related_person, field, None), list):
-                        setattr(
-                            related_person,
-                            field,
-                            [
-                                rel
-                                for rel in getattr(related_person, field, [])
-                                if rel != item.delete_member_id
-                            ],
-                        )
+                    if field in ["spouse_id", "children_id", "sibling_id"]:
+                        relation_data[field] = [
+                            rel
+                            for rel in relation_data.get(field, [])
+                            if rel != item.delete_member_id
+                        ]
                     else:
-                        setattr(
-                            related_person, field, None
-                        )  # Remove field if it's a direct reference
+                        relation_data[field] = None
 
-                    relation_ref.set(related_person.to_dict())
+                    relation_ref.set(relation_data)
 
         # Update parents, siblings, spouses, and children
         if user_data.get("father_id"):
@@ -476,15 +468,13 @@ async def delete_tree_member(
 
             if child_doc.exists:
                 child_data = child_doc.to_dict()
-                child_person = Person(**child_data)
+                if child_data["father_id"] == item.delete_member_id:
+                    child_data["father_id"] = None
 
-                if child_person.father_id == item.delete_member_id:
-                    child_person.father_id = None
+                if child_data["mother_id"] == item.delete_member_id:
+                    child_data["mother_id"] = None
 
-                if child_person.mother_id == item.delete_member_id:
-                    child_person.mother_id = None
-
-                child_ref.set(child_person.to_dict())
+                child_ref.set(child_data)
 
         for sibling in user_data.get("sibling_id", []):
             update_relation(sibling, "sibling_id")
@@ -497,7 +487,10 @@ async def delete_tree_member(
 
         # Finally, delete the user document
         user_ref.delete()
-        return {"message": "User deleted successfully", "deleted_user_id": item.delete_member_id}
+        return {
+            "message": "User deleted successfully",
+            "deleted_user_id": item.delete_member_id,
+        }
     except Exception as e:
         logging.error(f"Unexpected error when deleting user: {str(e)}")
         raise HTTPException(

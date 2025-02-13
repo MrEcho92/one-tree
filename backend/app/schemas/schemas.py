@@ -96,6 +96,7 @@ class UpdateTreeSchema(BaseModel):
     updated_by: Optional[str] = None
     updated_at: Optional[datetime] = None
 
+
 class DeleteMemberSchema(BaseModel):
     delete_member_id: str
     root_id: str

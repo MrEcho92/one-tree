@@ -50,7 +50,7 @@ export default function EditFamilyMember({
   setRootId,
   openDeleteMemberModal,
   firstRootId,
-  treeId
+  treeId,
 }: EditFamilyMemberProps) {
   const { enqueueSnackbar } = useSnackbar();
   const { control, handleSubmit, reset, watch } = useForm<Person>({
@@ -92,6 +92,7 @@ export default function EditFamilyMember({
         });
         setIsEditing(false);
         setUpdatedData(updatedPerson);
+
         queryClient.refetchQueries({
           queryKey: ['familyTrees', treeId],
           exact: true,

@@ -19,6 +19,7 @@ import {
   Radio,
   Select,
   SelectChangeEvent,
+  Typography,
 } from '@mui/material';
 import { AddMemberTreeForm } from '../../../types/tree';
 import { capitalize } from '../../../utils/capitalize';
@@ -179,11 +180,11 @@ export default function AddMemberDialog({
               <>
                 <Divider />
                 <FormControl sx={{ m: 1, width: 300 }}>
-                  <FormLabel>Add parent with ++</FormLabel>
-                  <div>
-                    when no parent is selected, you are adding child without
-                    parent
-                  </div>
+                  <FormLabel>Select Parent</FormLabel>
+                  <Typography variant="body2">
+                    If no parent is selected, the child will be added without a
+                    specified parent.
+                  </Typography>
                   <Select
                     labelId="demo-select-small-label"
                     id="demo-select-small"

@@ -55,14 +55,14 @@ export default function CreateTree() {
         last_name: data.father_last_name,
         date_of_birth: data.father_date_of_birth,
         gender: data.father_gender,
-        is_alive: data.father_is_alive,
+        is_alive: !data.father_is_alive,
       },
       mother: {
         first_name: data.mother_first_name,
         last_name: data.mother_last_name,
         date_of_birth: data.mother_date_of_birth,
         gender: data.mother_gender,
-        is_alive: data.mother_is_alive,
+        is_alive: !data.mother_is_alive,
       },
     };
 
