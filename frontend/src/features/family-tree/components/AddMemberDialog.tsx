@@ -179,11 +179,15 @@ export default function AddMemberDialog({
             {familyType === 'child' && (
               <>
                 <Divider />
-                <FormControl sx={{ m: 1, width: 300 }}>
-                  <FormLabel>Select Parent</FormLabel>
-                  <Typography variant="body2">
-                    If no parent is selected, the child will be added without a
-                    specified parent.
+                <FormControl sx={{ my: 1, width: 300 }}>
+                  <FormLabel
+                    sx={{ color: (theme) => theme.palette.text.primary }}
+                  >
+                    Select the other parent (optional)
+                  </FormLabel>
+                  <Typography variant="body2" py={1}>
+                    If no parent is selected, the child will be added with only
+                    one parent.
                   </Typography>
                   <Select
                     labelId="demo-select-small-label"

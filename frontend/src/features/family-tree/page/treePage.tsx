@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Stack from '@mui/material/Stack';
@@ -27,6 +28,7 @@ import {
   useGetFamilyTrees,
   useAddMemberFamilyTree,
   useDeleteFamilyTreeMember,
+  useDeleteFamilyTree,
 } from '../../../hooks/treeHooks';
 import {
   Person,
@@ -35,16 +37,19 @@ import {
 } from '../../../types/tree';
 import { transformNodeData } from '../../../utils/transformTree';
 import queryClient from '../../../core/http/react-query';
-import TreeOverview from '../components/treeOverview';
+import TreeOverview from '../components/TreeOverview';
 import { useModal } from '../../../components/common';
 import MemberSearch from '../components/MemberSearch';
 import DeleteMember from '../components/DeleteMember';
+import DeleteTree from '../components/DeleteTree';
+import AddCollaborators from '../components/AddCollaborators';
 
 export function TreePage() {
   const { treeId } = useParams();
   const { palette } = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const { openModal, closeModal } = useModal();
+  const navigate = useNavigate();
 
   const [value, setValue] = useState<string>('1');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -68,7 +73,8 @@ export function TreePage() {
 
   const { data, isLoading, isError } = useGetFamilyTrees(treeId ?? '');
   const mutation = useAddMemberFamilyTree(treeId ?? '');
-  const deleteMutation = useDeleteFamilyTreeMember(treeId ?? '');
+  const deleteTreeMemberMutation = useDeleteFamilyTreeMember(treeId ?? '');
+  const deleteFamilyTreeMutation = useDeleteFamilyTree(treeId ?? '');
 
   useEffect(() => {
     if (data) {
@@ -135,7 +141,7 @@ export function TreePage() {
   }
 
   function handleDeleteMember(payload: DeleteMemberPayload): void {
-    deleteMutation.mutate(payload, {
+    deleteTreeMemberMutation.mutate(payload, {
       onSuccess: () => {
         enqueueSnackbar('Family member deleted successfully!', {
           variant: 'success',
@@ -155,6 +161,26 @@ export function TreePage() {
     });
   }
 
+  function handleDeleteTree() {
+    deleteFamilyTreeMutation.mutate(undefined, {
+      onSuccess: () => {
+        enqueueSnackbar('Family tree deleted successfully!', {
+          variant: 'success',
+        });
+        // Redirect to dashboard
+        navigate('/app');
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to delete family tree', {
+          variant: 'error',
+        });
+        console.error('Error deleting tree:', error);
+      },
+    });
+  }
+
+  function handleAddCollaborators() {}
+
   function openDeleteMemberModal(name: string, nodeId: string): void {
     openModal(
       <DeleteMember
@@ -163,6 +189,20 @@ export function TreePage() {
         nodeId={nodeId}
         onDelete={handleDeleteMember}
         rootId={firstRootId ?? ''}
+      />,
+    );
+  }
+
+  function openDeleteTreeModal() {
+    openModal(
+      <DeleteTree closeModal={closeModal} onDelete={handleDeleteTree} />,
+    );
+  }
+  function openAddCollaboratorsModal() {
+    openModal(
+      <AddCollaborators
+        closeModal={closeModal}
+        onAddCollaborators={handleAddCollaborators}
       />,
     );
   }
@@ -205,8 +245,12 @@ export function TreePage() {
                 <Tab label="Stories" value="3" />
               </TabList>
             </Box>
-            <TabPanel value="1">
-              <TreeOverview description={familyTree?.description} />
+            <TabPanel value="1" sx={{ p: { xs: '0' } }}>
+              <TreeOverview
+                initialData={familyTree}
+                openDeleteTreeModal={openDeleteTreeModal}
+                openAddCollaboratorsModal={openAddCollaboratorsModal}
+              />
             </TabPanel>
             <TabPanel value="2" sx={{ p: { xs: '0' } }}>
               <Box

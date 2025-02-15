@@ -1,4 +1,5 @@
 import type { Node, Gender, RelType } from 'relatives-tree/lib/types';
+import { brown, orange } from '@mui/material/colors';
 import { Person } from '../types/tree';
 
 export function transformNodeData(data: Person[]): Node[] {
@@ -29,4 +30,15 @@ export function transformNodeData(data: Person[]): Node[] {
         type: 'blood' as RelType,
       })) ?? [],
   }));
+}
+
+export function stringAvatar(data: any, name: string) {
+  return {
+    sx: {
+      bgcolor: data?.gender === 'male' ? brown[500] : orange[500],
+      width: 100,
+      height: 100,
+    },
+    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+  };
 }

@@ -30,6 +30,7 @@ import { Person, UpdateMemberPayload } from '../../../types/tree';
 import { transformDate } from '../../../utils/transformDate';
 import { useUpdateMember } from '../../../hooks/treeHooks';
 import queryClient from '../../../core/http/react-query';
+import { stringAvatar } from '../../../utils/transformTree';
 
 type EditFamilyMemberProps = {
   defaultValues: Person;
@@ -322,9 +323,13 @@ export default function EditFamilyMember({
             </Tooltip>
           </Box>
           <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
-            <Avatar sx={{ width: 80, height: 80 }} src={updatedData?.photo_url}>
-              H
-            </Avatar>
+            <Avatar
+              {...stringAvatar(
+                updatedData,
+                `${updatedData?.first_name} ${updatedData?.last_name}`,
+              )}
+              src={updatedData?.photo_url}
+            ></Avatar>
           </Box>
           <Box
             sx={{

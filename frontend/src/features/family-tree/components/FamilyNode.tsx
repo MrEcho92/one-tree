@@ -7,6 +7,7 @@ import { useTheme } from '@mui/material';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { transformDate } from '../../../utils/transformDate';
 import { Person } from '../../../types/tree';
+import { stringAvatar } from '../../../utils/transformTree';
 
 interface FamilyNodeProps {
   node: ExtNode;
@@ -38,17 +39,6 @@ export const FamilyNode = React.memo(function FamilyNode({
     [node.id, onSubClick],
   );
 
-  function stringAvatar(name: string) {
-    return {
-      sx: {
-        bgcolor: nodeDetails?.gender === 'male' ? brown[500] : orange[500],
-        width: 100,
-        height: 100,
-      },
-      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
-    };
-  }
-
   return (
     <Box
       sx={{
@@ -75,6 +65,7 @@ export const FamilyNode = React.memo(function FamilyNode({
         <Avatar
           alt="Remy Sharp"
           {...stringAvatar(
+            nodeDetails,
             `${nodeDetails?.first_name} ${nodeDetails?.last_name}`,
           )}
         />

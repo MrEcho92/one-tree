@@ -58,3 +58,14 @@ export const useDeleteFamilyTreeMember = (treeId: string) => {
     'DELETE',
   );
 };
+
+export const useAddCollaborators = (treeId: string) => {
+  return useApiMutation<FamilyTree, any>(
+    `/add-collaborators/${treeId}`,
+    'PUT',
+  );
+};
+
+export const useUpdateTree = (treeId: string) => {
+  return useApiMutation<FamilyTree, any>(`/trees/${treeId}`, 'PUT');
+};
