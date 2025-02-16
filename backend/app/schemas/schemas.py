@@ -103,3 +103,31 @@ class DeleteMemberSchema(BaseModel):
 
 class AddCollaboratorSchema(BaseModel):
     collaborators: List[str] = []
+
+
+class FamilyStoriesSchema(BaseModel):
+    id: str
+    title: str
+    tree_id: str
+    created_by: str
+    created_at: datetime
+    updated_by: Optional[str] = None
+    updated_at: Optional[datetime] = None
+
+
+class AddFamilyStorySchema(BaseModel):
+    title: str
+    content: str
+    media_url: Optional[str] = None
+    tags: Optional[List[str]] = []
+    tree_id: str
+    is_public: bool = False
+    created_by: str
+
+
+class UpdatedFamilyStorySchema(BaseModel):
+    title: Optional[str]
+    content: Optional[str]
+    media_url: Optional[str] = None
+    tags: Optional[List[str]] = []
+    is_public: Optional[bool]

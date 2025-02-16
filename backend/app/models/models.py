@@ -68,7 +68,8 @@ class FamilyStory(AbstractBaseModel):
     content: str
     media_url: Optional[str] = None
     tags: Optional[List[str]] = []
-    family_tree_id: str
+    tree_id: str
+    is_public: bool = False
 
 
 class ContextState(Enum):

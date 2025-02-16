@@ -4,17 +4,21 @@ from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException, status
 from google.cloud import firestore
 
-from app.core.constants import FAMILY_TREE, PEOPLE
+from app.core.constants import FAMILY_STORY, FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
 from app.schemas.schemas import (
     AddCollaboratorSchema,
+    AddFamilyStorySchema,
     AddPersonSchema,
     CreateFamilyTreeSchema,
     DeleteMemberSchema,
+    FamilyStoriesSchema,
+    FamilyStory,
     FamilyTrees,
     RelationToMemberSchema,
     RelationType,
+    UpdatedFamilyStorySchema,
     UpdatePersonSchema,
     UpdateTreeSchema,
 )
@@ -490,4 +494,109 @@ async def delete_tree_member(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e),
+        )
+
+
+@router.get(
+    "/trees/{tree_id}/story",
+    response_model=List[FamilyStoriesSchema],
+    status_code=status.HTTP_200_OK,
+)
+async def get_family_story(
+    tree_id: str, db=Depends(get_db)
+) -> List[FamilyStoriesSchema]:
+    """Get all family stories for a specific family tree"""
+    try:
+        stories = db.collection(FAMILY_STORY).where("tree_id", "==", tree_id).stream()
+        return [FamilyStory(**story.to_dict()) for story in stories]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.get(
+    "/trees/stories/{story_id}",
+    response_model=FamilyStory,
+    status_code=status.HTTP_200_OK,
+)
+async def get_family_tree_by_id(story_id: str, db=Depends(get_db)) -> FamilyStory:
+    """Get a family story by ID"""
+    try:
+        story = db.collection(FAMILY_STORY).document(story_id).get()
+        if not story.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Family story not found"
+            )
+        return FamilyStory.from_dict(story.to_dict())
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.post(
+    "/trees/story", response_model=FamilyStory, status_code=status.HTTP_201_CREATED
+)
+async def add_family_story(
+    story: AddFamilyStorySchema, db=Depends(get_db)
+) -> FamilyStory:
+    """Add a new family story to a family tree"""
+    try:
+        new_story = FamilyStory(
+            **story.model_dump(),
+            tree_id=story.tree_id,
+        )
+        db.collection(FAMILY_STORY).document(new_story.id).set(new_story.to_dict())
+        return new_story
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.put(
+    "/trees/{story_id}/story",
+    response_model=FamilyStory,
+    status_code=status.HTTP_200_OK,
+)
+async def update_family_story(
+    story_id: str, updated_data: UpdatedFamilyStorySchema, db=Depends(get_db)
+) -> FamilyStory:
+    """Update a family story"""
+    try:
+        story_ref = db.collection(FAMILY_STORY).document(story_id)
+        story = story_ref.get()
+        if not story.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Family story not found"
+            )
+
+        updated_story_data = updated_data.model_dump(exclude_unset=True)
+        updated_story_data["updated_by"] = updated_data.updated_by
+        updated_story_data["updated_at"] = firestore.SERVER_TIMESTAMP
+        story_ref.update(updated_story_data)
+
+        updated_story = story_ref.get().to_dict()
+        return FamilyStory.from_dict(updated_story)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.delete("/trees/{story_id}/story", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_family_story(story_id: str, db=Depends(get_db)) -> None:
+    """Delete a family story"""
+    try:
+        story_ref = db.collection(FAMILY_STORY).document(story_id)
+        story = story_ref.get()
+        if not story.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Family story not found"
+            )
+        story_ref.delete()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
