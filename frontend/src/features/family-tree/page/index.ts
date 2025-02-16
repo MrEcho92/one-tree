@@ -1,1 +1,1 @@
-export * from './TreePage';
+export * from './FamilyTreePage';

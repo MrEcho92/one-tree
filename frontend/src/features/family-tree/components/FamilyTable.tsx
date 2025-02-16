@@ -12,7 +12,7 @@ type Person = {
   date_of_birth: string;
 };
 
-export const MembersTable = ({ data }: any) => {
+export default function FamilyMemberTable({ data }: any) {
   //should be memoized or stable
   const columns = useMemo<MRT_ColumnDef<Person>[]>(
     () => [

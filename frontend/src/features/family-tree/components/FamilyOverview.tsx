@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -15,25 +15,22 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useForm, Controller } from 'react-hook-form';
-import { MembersTable } from './TreeMembersTable';
+import FamilyMemberTable from './FamilyTable';
 import { transformDate } from '../../../utils/transformDate';
 import { capitalize } from '../../../utils/capitalize';
 import { UpdateTreePayload } from '../../../types/tree';
 
+
 type TreeOverviewProps = {
   initialData?: any;
   onSave?: any;
-  onDelete?: any;
-  onAddCollaborator?: any;
   openDeleteTreeModal: () => void;
   openAddCollaboratorsModal: () => void;
 };
 
-export default function TreeOverview({
+export default function FamilyTreeOverview({
   initialData,
   onSave,
-  onDelete,
-  onAddCollaborator,
   openDeleteTreeModal,
   openAddCollaboratorsModal,
 }: TreeOverviewProps) {
@@ -160,7 +157,7 @@ export default function TreeOverview({
         </Typography>
         <Box pt={1}>
           {data?.length > 0 ? (
-            <MembersTable data={data} />
+            <FamilyMemberTable data={data} />
           ) : (
             <Typography>No family member</Typography>
           )}

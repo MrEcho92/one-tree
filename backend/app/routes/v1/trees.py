@@ -14,7 +14,6 @@ from app.schemas.schemas import (
     CreateFamilyTreeSchema,
     DeleteMemberSchema,
     FamilyStoriesSchema,
-    FamilyStory,
     FamilyTrees,
     RelationToMemberSchema,
     RelationType,

@@ -1,4 +1,4 @@
-import React, { memo, useRef } from 'react';
+import { memo, useRef } from 'react';
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
 import IconButton from '@mui/material/IconButton';

@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
-import { TreePage } from '../page/TreePage';
+import FamilyTreePage from '../page/FamilyTreePage';
 
 export function TreeRoutes() {
   return (
     <Routes>
-      <Route path=":treeId" element={<TreePage />} />
+      <Route path=":treeId" element={<FamilyTreePage />} />
     </Routes>
   );
 }

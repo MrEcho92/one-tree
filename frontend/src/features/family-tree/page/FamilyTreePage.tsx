@@ -41,14 +41,14 @@ import {
 } from '../../../types/tree';
 import { transformNodeData } from '../../../utils/transformTree';
 import queryClient from '../../../core/http/react-query';
-import TreeOverview from '../components/TreeOverview';
+import FamilyTreeOverview from '../components/FamilyOverview';
 import { useModal } from '../../../components/common';
 import MemberSearch from '../components/MemberSearch';
 import DeleteMember from '../components/DeleteMember';
 import DeleteTree from '../components/DeleteTree';
 import AddCollaborators from '../components/AddCollaborators';
 
-export function TreePage() {
+export default function FamilyTreePage() {
   const { treeId } = useParams();
   const { palette } = useTheme();
   const { enqueueSnackbar } = useSnackbar();
@@ -283,7 +283,7 @@ export function TreePage() {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <TabList
                 onChange={handleChange}
-                aria-label="lab API tabs example"
+                aria-label="family tree tabs"
               >
                 <Tab label="Overview" value="1" />
                 <Tab label="Tree" value="2" />
@@ -291,13 +291,11 @@ export function TreePage() {
               </TabList>
             </Box>
             <TabPanel value="1" sx={{ p: { xs: '0' } }}>
-              <TreeOverview
+              <FamilyTreeOverview
                 initialData={familyTree}
                 openDeleteTreeModal={openDeleteTreeModal}
                 openAddCollaboratorsModal={openAddCollaboratorsModal}
                 onSave={handleUpdateTree}
-                onDelete={handleDeleteTree}
-                onAddCollaborator={handleAddCollaborators}
               />
             </TabPanel>
             <TabPanel value="2" sx={{ p: { xs: '0' } }}>
@@ -389,8 +387,8 @@ export function TreePage() {
                 )}
               </Box>
             </TabPanel>
-            <TabPanel value="3">
-              <Box sx={{ width: '100%', height: '80vh' }}>Family stories</Box>
+            <TabPanel value="3" sx={{ p: { xs: '0' } }}>
+              <Box>Family stories</Box>
             </TabPanel>
           </TabContext>
         </Box>
