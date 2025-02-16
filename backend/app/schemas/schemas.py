@@ -94,9 +94,12 @@ class UpdateTreeSchema(BaseModel):
     is_public: Optional[bool] = False
     collaborators: Optional[List[str]] = []
     updated_by: Optional[str] = None
-    updated_at: Optional[datetime] = None
 
 
 class DeleteMemberSchema(BaseModel):
     delete_member_id: str
     root_id: str
+
+
+class AddCollaboratorSchema(BaseModel):
+    collaborators: List[str] = []

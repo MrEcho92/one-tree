@@ -29,11 +29,15 @@ import {
   useAddMemberFamilyTree,
   useDeleteFamilyTreeMember,
   useDeleteFamilyTree,
+  useUpdateTree,
+  useAddCollaborators,
 } from '../../../hooks/treeHooks';
 import {
   Person,
   AddMemberPayload,
   DeleteMemberPayload,
+  UpdateTreePayload,
+  AddCollaboratorsPayload,
 } from '../../../types/tree';
 import { transformNodeData } from '../../../utils/transformTree';
 import queryClient from '../../../core/http/react-query';
@@ -75,6 +79,8 @@ export function TreePage() {
   const mutation = useAddMemberFamilyTree(treeId ?? '');
   const deleteTreeMemberMutation = useDeleteFamilyTreeMember(treeId ?? '');
   const deleteFamilyTreeMutation = useDeleteFamilyTree(treeId ?? '');
+  const updateTreeMutation = useUpdateTree(treeId ?? '');
+  const addCollaboratorsMutation = useAddCollaborators(treeId ?? '');
 
   useEffect(() => {
     if (data) {
@@ -179,7 +185,46 @@ export function TreePage() {
     });
   }
 
-  function handleAddCollaborators() {}
+  function handleUpdateTree(payload: UpdateTreePayload): void {
+    updateTreeMutation.mutate(payload, {
+      onSuccess: () => {
+        enqueueSnackbar('Family tree updated successfully!', {
+          variant: 'success',
+        });
+        queryClient.refetchQueries({
+          queryKey: ['familyTrees', treeId],
+          exact: true,
+        });
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to update family tree', {
+          variant: 'error',
+        });
+        console.error('Error updating tree:', error);
+      },
+    });
+  }
+
+  function handleAddCollaborators(payload: AddCollaboratorsPayload): void {
+    addCollaboratorsMutation.mutate(payload, {
+      onSuccess: () => {
+        enqueueSnackbar('Collaborator added successfully!', {
+          variant: 'success',
+        });
+        queryClient.refetchQueries({
+          queryKey: ['familyTrees', treeId],
+          exact: true,
+        });
+        closeModal?.();
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to add collaborator', {
+          variant: 'error',
+        });
+        console.error('Error adding collaborator:', error);
+      },
+    });
+  }
 
   function openDeleteMemberModal(name: string, nodeId: string): void {
     openModal(
@@ -250,6 +295,9 @@ export function TreePage() {
                 initialData={familyTree}
                 openDeleteTreeModal={openDeleteTreeModal}
                 openAddCollaboratorsModal={openAddCollaboratorsModal}
+                onSave={handleUpdateTree}
+                onDelete={handleDeleteTree}
+                onAddCollaborator={handleAddCollaborators}
               />
             </TabPanel>
             <TabPanel value="2" sx={{ p: { xs: '0' } }}>
@@ -355,12 +403,12 @@ export function TreePage() {
           }}
         >
           <EditFamilyMember
-            defaultValues={familyTree?.members.find(
+            defaultValues={familyTree?.members?.find(
               (member: Person) => member.id === selectedNode,
             )}
             closeDrawer={closeDrawer}
             onAddMember={handleAddMember}
-            treeMembers={familyTree.members}
+            treeMembers={familyTree?.members}
             setRootId={setRootId}
             openDeleteMemberModal={openDeleteMemberModal}
             firstRootId={firstRootId ?? ''}

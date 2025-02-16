@@ -7,15 +7,14 @@ import { DeleteMemberPayload } from '../../../types/tree';
 
 type DeleteTreeProps = {
   closeModal: () => void;
-  onDelete: (payload: DeleteMemberPayload) => void;
+  onDelete: () => void;
 };
 
 export default function DeleteTree({ closeModal, onDelete }: DeleteTreeProps) {
   function handleOnDeleteTree() {
-    const payload = {};
-    // if (onDelete) {
-    //   onDelete();
-    // }
+    if (onDelete) {
+      onDelete();
+    }
   }
   return (
     <Box p={2}>

@@ -15,9 +15,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useForm, Controller } from 'react-hook-form';
-import MembersTable from './TreeMembersTable';
+import { MembersTable } from './TreeMembersTable';
 import { transformDate } from '../../../utils/transformDate';
 import { capitalize } from '../../../utils/capitalize';
+import { UpdateTreePayload } from '../../../types/tree';
 
 type TreeOverviewProps = {
   initialData?: any;
@@ -44,7 +45,13 @@ export default function TreeOverview({
 
   const handleEdit = () => setIsEditing(!isEditing);
   const handleSave = (data: any) => {
-    onSave(data);
+    const payload: UpdateTreePayload = {
+      name: data.name,
+      description: data.description,
+      is_public: data.is_public,
+      updated_by: '123@gmail.com',
+    };
+    onSave(payload);
     setIsEditing(false);
   };
 
@@ -145,7 +152,12 @@ export default function TreeOverview({
         </Box>
       )}
       <Box py={3}>
-        <Typography fontWeight="bold">Family Members</Typography>
+        <Typography fontWeight="bold">
+          Family Members{' '}
+          {initialData?.members?.length > 0
+            ? `(${initialData?.members?.length})`
+            : null}
+        </Typography>
         <Box pt={1}>
           {data?.length > 0 ? (
             <MembersTable data={data} />

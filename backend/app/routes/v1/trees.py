@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from google.cloud import firestore
@@ -8,6 +8,7 @@ from app.core.constants import FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
 from app.schemas.schemas import (
+    AddCollaboratorSchema,
     AddPersonSchema,
     CreateFamilyTreeSchema,
     DeleteMemberSchema,
@@ -20,6 +21,15 @@ from app.schemas.schemas import (
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+
+def fetch_members(members_data: List[str], db: Any):
+    members = []
+    for member_id in members_data:
+        member = db.collection(PEOPLE).document(member_id).get()
+        if member.exists:
+            members.append(Person.from_dict(member.to_dict()))
+    return members
 
 
 @router.get(
@@ -53,13 +63,7 @@ async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
         tree_data = tree.to_dict()
 
         # Fetch members details
-        members = []
-        for member_id in tree_data.get("members", []):
-            member = db.collection(PEOPLE).document(member_id).get()
-            if member.exists:
-                members.append(Person.from_dict(member.to_dict()))
-
-        tree_data["members"] = members
+        tree_data["members"] = fetch_members(tree_data.get("members", []), db)
 
         return FamilyTree.from_dict(tree_data)
     except Exception as e:
@@ -134,13 +138,13 @@ async def create_tree_with_members(
         )
 
 
-@router.post(
+@router.put(
     "/add-collaborators/{tree_id}",
     response_model=FamilyTree,
     status_code=status.HTTP_200_OK,
 )
 async def add_collaborator(
-    tree_id: str, collaborators: List[str], db=Depends(get_db)
+    tree_id: str, data: AddCollaboratorSchema, db=Depends(get_db)
 ) -> FamilyTree:
     """Add collaborators to a family tree"""
     try:
@@ -153,9 +157,11 @@ async def add_collaborator(
 
         tree_ref.update(
             {
-                "collaborators": firestore.ArrayUnion(collaborators),
+                "collaborators": firestore.ArrayUnion(data.collaborators),
             }
         )
+        # Fetch updated tree members
+        tree["members"] = fetch_members(tree.get("members", []), db)
         return FamilyTree.from_dict(tree_ref)
     except Exception as e:
         raise HTTPException(
@@ -299,13 +305,7 @@ async def add_member_tree(
 
         # Fetch updated tree members
         tree_data = tree_ref.get().to_dict()
-        members = []
-        for member_id in tree_data.get("members", []):
-            member_doc = db.collection(PEOPLE).document(member_id).get()
-            if member_doc.exists:
-                members.append(Person.from_dict(member_doc.to_dict()))
-
-        tree_data["members"] = members
+        tree_data["members"] = fetch_members(tree_data.get("members", []), db)
         return FamilyTree.from_dict(tree_data)
     except Exception as e:
         logger.error(f"Unexpected error from adding a member: {str(e)}")
@@ -318,7 +318,7 @@ async def add_member_tree(
     "/trees/{tree_id}", response_model=FamilyTree, status_code=status.HTTP_200_OK
 )
 async def update_tree(
-    tree_id: str, update_tree: UpdateTreeSchema, db=Depends(get_db)
+    tree_id: str, tree_data: UpdateTreeSchema, db=Depends(get_db)
 ) -> FamilyTree:
     """Update a family tree"""
     try:
@@ -329,21 +329,15 @@ async def update_tree(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
             )
 
-        updated_data = update_tree.model_dump(exclude_unset=True)
-        updated_data["updated_by"] = update_tree.updated_by
+        updated_data = tree_data.model_dump(exclude_unset=True)
+        updated_data["updated_by"] = tree_data.updated_by
         updated_data["updated_at"] = firestore.SERVER_TIMESTAMP
         tree_ref.update(updated_data)
 
         updated_tree = tree_ref.get().to_dict()
 
         # Fetch updated tree members
-        members = []
-        for member_id in updated_tree.get("members", []):
-            member_doc = db.collection(PEOPLE).document(member_id).get()
-            if member_doc.exists:
-                members.append(Person.from_dict(member_doc.to_dict()))
-
-        updated_tree["members"] = members
+        updated_tree["members"] = fetch_members(updated_tree.get("members", []), db)
         return FamilyTree.from_dict(updated_tree)
     except Exception as e:
         raise HTTPException(

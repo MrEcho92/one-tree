@@ -3,13 +3,13 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ClearIcon from '@mui/icons-material/Clear';
 import Button from '@mui/material/Button';
-import { DeleteMemberPayload } from '../../../types/tree';
+import { AddCollaboratorsPayload } from '../../../types/tree';
 import { useForm, Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 
 type AddCollaborators = {
   closeModal: () => void;
-  onAddCollaborators: () => void;
+  onAddCollaborators: (payload: AddCollaboratorsPayload) => void;
 };
 
 export default function AddCollaborators({
@@ -22,12 +22,11 @@ export default function AddCollaborators({
     formState: { errors },
   } = useForm<{ email: string }>();
 
-  function handleOnAddCollaborators() {
-    const payload = {};
-    // onAddCollaborators(data.email);
-    // // if (onDelete) {
-    // //   onDelete();
-    // // }
+  function handleOnAddCollaborators(data: any) {
+    const payload: AddCollaboratorsPayload = {
+      collaborators: [data.email],
+    };
+    onAddCollaborators(payload);
   }
   return (
     <Box p={2}>

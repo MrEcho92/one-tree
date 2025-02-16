@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid2';
@@ -9,6 +10,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import Button from '@mui/material/Button';
+import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
@@ -16,6 +18,7 @@ import { Header } from '../components';
 import { useModal } from '../../../components/common';
 import CreateTree from '../../family-tree/components/CreateTree';
 import { useGetFamilyTreesByUser } from '../../../hooks/treeHooks';
+import { transformDate } from '../../../utils/transformDate';
 
 const data = [
   {
@@ -44,8 +47,16 @@ const data = [
 
 export function DashboardPage() {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { openModal } = useModal();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const userId = '123@gmail.com';
+  const {
+    data: familyTrees,
+    isLoading,
+    isError,
+  } = useGetFamilyTreesByUser(userId ?? '');
+  const treeData = familyTrees as any;
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
       <Stack
@@ -115,28 +126,48 @@ export function DashboardPage() {
             <Grid size={{ xs: 12, lg: 6 }}>
               <Card variant="outlined" sx={{ width: '100%' }}>
                 <CardContent>
-                  <Typography component="h2" variant="subtitle2" gutterBottom>
+                  <Typography component="h2" variant="subtitle1" gutterBottom>
                     Family Trees
                   </Typography>
                   <Stack sx={{ justifyContent: 'space-between' }}>
-                    <Stack
-                      direction="row"
-                      sx={{
-                        alignContent: { xs: 'center', sm: 'flex-start' },
-                        alignItems: 'center',
-                        gap: 1,
-                      }}
-                    >
-                      <Typography variant="h4" component="p">
-                        13,277
-                      </Typography>
-                    </Stack>
-                    <Typography
-                      variant="caption"
-                      sx={{ color: 'text.secondary' }}
-                    >
-                      Sessions per day for the last 30 days
-                    </Typography>
+                    {treeData &&
+                      treeData.map((tree: any) => {
+                        return (
+                          <Stack
+                            key={tree.id}
+                            direction="row"
+                            sx={{
+                              alignContent: { xs: 'center', sm: 'flex-start' },
+                              alignItems: 'center',
+                              gap: 1,
+                              justifyContent: 'space-between',
+                              '&:hover': {
+                                backgroundColor: theme.palette.grey[200],
+                                cursor: 'pointer',
+                              },
+                              p: 1,
+                            }}
+                            onClick={() => navigate(`/app/tree/${tree.id}`)}
+                          >
+                            <Box>
+                              <Typography component="h2" variant="subtitle2">
+                                {tree.name}
+                              </Typography>
+                              <Typography
+                                component="p"
+                                variant="subtitle2"
+                                sx={{ color: theme.palette.text.secondary }}
+                              >
+                                Updated {transformDate(tree.updated_at)}
+                              </Typography>
+                            </Box>
+                            <Box>
+                              <ChevronRightOutlinedIcon />
+                            </Box>
+                          </Stack>
+                        );
+                      })}
+                    {!treeData && <Box>No family trees available</Box>}
                   </Stack>
                 </CardContent>
               </Card>
@@ -148,7 +179,7 @@ export function DashboardPage() {
               >
                 <Card variant="outlined" sx={{ width: '100%' }}>
                   <CardContent>
-                    <Typography component="h2" variant="subtitle2" gutterBottom>
+                    <Typography component="h2" variant="subtitle1" gutterBottom>
                       Cultural stories
                     </Typography>
                     <Stack sx={{ justifyContent: 'space-between' }}>
@@ -182,7 +213,7 @@ export function DashboardPage() {
               >
                 <Card variant="outlined" sx={{ width: '100%' }}>
                   <CardContent>
-                    <Typography component="h2" variant="subtitle2" gutterBottom>
+                    <Typography component="h2" variant="subtitle1" gutterBottom>
                       Migration Tracking history
                     </Typography>
                     <Stack sx={{ justifyContent: 'space-between' }}>

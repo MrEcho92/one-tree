@@ -12,7 +12,7 @@ type Person = {
   date_of_birth: string;
 };
 
-const MembersTable = ({ data }: any) => {
+export const MembersTable = ({ data }: any) => {
   //should be memoized or stable
   const columns = useMemo<MRT_ColumnDef<Person>[]>(
     () => [
@@ -58,5 +58,3 @@ const MembersTable = ({ data }: any) => {
 
   return <MaterialReactTable table={table} />;
 };
-
-export default MembersTable;

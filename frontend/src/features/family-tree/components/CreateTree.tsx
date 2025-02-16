@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import dayjs from 'dayjs';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { Divider, FormLabel, useTheme } from '@mui/material';
+import { Divider, FormLabel, IconButton, useTheme } from '@mui/material';
 import { useModal } from '../../../components/common';
 import {
   Button,
@@ -14,6 +14,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import {
   CreateFamilyTreePayload,
@@ -94,15 +95,23 @@ export default function CreateTree() {
         p: 4,
       }}
     >
-      <Typography
-        sx={{
-          fontWeight: typography.h1.fontWeight,
-          fontSize: { xs: typography.h4.fontSize, md: typography.h3.fontSize },
-          color: palette.text.primary,
-        }}
-      >
-        Create Family Tree
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography
+          sx={{
+            fontWeight: typography.h1.fontWeight,
+            fontSize: {
+              xs: typography.h4.fontSize,
+              md: typography.h3.fontSize,
+            },
+            color: palette.text.primary,
+          }}
+        >
+          Create Family Tree
+        </Typography>
+        <IconButton onClick={closeModal}>
+          <ClearIcon />
+        </IconButton>
+      </Box>
       <TextField
         label="Tree Name"
         {...register('name', { required: true })}

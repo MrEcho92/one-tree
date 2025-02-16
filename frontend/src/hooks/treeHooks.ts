@@ -60,12 +60,12 @@ export const useDeleteFamilyTreeMember = (treeId: string) => {
 };
 
 export const useAddCollaborators = (treeId: string) => {
-  return useApiMutation<FamilyTree, any>(
-    `/add-collaborators/${treeId}`,
-    'PUT',
-  );
+  return useApiMutation<FamilyTree, any>(`/add-collaborators/${treeId}`, 'PUT');
 };
 
 export const useUpdateTree = (treeId: string) => {
-  return useApiMutation<FamilyTree, any>(`/trees/${treeId}`, 'PUT');
+  return useApiMutation<FamilyTree, UpdateMemberPayload>(
+    `/trees/${treeId}`,
+    'PUT',
+  );
 };

@@ -131,3 +131,15 @@ export interface DeleteMemberPayload {
   delete_member_id: string;
   root_id: string;
 }
+
+export interface UpdateTreePayload {
+  name?: string;
+  description?: string;
+  is_public?: boolean;
+  collaborators?: string[];
+  updated_by?: string;
+}
+
+export interface AddCollaboratorsPayload {
+  collaborators: string[];
+}
