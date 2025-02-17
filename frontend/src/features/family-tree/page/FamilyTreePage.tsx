@@ -47,6 +47,7 @@ import MemberSearch from '../components/MemberSearch';
 import DeleteMember from '../components/DeleteMember';
 import DeleteTree from '../components/DeleteTree';
 import AddCollaborators from '../components/AddCollaborators';
+import { FamilyStory } from '../components';
 
 export default function FamilyTreePage() {
   const { treeId } = useParams();
@@ -281,10 +282,7 @@ export default function FamilyTreePage() {
           </Typography>
           <TabContext value={value}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <TabList
-                onChange={handleChange}
-                aria-label="family tree tabs"
-              >
+              <TabList onChange={handleChange} aria-label="family tree tabs">
                 <Tab label="Overview" value="1" />
                 <Tab label="Tree" value="2" />
                 <Tab label="Stories" value="3" />
@@ -388,7 +386,7 @@ export default function FamilyTreePage() {
               </Box>
             </TabPanel>
             <TabPanel value="3" sx={{ p: { xs: '0' } }}>
-              <Box>Family stories</Box>
+              <FamilyStory treeId={treeId ?? ''} />
             </TabPanel>
           </TabContext>
         </Box>

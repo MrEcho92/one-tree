@@ -143,3 +143,35 @@ export interface UpdateTreePayload {
 export interface AddCollaboratorsPayload {
   collaborators: string[];
 }
+
+export interface AddStoryPayload {
+  title: string;
+  content: string;
+  tags?: string[];
+  is_public: boolean;
+  media_url?: string;
+  created_by: string;
+  tree_id: string;
+}
+
+export interface FamilyStory {
+  id: string;
+  created_by: string;
+  created_at: string;
+  updated_by: string;
+  updated_at: string;
+  title: string;
+  content: string;
+  tags?: string[];
+  is_public: boolean;
+  media_url?: string;
+}
+
+export interface UpdateStoryPayload {
+  title?: string;
+  content?: string;
+  tags?: string[];
+  is_public?: boolean;
+  media_url?: string;
+  updated_by?: string;
+}

@@ -497,11 +497,11 @@ async def delete_tree_member(
 
 
 @router.get(
-    "/trees/{tree_id}/story",
+    "/stories/{tree_id}",
     response_model=List[FamilyStoriesSchema],
     status_code=status.HTTP_200_OK,
 )
-async def get_family_story(
+async def get_family_stories(
     tree_id: str, db=Depends(get_db)
 ) -> List[FamilyStoriesSchema]:
     """Get all family stories for a specific family tree"""
@@ -515,7 +515,7 @@ async def get_family_story(
 
 
 @router.get(
-    "/trees/stories/{story_id}",
+    "/stories/{story_id}/story",
     response_model=FamilyStory,
     status_code=status.HTTP_200_OK,
 )
@@ -527,6 +527,7 @@ async def get_family_tree_by_id(story_id: str, db=Depends(get_db)) -> FamilyStor
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Family story not found"
             )
+        
         return FamilyStory.from_dict(story.to_dict())
     except Exception as e:
         raise HTTPException(
@@ -535,7 +536,7 @@ async def get_family_tree_by_id(story_id: str, db=Depends(get_db)) -> FamilyStor
 
 
 @router.post(
-    "/trees/story", response_model=FamilyStory, status_code=status.HTTP_201_CREATED
+    "/stories", response_model=FamilyStory, status_code=status.HTTP_201_CREATED
 )
 async def add_family_story(
     story: AddFamilyStorySchema, db=Depends(get_db)
@@ -544,7 +545,6 @@ async def add_family_story(
     try:
         new_story = FamilyStory(
             **story.model_dump(),
-            tree_id=story.tree_id,
         )
         db.collection(FAMILY_STORY).document(new_story.id).set(new_story.to_dict())
         return new_story
@@ -555,7 +555,7 @@ async def add_family_story(
 
 
 @router.put(
-    "/trees/{story_id}/story",
+    "/stories/{story_id}",
     response_model=FamilyStory,
     status_code=status.HTTP_200_OK,
 )
@@ -584,7 +584,7 @@ async def update_family_story(
         )
 
 
-@router.delete("/trees/{story_id}/story", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/stories/{story_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_family_story(story_id: str, db=Depends(get_db)) -> None:
     """Delete a family story"""
     try:

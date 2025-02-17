@@ -6,6 +6,9 @@ import {
   Person,
   AddMemberPayload,
   DeleteMemberPayload,
+  AddStoryPayload,
+  FamilyStory,
+  UpdateStoryPayload,
 } from '../types/tree';
 
 export const useGetFamilyTreesByUser = (userId: string) => {
@@ -68,4 +71,41 @@ export const useUpdateTree = (treeId: string) => {
     `/trees/${treeId}`,
     'PUT',
   );
+};
+
+export const useGetFamilyStories = (treeId: string) => {
+  return useApiQuery<FamilyStory[]>(
+    ['familyStories', treeId],
+    `/stories/${treeId}`,
+    {
+      queryKey: ['familyStories', treeId],
+      enabled: !!treeId,
+    },
+  );
+};
+
+export const useGetFamilyStoriesById = (storyId: string) => {
+  return useApiQuery<FamilyStory>(
+    ['familyStories', storyId],
+    `/stories/${storyId}/story`,
+    {
+      queryKey: ['familyStories', storyId],
+      enabled: !!storyId,
+    },
+  );
+};
+
+export const useCreateStory = () => {
+  return useApiMutation<FamilyStory, AddStoryPayload>('/stories', 'POST');
+};
+
+export const useUpdateStory = (storyId: string) => {
+  return useApiMutation<Person, UpdateStoryPayload>(
+    `/stories/${storyId}`,
+    'PUT',
+  );
+};
+
+export const useDeleteFamilyStory = (storyId: string) => {
+  return useApiMutation<void, void>(`/trees/${storyId}`, 'DELETE');
 };

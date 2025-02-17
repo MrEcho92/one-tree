@@ -57,4 +57,4 @@ export default function FamilyMemberTable({ data }: any) {
   });
 
   return <MaterialReactTable table={table} />;
-};
+}

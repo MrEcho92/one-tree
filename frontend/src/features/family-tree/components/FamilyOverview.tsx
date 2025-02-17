@@ -20,7 +20,6 @@ import { transformDate } from '../../../utils/transformDate';
 import { capitalize } from '../../../utils/capitalize';
 import { UpdateTreePayload } from '../../../types/tree';
 
-
 type TreeOverviewProps = {
   initialData?: any;
   onSave?: any;

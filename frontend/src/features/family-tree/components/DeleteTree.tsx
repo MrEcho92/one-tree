@@ -3,7 +3,6 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ClearIcon from '@mui/icons-material/Clear';
 import Button from '@mui/material/Button';
-import { DeleteMemberPayload } from '../../../types/tree';
 
 type DeleteTreeProps = {
   closeModal: () => void;

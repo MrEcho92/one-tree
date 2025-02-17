@@ -10,6 +10,5 @@ export * from './Navigation';
 export * from './TreeWrapper';
 export * from './FamilyTable';
 export * from './FamilyOverview';
-export * from './constants'
-
-
+export * from './constants';
+export * from './AddStoryModal';
