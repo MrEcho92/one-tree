@@ -12,3 +12,13 @@ export const MIN_SCALE = 0.2 as const;
 
 export const NODE_WIDTH = 240 as const;
 export const NODE_HEIGHT = 280 as const;
+
+export const topTags = [
+  'Family',
+  'Food',
+  'History',
+  'Legacy',
+  'Memories',
+  'Recipes',
+  'Ceremonies',
+] as const;

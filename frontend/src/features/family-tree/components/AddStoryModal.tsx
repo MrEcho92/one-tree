@@ -10,22 +10,13 @@ import Chip from '@mui/material/Chip';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { AddStoryPayload } from '../../../types';
+import { topTags } from './constants';
 
 type AddStoryProps = {
   closeModal: () => void;
   onAddStory: (payload: AddStoryPayload) => void;
   treeId: string;
 };
-
-const topTags = [
-  'Family',
-  'Food',
-  'History',
-  'Legacy',
-  'Memories',
-  'Recipes',
-  'Ceremonies',
-] as const;
 
 type FormValues = {
   title: string;
@@ -55,6 +46,7 @@ export default function AddStoryToTree({
       tags: data.tags,
       is_public: data.is_public,
       tree_id: treeId,
+      // TODO: add user email
       created_by: '123@gmail.com',
     };
 

@@ -75,6 +75,7 @@ export default function AddMemberDialog({
         last_name: data.last_name,
         date_of_birth: data.date_of_birth,
         gender: data.gender,
+        // TODO: add user email
         created_by: '123@gmail.com',
       },
       relation: {

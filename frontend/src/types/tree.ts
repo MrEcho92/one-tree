@@ -165,6 +165,7 @@ export interface FamilyStory {
   tags?: string[];
   is_public: boolean;
   media_url?: string;
+  tree_id: string;
 }
 
 export interface UpdateStoryPayload {
@@ -174,4 +175,11 @@ export interface UpdateStoryPayload {
   is_public?: boolean;
   media_url?: string;
   updated_by?: string;
+}
+
+export interface StoryForm {
+  title: string;
+  content: string;
+  tags: string[];
+  is_public: boolean;
 }

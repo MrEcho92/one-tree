@@ -107,5 +107,5 @@ export const useUpdateStory = (storyId: string) => {
 };
 
 export const useDeleteFamilyStory = (storyId: string) => {
-  return useApiMutation<void, void>(`/trees/${storyId}`, 'DELETE');
+  return useApiMutation<void, void>(`/stories/${storyId}`, 'DELETE');
 };

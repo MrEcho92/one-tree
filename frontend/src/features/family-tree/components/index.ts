@@ -12,3 +12,5 @@ export * from './FamilyTable';
 export * from './FamilyOverview';
 export * from './constants';
 export * from './AddStoryModal';
+export * from './StoryDetails';
+export * from './DeleteStory';

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSnackbar } from 'notistack';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -10,7 +10,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { useModal } from '../../../components/common';
 import AddStoryToTree from './AddStoryModal';
-import { AddStoryPayload } from '../../../types';
+import { AddStoryPayload, UpdateStoryPayload } from '../../../types';
 import {
   useCreateStory,
   useUpdateStory,
@@ -19,6 +19,8 @@ import {
   useDeleteFamilyStory,
 } from '../../../hooks/treeHooks';
 import { capitalize } from '../../../utils';
+import StoryDetails from './StoryDetails';
+import queryClient from '../../../core/http/react-query';
 
 type FamilyStoryProps = {
   treeId: string;
@@ -27,9 +29,9 @@ type FamilyStoryProps = {
 export function FamilyStory({ treeId }: FamilyStoryProps) {
   const { openModal, closeModal } = useModal();
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const [selectedIndex, setSelectedIndex] = useState<number>(1);
-  const [selectedStoryId, setSelectedStoryId] = useState<string>("");
+  const [selectedStoryId, setSelectedStoryId] = useState<string>('');
 
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -37,7 +39,7 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
     storyId: string,
   ) => {
     setSelectedIndex(index);
-    setSelectedStoryId(storyId)
+    setSelectedStoryId(storyId);
   };
 
   const createMutation = useCreateStory();
@@ -47,17 +49,67 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
     isLoading: isStoryLoading,
     isError: isStoryError,
   } = useGetFamilyStoriesById(selectedStoryId);
+  const deleteStoryMutation = useDeleteFamilyStory(selectedStoryId ?? '');
+  const updateStoryMutation = useUpdateStory(selectedStoryId ?? '');
+
+  const familyStories = useMemo(() => {
+    if (data) {
+      return data as any;
+    }
+    return null;
+  }, [data]);
+
+  const getStoryDetails = useCallback(() => {
+    if (storyData) {
+      return storyData as any;
+    }
+    return null;
+  }, [storyData]);
+
+  const storyDetails = getStoryDetails();
+
+  if (isLoading || isStoryLoading) {
+    return <Box>Loading...</Box>;
+  }
+
+  if (isError || isStoryError) {
+    return <Box>Error occured</Box>;
+  }
 
   function handleAddStory(payload: AddStoryPayload) {
     createMutation.mutate(payload, {
       onSuccess: () => {
         enqueueSnackbar('Story added successfully', { variant: 'success' });
-        closeModal();
+        queryClient.refetchQueries({
+          queryKey: ['familyStories', treeId],
+          exact: true,
+        });
+        closeModal?.();
       },
       onError: (error: any) => {
         enqueueSnackbar(`Failed to add story: ${error.message}`, {
           variant: 'error',
         });
+      },
+    });
+  }
+
+  function handleUpdateStory(payload: UpdateStoryPayload): void {
+    updateStoryMutation.mutate(payload, {
+      onSuccess: () => {
+        enqueueSnackbar('Family story updated successfully!', {
+          variant: 'success',
+        });
+        queryClient.refetchQueries({
+          queryKey: ['familyStories', selectedStoryId],
+          exact: true,
+        });
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to update family story', {
+          variant: 'error',
+        });
+        console.error('Error updating story:', error);
       },
     });
   }
@@ -71,14 +123,28 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
       />,
     );
   }
-  const familyStories = useMemo(() => {
-    if (data) {
-      return data as any;
-    }
-    return null;
-  }, [data]);
 
-  console.log('data', data);
+  function handleDeleteStory() {
+    deleteStoryMutation.mutate(undefined, {
+      onSuccess: () => {
+        enqueueSnackbar('Story deleted successfully!', {
+          variant: 'success',
+        });
+        queryClient.refetchQueries({
+          queryKey: ['familyStories', treeId],
+          exact: true,
+        });
+        closeModal?.();
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to delete story', {
+          variant: 'error',
+        });
+        console.error('Error deleting story:', error);
+      },
+    });
+  }
+
   return (
     <Box sx={{ width: '100%', height: '80vh', my: 1 }}>
       <Box py={1} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -109,6 +175,12 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
           <Typography variant="body1" fontWeight="bold" py={1}>
             Family Stories
           </Typography>
+          <Typography
+            variant="body2"
+            sx={{ color: (theme) => theme.palette.text.secondary }}
+          >
+            Select a story from the list to view its details.
+          </Typography>
           <List component="nav" aria-label="main mailbox folders">
             {familyStories?.map((story: any, index: number) => (
               <ListItemButton
@@ -118,7 +190,9 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
               >
                 <ListItemText
                   primary={
-                    <Typography noWrap>{capitalize(story.title)}</Typography>
+                    <Typography noWrap color="info">
+                      {capitalize(story.title)}
+                    </Typography>
                   }
                 />
               </ListItemButton>
@@ -129,7 +203,11 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
         <Box
           sx={{ width: { xs: '60%', md: '70%' }, bgcolor: 'background.paper' }}
         >
-          <Typography>Family Stories</Typography>
+          <StoryDetails
+            story={storyDetails}
+            onDeleteStory={handleDeleteStory}
+            onUpdateStory={handleUpdateStory}
+          />
         </Box>
       </Box>
     </Box>

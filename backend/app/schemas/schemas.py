@@ -131,3 +131,4 @@ class UpdatedFamilyStorySchema(BaseModel):
     media_url: Optional[str] = None
     tags: Optional[List[str]] = []
     is_public: Optional[bool]
+    updated_by: str

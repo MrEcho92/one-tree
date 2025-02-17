@@ -50,6 +50,7 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const { openModal } = useModal();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  // TODO: add user email
   const userId = '123@gmail.com';
   const {
     data: familyTrees,
