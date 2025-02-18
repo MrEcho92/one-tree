@@ -1,0 +1,34 @@
+{
+    "createTree": {
+        "title": "Create Family Tree",
+        "sections": {
+            "treeName": "Tree Name",
+            "description": "Description",
+            "makeTreePublic": "Make tree public?",
+            "common": {
+                "firstName": "First Name",
+                "lastName": "Last Name",
+                "dob": "Date of Birth",
+                "gender": "Gender",
+                "deceased": "Is Deceased?"
+            },
+            "root": {
+                "title": "Root Member (Me)"
+            },
+            "father": {
+                "title": "Father"
+            },
+            "mother": {
+                "title": "Mother"
+            }
+        },
+        "actionBtn": "Create Tree"
+    },
+    "treeId": {
+        "navItems": {
+            "overview": "Overview",
+            "tree":"Tree",
+            "stories": "Stories"
+        }
+    }
+}

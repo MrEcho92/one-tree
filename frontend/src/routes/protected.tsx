@@ -1,9 +1,7 @@
 import { Navigate, RouteObject } from 'react-router-dom';
 import { ProtectedBase } from '../components/sections';
-
-export function App() {
-  return <div>App level</div>;
-}
+import { DashboardPage } from '../features/dashbord/page';
+import { TreeRoutes } from '../features/family-tree/routes/treeRoutes';
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -12,7 +10,11 @@ export const protectedRoutes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <div>Home page</div>,
+        element: <DashboardPage />,
+      },
+      {
+        path: 'tree/*',
+        element: <TreeRoutes />,
       },
       {
         path: '*',

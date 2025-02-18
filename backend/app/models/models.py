@@ -39,6 +39,7 @@ class Person(AbstractBaseModel):
     first_name: str
     middle_name: Optional[str] = None
     last_name: str
+    last_name_at_birth: Optional[str] = None
     date_of_birth: Optional[datetime] = None
     gender: Optional[str] = None
     is_alive: Optional[bool] = True
@@ -50,6 +51,7 @@ class Person(AbstractBaseModel):
     mother_id: Optional[str] = None
     spouse_id: Optional[List[str]] = []
     children_id: Optional[List[str]] = []
+    sibling_id: Optional[List[str]] = []
     tree_id: str
 
 
@@ -66,7 +68,8 @@ class FamilyStory(AbstractBaseModel):
     content: str
     media_url: Optional[str] = None
     tags: Optional[List[str]] = []
-    family_tree_id: str
+    tree_id: str
+    is_public: bool = False
 
 
 class ContextState(Enum):
