@@ -1,0 +1,13 @@
+{
+    "labels": {
+        "overview": "Overview",
+        "details": "Details",
+        "familyTrees": "Family trees",
+        "cultural": "Cultural stories",
+        "migration": "Migration tracking history"
+    },
+    "noFamilyAvailable": "No family trees available",
+    "update": "Update",
+    "home": "Home",
+    "dashboard": "Dashboard"
+}

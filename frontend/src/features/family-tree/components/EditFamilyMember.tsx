@@ -31,6 +31,7 @@ import { transformDate } from '../../../utils/transformDate';
 import { useUpdateMember } from '../../../hooks/treeHooks';
 import queryClient from '../../../core/http/react-query';
 import { stringAvatar } from '../../../utils/transformTree';
+import { capitalize } from '../../../utils';
 
 type EditFamilyMemberProps = {
   defaultValues: Person;
@@ -473,7 +474,7 @@ export default function EditFamilyMember({
                 >
                   Gender
                 </Typography>
-                <Typography>{updatedData?.gender}</Typography>
+                <Typography>{capitalize(updatedData?.gender)}</Typography>
               </Box>
             )}
             {updatedData?.gender && (

@@ -184,10 +184,10 @@ export default function StoryDetails({
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
               <MenuItem onClick={() => setIsEditing(true)}>
-                <EditIcon /> Edit
+                <EditIcon color="info" /> Edit
               </MenuItem>
               <MenuItem onClick={openDeleteModal}>
-                <DeleteIcon /> Delete
+                <DeleteIcon color="info" /> Delete
               </MenuItem>
             </Menu>
           </Box>

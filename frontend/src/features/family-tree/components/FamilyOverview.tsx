@@ -11,6 +11,7 @@ import {
   FormControlLabel,
   IconButton,
 } from '@mui/material';
+import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -132,15 +133,21 @@ export default function FamilyTreeOverview({
           >
             <Typography fontWeight="bold">Tree Details</Typography>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <IconButton onClick={() => setIsEditing(true)}>
-                <EditIcon fontSize="small" />
-              </IconButton>
-              <IconButton onClick={openDeleteTreeModal}>
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-              <IconButton onClick={openAddCollaboratorsModal}>
-                <PersonAddIcon fontSize="small" />
-              </IconButton>
+              <Tooltip title="Edit tree">
+                <IconButton onClick={() => setIsEditing(true)}>
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete tree">
+                <IconButton onClick={openDeleteTreeModal}>
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Add a collaborator">
+                <IconButton onClick={openAddCollaboratorsModal}>
+                  <PersonAddIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
             </Box>
           </Box>
           <Box py={1}>

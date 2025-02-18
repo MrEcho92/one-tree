@@ -148,12 +148,18 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
   return (
     <Box sx={{ width: '100%', height: '80vh', my: 1 }}>
       <Box py={1} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        <Typography variant="body1">
+        <Typography
+          variant="body1"
+          sx={{ color: (theme) => theme.palette.text.secondary }}
+        >
           The family story section allows you to preserve and share these
           priceless memories (such as recipes, ceremonies, traditions) with
           loved ones.
         </Typography>
-        <Typography variant="body1">
+        <Typography
+          variant="body1"
+          sx={{ color: (theme) => theme.palette.text.secondary }}
+        >
           Your family’s history is more than just names and dates - it’s the
           stories, traditions, and experiences that shape your identity. Keep
           them private or share them with the community to celebrate your

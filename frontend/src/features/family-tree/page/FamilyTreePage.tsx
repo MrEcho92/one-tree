@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Stack from '@mui/material/Stack';
@@ -55,6 +56,8 @@ export default function FamilyTreePage() {
   const { enqueueSnackbar } = useSnackbar();
   const { openModal, closeModal } = useModal();
   const navigate = useNavigate();
+
+  const { t } = useTranslation('tree');
 
   const [value, setValue] = useState<string>('1');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -283,9 +286,9 @@ export default function FamilyTreePage() {
           <TabContext value={value}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <TabList onChange={handleChange} aria-label="family tree tabs">
-                <Tab label="Overview" value="1" />
-                <Tab label="Tree" value="2" />
-                <Tab label="Stories" value="3" />
+                <Tab label={t('tree:treeId.navItems.overview')} value="1" />
+                <Tab label={t('tree:treeId.navItems.tree')} value="2" />
+                <Tab label={t('tree:treeId.navItems.stories')} value="3" />
               </TabList>
             </Box>
             <TabPanel value="1" sx={{ p: { xs: '0' } }}>

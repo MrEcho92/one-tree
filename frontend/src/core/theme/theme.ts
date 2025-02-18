@@ -1,6 +1,15 @@
 import { createTheme, ThemeOptions } from '@mui/material';
 
 const themeOptions: ThemeOptions = {
+  components: {
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          color: 'white',
+        },
+      },
+    },
+  },
   palette: {
     primary: {
       main: '#086A33', // Deep Green

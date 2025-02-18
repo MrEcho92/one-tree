@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid2';
@@ -49,6 +50,7 @@ export function DashboardPage() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { openModal } = useModal();
+  const { t } = useTranslation('dashboard');
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   // TODO: add user email
   const userId = '123@gmail.com';
@@ -58,6 +60,12 @@ export function DashboardPage() {
     isError,
   } = useGetFamilyTreesByUser(userId ?? '');
   const treeData = familyTrees as any;
+  if (isLoading) {
+    return <Box>Loading...</Box>;
+  }
+  if (isError) {
+    return <Box>Error...</Box>;
+  }
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
       <Stack
@@ -69,10 +77,13 @@ export function DashboardPage() {
           mt: { xs: 8, md: 0 },
         }}
       >
-        <Header title="Home" headerName="Dashboard" />
+        <Header
+          title={t('dashboard:home')}
+          headerName={t('dashboard:dashboard')}
+        />
         <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
           <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-            Overview
+            {t('dashboard:labels.overview')}
           </Typography>
           <Grid
             container
@@ -121,14 +132,14 @@ export function DashboardPage() {
           <Divider />
 
           <Typography component="h2" variant="h6" sx={{ my: 2 }}>
-            Details
+            {t('dashboard:labels.details')}
           </Typography>
           <Grid container spacing={2} columns={12}>
             <Grid size={{ xs: 12, lg: 6 }}>
               <Card variant="outlined" sx={{ width: '100%' }}>
                 <CardContent>
                   <Typography component="h2" variant="subtitle1" gutterBottom>
-                    Family Trees
+                    {t('dashboard:labels.familyTrees')}
                   </Typography>
                   <Stack sx={{ justifyContent: 'space-between' }}>
                     {treeData &&
@@ -159,7 +170,8 @@ export function DashboardPage() {
                                 variant="subtitle2"
                                 sx={{ color: theme.palette.text.secondary }}
                               >
-                                Updated {transformDate(tree.updated_at)}
+                                {t('dashboard:update')}{' '}
+                                {transformDate(tree.updated_at)}
                               </Typography>
                             </Box>
                             <Box>
@@ -168,7 +180,7 @@ export function DashboardPage() {
                           </Stack>
                         );
                       })}
-                    {!treeData && <Box>No family trees available</Box>}
+                    {!treeData && <Box>{t('dashboard:noFamilyAvailable')}</Box>}
                   </Stack>
                 </CardContent>
               </Card>
@@ -181,7 +193,7 @@ export function DashboardPage() {
                 <Card variant="outlined" sx={{ width: '100%' }}>
                   <CardContent>
                     <Typography component="h2" variant="subtitle1" gutterBottom>
-                      Cultural stories
+                      {t('dashboard:labels.cultural')}
                     </Typography>
                     <Stack sx={{ justifyContent: 'space-between' }}>
                       <Stack
@@ -215,7 +227,7 @@ export function DashboardPage() {
                 <Card variant="outlined" sx={{ width: '100%' }}>
                   <CardContent>
                     <Typography component="h2" variant="subtitle1" gutterBottom>
-                      Migration Tracking history
+                      {t('dashboard:labels.migration')}
                     </Typography>
                     <Stack sx={{ justifyContent: 'space-between' }}>
                       <Stack

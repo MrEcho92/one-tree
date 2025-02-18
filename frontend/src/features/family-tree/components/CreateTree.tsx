@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Divider, FormLabel, IconButton, useTheme } from '@mui/material';
@@ -35,6 +36,7 @@ export default function CreateTree() {
   });
 
   const navigate = useNavigate();
+  const { t } = useTranslation(['tree', 'common']);
 
   const mutation = useCreateFamilyTree();
 
@@ -106,21 +108,24 @@ export default function CreateTree() {
             color: palette.text.primary,
           }}
         >
-          Create Family Tree
+          {t('tree:createTree.title')}
         </Typography>
         <IconButton onClick={closeModal}>
           <ClearIcon />
         </IconButton>
       </Box>
       <TextField
-        label="Tree Name"
+        label={t('tree:createTree.sections.treeName')}
         {...register('name', { required: true })}
         required
       />
-      <TextField label="Description" {...register('description')} />
+      <TextField
+        label={t('tree:createTree.sections.description')}
+        {...register('description')}
+      />
       <FormControlLabel
         control={<Checkbox {...register('is_public')} />}
-        label="Make tree public?"
+        label={t('tree:createTree.sections.makeTreePublic')}
       />
       <Divider />
       <Typography
@@ -132,15 +137,15 @@ export default function CreateTree() {
           color: palette.text.secondary,
         }}
       >
-        Root Member (Me)
+        {t('tree:createTree.sections.makeTreePublic')}
       </Typography>
       <TextField
-        label="First Name"
+        label={t('tree:createTree.sections.common.firstName')}
         {...register('root_first_name', { required: true })}
         required
       />
       <TextField
-        label="Last Name"
+        label={t('tree:createTree.sections.common.lastName')}
         {...register('root_last_name', { required: true })}
         required
       />
@@ -150,7 +155,7 @@ export default function CreateTree() {
         render={({ field }) => (
           <DatePicker
             minDate={dayjs('1850-01-01').toDate()}
-            label="Date of Birth"
+            label={t('tree:createTree.sections.common.dob')}
             format="dd/MM/yyyy"
             value={field.value ? new Date(field.value) : null}
             onChange={(date) =>
@@ -162,14 +167,14 @@ export default function CreateTree() {
         )}
       />
       <FormControl component="fieldset" required>
-        <FormLabel>Gender</FormLabel>
+        <FormLabel>{t('tree:createTree.sections.common.gender')}</FormLabel>
         <Controller
           name="root_gender"
           control={control}
           render={({ field }) => (
             <Select {...field}>
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
+              <MenuItem value="male">{t('common:male')}</MenuItem>
+              <MenuItem value="female">{t('common:female')}</MenuItem>
             </Select>
           )}
         />
@@ -184,17 +189,23 @@ export default function CreateTree() {
           color: palette.text.secondary,
         }}
       >
-        Father
+        {t('tree:createTree.sections.father.title')}
       </Typography>
-      <TextField label="First Name" {...register('father_first_name')} />
-      <TextField label="Last Name" {...register('father_last_name')} />
+      <TextField
+        label={t('tree:createTree.sections.common.firstName')}
+        {...register('father_first_name')}
+      />
+      <TextField
+        label={t('tree:createTree.sections.common.lastName')}
+        {...register('father_last_name')}
+      />
       <Controller
         name="father_date_of_birth"
         control={control}
         render={({ field }) => (
           <DatePicker
             minDate={dayjs('1850-01-01').toDate()}
-            label="Date of Birth"
+            label={t('tree:createTree.sections.common.dob')}
             format="dd/MM/yyyy"
             value={field.value ? new Date(field.value) : null}
             onChange={(date) =>
@@ -206,21 +217,21 @@ export default function CreateTree() {
         )}
       />
       <FormControl component="fieldset" required>
-        <FormLabel>Gender</FormLabel>
+        <FormLabel>{t('tree:createTree.sections.common.gender')}</FormLabel>
         <Controller
           name="father_gender"
           control={control}
           render={({ field }) => (
             <Select {...field}>
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
+              <MenuItem value="male">{t('common:male')}</MenuItem>
+              <MenuItem value="female">{t('common:female')}</MenuItem>
             </Select>
           )}
         />
       </FormControl>
       <FormControlLabel
         control={<Checkbox {...register('father_is_alive')} />}
-        label="Is Deceased?"
+        label={t('tree:createTree.sections.common.deceased')}
       />
       <Divider />
       <Typography
@@ -232,17 +243,23 @@ export default function CreateTree() {
           color: palette.text.secondary,
         }}
       >
-        Mother
+        {t('tree:createTree.sections.mother.title')}
       </Typography>
-      <TextField label="First Name" {...register('mother_first_name')} />
-      <TextField label="Last Name" {...register('mother_last_name')} />
+      <TextField
+        label={t('tree:createTree.sections.common.firstName')}
+        {...register('mother_first_name')}
+      />
+      <TextField
+        label={t('tree:createTree.sections.common.lastName')}
+        {...register('mother_last_name')}
+      />
       <Controller
         name="mother_date_of_birth"
         control={control}
         render={({ field }) => (
           <DatePicker
             minDate={dayjs('1850-01-01').toDate()}
-            label="Date of Birth"
+            label={t('tree:createTree.sections.common.dob')}
             format="dd/MM/yyyy"
             value={field.value ? new Date(field.value) : null}
             onChange={(date) =>
@@ -254,25 +271,25 @@ export default function CreateTree() {
         )}
       />
       <FormControl component="fieldset" required>
-        <FormLabel>Gender</FormLabel>
+        <FormLabel>{t('tree:createTree.sections.common.gender')}</FormLabel>
         <Controller
           name="mother_gender"
           control={control}
           render={({ field }) => (
             <Select {...field}>
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
+              <MenuItem value="male">{t('common:male')}</MenuItem>
+              <MenuItem value="female">{t('common:female')}</MenuItem>
             </Select>
           )}
         />
       </FormControl>
       <FormControlLabel
         control={<Checkbox {...register('mother_is_alive')} />}
-        label="Is Deceased?"
+        label={t('tree:createTree.sections.common.deceased')}
       />
 
       <Button type="submit" variant="contained" color="primary">
-        Create Tree
+        {t('tree:createTree.actionBtn')}
       </Button>
     </Box>
   );
