@@ -115,7 +115,7 @@ export default function AddMemberDialog({
       );
       setSpouseNames(spouse);
     }
-  }, [spouseMembers, isAddMemberOpen]);
+  }, [spouseMembers, isAddMemberOpen, selectedPerson?.spouse_id]);
 
   return (
     <Dialog
