@@ -15,8 +15,12 @@ export const publicRoutes: RouteObject[] = [
         element: <LandingRoutes />,
       },
       {
-        path: '/hub',
+        path: 'hub/*',
         element: <CulturalRoutes />,
+      },
+      {
+        path: '/about',
+        element: <div>About us</div>,
       },
     ],
   },
