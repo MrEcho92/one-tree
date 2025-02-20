@@ -20,6 +20,7 @@ import { useModal } from '../../../components/common';
 import CreateTree from '../../family-tree/components/CreateTree';
 import { useGetFamilyTreesByUser } from '../../../hooks/treeHooks';
 import { transformDate } from '../../../utils/transformDate';
+import CreateCulturalPost from '../../cultural-context/components/CreatePost';
 
 const data = [
   {
@@ -119,6 +120,9 @@ export function DashboardPage() {
                       onClick={() => {
                         if (data.id === 'family-tree')
                           openModal(<CreateTree />);
+                        else if (data.id === 'hub')
+                          openModal(<CreateCulturalPost />);
+                        else openModal(<div>migration tracking</div>);
                       }}
                     >
                       {data?.btnTitle}
