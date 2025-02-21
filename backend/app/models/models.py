@@ -81,9 +81,10 @@ class ContextState(Enum):
 class CulturalContext(AbstractBaseModel):
     title: str
     content: str
-    media_url: Optional[str] = None
+    video_url: Optional[str] = None
+    image_url: Optional[str] = None
+    link_url: Optional[str] = None
     tags: List[str] = []
-    country: str = None
     state: ContextState = ContextState.PENDING.value
 
 

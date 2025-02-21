@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.core.constants import CULTURAL_CONTEXT
 from app.core.database import get_db
 from app.models.models import CulturalContext
-from app.schemas.schemas import CreateCulturalContextSchema
+from backend.app.schemas.cultural_schemas import CreateCulturalContextSchema
 
 router = APIRouter()
 

@@ -7,7 +7,7 @@ from google.cloud import firestore
 from app.core.constants import FAMILY_STORY, FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
-from app.schemas.schemas import (
+from backend.app.schemas.tree_schemas import (
     AddCollaboratorSchema,
     AddFamilyStorySchema,
     AddPersonSchema,
@@ -527,7 +527,7 @@ async def get_family_tree_by_id(story_id: str, db=Depends(get_db)) -> FamilyStor
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Family story not found"
             )
-        
+
         return FamilyStory.from_dict(story.to_dict())
     except Exception as e:
         raise HTTPException(

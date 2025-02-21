@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
@@ -49,15 +48,6 @@ class UpdatePersonSchema(BaseModel):
     bio: Optional[str] = None
     photo_url: Optional[str] = None
     updated_by: Optional[str] = None
-
-
-class CreateCulturalContextSchema(BaseModel):
-    title: str
-    content: str
-    media_url: Optional[str] = None
-    tags: List[str] = []
-    country: str
-    created_by: str
 
 
 class FamilyTrees(BaseModel):
