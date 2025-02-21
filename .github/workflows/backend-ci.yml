@@ -39,7 +39,6 @@ jobs:
             
       - name: Run linting
         run: |
-          # flake8 .
           black . --check
           isort . --check-only
 
