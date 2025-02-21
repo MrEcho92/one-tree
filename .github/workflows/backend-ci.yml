@@ -37,11 +37,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
             
-      # - name: Run linting
-      #   run: |
-      #     flake8 .
-      #     black . --check
-      #     isort . --check-only
+      - name: Run linting
+        run: |
+          # flake8 .
+          black . --check
+          isort . --check-only
 
       # - name: Run tests
       #   run: |

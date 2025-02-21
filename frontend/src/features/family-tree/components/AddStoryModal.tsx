@@ -115,7 +115,7 @@ export default function AddStoryToTree({
                     placeholder="Add tags"
                     fullWidth
                     margin="dense"
-                    helperText="Please note you can add new tags"
+                    helperText="Please note you can add new tags e.g. marriage, tradition"
                   />
                 )}
               />

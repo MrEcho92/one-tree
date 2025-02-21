@@ -21,4 +21,6 @@ export const topTags = [
   'Memories',
   'Recipes',
   'Ceremonies',
+  'Music',
+  'Ghana',
 ] as const;
