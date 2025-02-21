@@ -46,7 +46,9 @@ async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTrees]:
         trees = db.collection(FAMILY_TREE).where("created_by", "==", user_id).stream()
         return [FamilyTrees(**tree.to_dict()) for tree in trees]
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.get(
@@ -71,7 +73,9 @@ async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
 
         return FamilyTree.from_dict(tree_data)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.post("/trees", response_model=FamilyTree, status_code=status.HTTP_201_CREATED)
@@ -100,8 +104,12 @@ async def create_tree_with_members(
 
         # Add members
         root_id = add_member(family_tree.root_member, tree.id)
-        father_id = add_member(family_tree.father, tree.id) if family_tree.father else None
-        mother_id = add_member(family_tree.mother, tree.id) if family_tree.mother else None
+        father_id = (
+            add_member(family_tree.father, tree.id) if family_tree.father else None
+        )
+        mother_id = (
+            add_member(family_tree.mother, tree.id) if family_tree.mother else None
+        )
 
         # Update root member with parent ids
         root_ref = db.collection(PEOPLE).document(root_id)
@@ -127,11 +135,15 @@ async def create_tree_with_members(
 
         # Update tree with members IDs
         tree_ref = db.collection(FAMILY_TREE).document(tree.id)
-        tree_ref.update({"members": firestore.ArrayUnion([root_id, father_id, mother_id])})
+        tree_ref.update(
+            {"members": firestore.ArrayUnion([root_id, father_id, mother_id])}
+        )
 
         return tree
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.put(
@@ -161,7 +173,9 @@ async def add_collaborator(
         tree["members"] = fetch_members(tree.get("members", []), db)
         return FamilyTree.from_dict(tree_ref)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.post(
@@ -209,8 +223,12 @@ async def add_member_tree(
                     relation_data = relation_doc.to_dict()
 
                     if field in ["spouse_id", "children_id", "sibling_id"]:
-                        if profile_id not in relation_data.get(field, []):  # Prevent duplicates
-                            relation_data[field] = relation_data.get(field, []) + [profile_id]
+                        if profile_id not in relation_data.get(
+                            field, []
+                        ):  # Prevent duplicates
+                            relation_data[field] = relation_data.get(field, []) + [
+                                profile_id
+                            ]
                     else:
                         relation_data[field] = profile_id
 
@@ -266,7 +284,9 @@ async def add_member_tree(
                 update_relation(relation.primary_spouse_id, "children_id", person.id)
                 update_relation(
                     person.id,
-                    "father_id" if relation.primary_spouse_gender == "male" else "mother_id",
+                    "father_id"
+                    if relation.primary_spouse_gender == "male"
+                    else "mother_id",
                     relation.primary_spouse_id,
                 )
 
@@ -283,7 +303,9 @@ async def add_member_tree(
             if primary_user_doc.exists:
                 primary_user_data = primary_user_doc.to_dict()
                 # parent field to look for in primary_user_data
-                field_id = "mother_id" if relation.rel == RelationType.FATHER else "father_id"
+                field_id = (
+                    "mother_id" if relation.rel == RelationType.FATHER else "father_id"
+                )
                 spouse_id = primary_user_data.get(field_id)
                 if spouse_id is not None:
                     # update spouse fields
@@ -296,7 +318,9 @@ async def add_member_tree(
         return FamilyTree.from_dict(tree_data)
     except Exception as e:
         logger.error(f"Unexpected error from adding a member: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.put(
@@ -304,7 +328,9 @@ async def add_member_tree(
     response_model=FamilyTree,
     status_code=status.HTTP_200_OK,
 )
-async def update_tree(tree_id: str, tree_data: UpdateTreeSchema, db=Depends(get_db)) -> FamilyTree:
+async def update_tree(
+    tree_id: str, tree_data: UpdateTreeSchema, db=Depends(get_db)
+) -> FamilyTree:
     """Update a family tree"""
     try:
         tree_ref = db.collection(FAMILY_TREE).document(tree_id)
@@ -326,7 +352,9 @@ async def update_tree(tree_id: str, tree_data: UpdateTreeSchema, db=Depends(get_
         updated_tree["members"] = fetch_members(updated_tree.get("members", []), db)
         return FamilyTree.from_dict(updated_tree)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.put(
@@ -334,7 +362,9 @@ async def update_tree(tree_id: str, tree_data: UpdateTreeSchema, db=Depends(get_
     response_model=Person,
     status_code=status.HTTP_200_OK,
 )
-async def update_member(member: UpdatePersonSchema, person_id: str, db=Depends(get_db)) -> Person:
+async def update_member(
+    member: UpdatePersonSchema, person_id: str, db=Depends(get_db)
+) -> Person:
     """Update a family member"""
     try:
         person_ref = db.collection(PEOPLE).document(person_id)
@@ -351,7 +381,9 @@ async def update_member(member: UpdatePersonSchema, person_id: str, db=Depends(g
 
         return Person.from_dict(person_ref.get().to_dict())
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.delete("/trees/{tree_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -376,11 +408,15 @@ async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
         # Delete the tree
         tree_ref.delete()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.delete("/trees/{tree_id}/member", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_tree_member(tree_id: str, item: DeleteMemberSchema, db=Depends(get_db)):
+async def delete_tree_member(
+    tree_id: str, item: DeleteMemberSchema, db=Depends(get_db)
+):
     """
     Deletes a member from the family tree while updating relationships.
 
@@ -476,13 +512,17 @@ async def delete_tree_member(tree_id: str, item: DeleteMemberSchema, db=Depends(
     response_model=List[FamilyStoriesSchema],
     status_code=status.HTTP_200_OK,
 )
-async def get_family_stories(tree_id: str, db=Depends(get_db)) -> List[FamilyStoriesSchema]:
+async def get_family_stories(
+    tree_id: str, db=Depends(get_db)
+) -> List[FamilyStoriesSchema]:
     """Get all family stories for a specific family tree"""
     try:
         stories = db.collection(FAMILY_STORY).where("tree_id", "==", tree_id).stream()
         return [FamilyStory(**story.to_dict()) for story in stories]
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.get(
@@ -502,11 +542,17 @@ async def get_family_tree_by_id(story_id: str, db=Depends(get_db)) -> FamilyStor
 
         return FamilyStory.from_dict(story.to_dict())
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
-@router.post("/stories", response_model=FamilyStory, status_code=status.HTTP_201_CREATED)
-async def add_family_story(story: AddFamilyStorySchema, db=Depends(get_db)) -> FamilyStory:
+@router.post(
+    "/stories", response_model=FamilyStory, status_code=status.HTTP_201_CREATED
+)
+async def add_family_story(
+    story: AddFamilyStorySchema, db=Depends(get_db)
+) -> FamilyStory:
     """Add a new family story to a family tree"""
     try:
         new_story = FamilyStory(
@@ -515,7 +561,9 @@ async def add_family_story(story: AddFamilyStorySchema, db=Depends(get_db)) -> F
         db.collection(FAMILY_STORY).document(new_story.id).set(new_story.to_dict())
         return new_story
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.put(
@@ -544,7 +592,9 @@ async def update_family_story(
         updated_story = story_ref.get().to_dict()
         return FamilyStory.from_dict(updated_story)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.delete("/stories/{story_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -560,4 +610,6 @@ async def delete_family_story(story_id: str, db=Depends(get_db)) -> None:
             )
         story_ref.delete()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )

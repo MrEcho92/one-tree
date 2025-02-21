@@ -21,7 +21,9 @@ async def get_contexts(db=Depends(get_db)) -> List[CulturalContext]:
         contexts = db.collection(CULTURAL_CONTEXT).stream()
         return [CulturalContext.from_dict(context.to_dict()) for context in contexts]
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.get(
@@ -40,7 +42,9 @@ async def get_context_by_id(context_id: str, db=Depends(get_db)) -> CulturalCont
             )
         return CulturalContext.from_dict(context.to_dict())
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.post(
@@ -57,7 +61,9 @@ async def create_context(
         db.collection(CULTURAL_CONTEXT).document(context.id).set(context.to_dict())
         return context
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.put(
@@ -74,7 +80,9 @@ async def update_context(
         db.collection(CULTURAL_CONTEXT).document(context_id).set(context.to_dict())
         return context
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.delete(
@@ -87,4 +95,6 @@ async def delete_context(context_id: str, db=Depends(get_db)) -> None:
     try:
         db.collection(CULTURAL_CONTEXT).document(context_id).delete()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )

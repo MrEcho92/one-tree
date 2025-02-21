@@ -15,7 +15,9 @@ load_dotenv()
 
 db: Optional[firestore.Client] = None
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv(
+    "GOOGLE_APPLICATION_CREDENTIALS"
+)
 
 
 def get_db() -> firestore.Client:
