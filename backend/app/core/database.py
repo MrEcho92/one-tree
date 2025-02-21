@@ -15,9 +15,7 @@ load_dotenv()
 
 db: Optional[firestore.Client] = None
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv(
-    "GOOGLE_APPLICATION_CREDENTIALS"
-)
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 
 
 def get_db() -> firestore.Client:
@@ -27,8 +25,7 @@ def get_db() -> firestore.Client:
     """
     if db is None:
         raise RuntimeError(
-            "Database not initialized. Ensure the application "
-            " has started properly."
+            "Database not initialized. Ensure the application " " has started properly."
         )
     return db
 
