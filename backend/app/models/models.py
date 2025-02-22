@@ -72,7 +72,7 @@ class FamilyStory(AbstractBaseModel):
     is_public: bool = False
 
 
-class ContextState(Enum):
+class ContextStatus(Enum):
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"
@@ -85,7 +85,7 @@ class CulturalContext(AbstractBaseModel):
     image_url: Optional[str] = None
     link_url: Optional[str] = None
     tags: List[str] = []
-    state: ContextState = ContextState.PENDING.value
+    status: ContextStatus = ContextStatus.PENDING.value
 
 
 class MigrationEvent(AbstractBaseModel):
