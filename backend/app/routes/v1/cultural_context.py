@@ -6,7 +6,7 @@ from google.cloud import firestore
 from app.core.constants import CULTURAL_CONTEXT
 from app.core.database import get_db
 from app.models.models import ContextStatus, CulturalContext
-from backend.app.schemas.cultural_schemas import (
+from app.schemas.cultural_schemas import (
     CreateCulturalContextSchema,
     UpdateCulturalContextSchema,
 )
@@ -136,7 +136,6 @@ async def update_context(
 
 @router.delete(
     "/contexts/{context_id}",
-    response_model=CulturalContext,
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_context(context_id: str, db=Depends(get_db)) -> None:

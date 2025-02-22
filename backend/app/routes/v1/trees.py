@@ -7,7 +7,7 @@ from google.cloud import firestore
 from app.core.constants import FAMILY_STORY, FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
-from backend.app.schemas.tree_schemas import (
+from app.schemas.tree_schemas import (
     AddCollaboratorSchema,
     AddFamilyStorySchema,
     AddPersonSchema,
