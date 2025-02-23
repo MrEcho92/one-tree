@@ -19,7 +19,7 @@ import { Header } from '../components';
 import { useModal } from '../../../components/common';
 import CreateTree from '../../family-tree/components/CreateTree';
 import { useGetFamilyTreesByUser } from '../../../hooks/treeHooks';
-import { transformDate } from '../../../utils/transformDate';
+import { transformDate } from '../../../utils/date';
 import CreateCulturalPost from '../../cultural-context/components/CreatePost';
 
 const data = [

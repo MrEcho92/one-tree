@@ -8,6 +8,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid2';
 import { styled } from '@mui/material/styles';
+import { useGetCulturalPosts } from '../../../hooks/hubHooks';
 
 const cardData = [
   {
@@ -144,6 +145,10 @@ function Author({ authors }: { authors: { name: string; avatar: string }[] }) {
 
 export default function HubList() {
   const [focusedCardIndex, setFocusedCardIndex] = useState<number | null>(null);
+
+  const { data, isLoading, isError } = useGetCulturalPosts();
+
+  console.log('data', data);
 
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);

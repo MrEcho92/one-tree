@@ -6,7 +6,7 @@ export function CulturalRoutes() {
   return (
     <Routes>
       <Route path="" element={<CulturalPage />} />
-      <Route path=":hubId" element={<HubDetails />} />
+      <Route path=":contextId" element={<HubDetails />} />
     </Routes>
   );
 }

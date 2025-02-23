@@ -17,7 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useForm, Controller } from 'react-hook-form';
 import FamilyMemberTable from './FamilyTable';
-import { transformDate } from '../../../utils/transformDate';
+import { transformDate } from '../../../utils/date';
 import { capitalize } from '../../../utils/capitalize';
 import { UpdateTreePayload } from '../../../types/tree';
 

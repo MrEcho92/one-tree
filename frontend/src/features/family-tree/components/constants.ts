@@ -16,11 +16,9 @@ export const NODE_HEIGHT = 280 as const;
 export const topTags = [
   'Family',
   'Food',
-  'History',
   'Legacy',
   'Memories',
   'Recipes',
   'Ceremonies',
   'Music',
-  'Ghana',
 ] as const;

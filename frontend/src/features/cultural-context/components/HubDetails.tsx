@@ -1,16 +1,29 @@
+import { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import {
+  FacebookIcon,
+  FacebookShareButton,
+  XIcon,
+  TwitterShareButton,
+  WhatsappIcon,
+  WhatsappShareButton,
+} from 'react-share';
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
 import { useTheme } from '@mui/material/styles';
+import { useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import IconButton from '@mui/material/IconButton';
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
 import Grid from '@mui/material/Grid2';
+import { useGetCulturalPostsByUser } from '../../../hooks/hubHooks';
+import { capitalize } from '../../../utils';
+import { formatDate } from '../../../utils';
+import { AppConfig } from '../../../core/constants';
 
 const articleInfo = [
   {
@@ -34,8 +47,33 @@ const articleInfo = [
 
 export default function HubDetails() {
   const theme = useTheme();
+  const { contextId } = useParams();
+
+  const [url, setUrl] = useState('');
+
+  useEffect(() => {
+    setUrl(window.location.href);
+  }, []);
+
+  const { data, isLoading, isError } = useGetCulturalPostsByUser(
+    contextId ?? '',
+  );
+
+  if (isLoading) {
+    return <Box>Loading...</Box>;
+  }
+
+  if (isError) {
+    return <Box>Error...</Box>;
+  }
+
+  let PostDetails;
+  if (data) {
+    PostDetails = data as any;
+  }
+
   return (
-    <Box mt={'64px'}>
+    <Box mt="64px">
       <Container
         maxWidth="xl"
         component="main"
@@ -58,112 +96,84 @@ export default function HubDetails() {
             }}
           >
             <Box>
-              <Typography variant="h3" gutterBottom>
-                Cultural Hub
+              <Typography variant="h1" gutterBottom>
+                {capitalize(PostDetails?.title)}
               </Typography>
               <Box display="flex" gap={1}>
-                <Typography variant="subtitle2">Created by Tom</Typography>
-                <Typography variant="subtitle2">20 Feb 2025</Typography>
+                <Typography variant="subtitle2">
+                  Written by {PostDetails?.created_by}
+                </Typography>
+                <Typography variant="subtitle2">
+                  {formatDate(PostDetails?.updated_at)}
+                </Typography>
               </Box>
             </Box>
-            <Typography>
-              Explore and celebrate rich traditions! Read and share stories,
-              recipes, and customs that keep your heritage alive. Welcome to the
-              Culture section of our news, where we explore the latest trends
-              and topics in art, music, film, literature, and more. From
-              groundbreaking exhibitions and performances to up-and-coming
-              artists and cultural events, we aim to provide you with a diverse
-              range of stories that showcase the richness and diversity of our
-              world's creative landscape.
-            </Typography>
-            <CardMedia
-              component="img"
-              alt="green iguana"
-              image="https://picsum.photos/800/450?random=45"
-              sx={{
-                // aspectRatio: '16 / 9',
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-                width: '100%',
-                maxWidth: '600px',
-                margin: '0 auto',
-              }}
-            />
-            <Card
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                }}
-              >
-                <CardContent sx={{ flex: '1 0 auto', textAlign: 'center' }}>
-                  <Typography component="div" variant="h5">
-                    Live From Space
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    component="div"
-                    sx={{ color: 'text.secondary' }}
-                  >
-                    Mac Miller
-                  </Typography>
-                </CardContent>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    py: 2,
-                  }}
-                >
-                  <IconButton aria-label="previous">
-                    {theme.direction === 'rtl' ? (
-                      <SkipNextIcon />
-                    ) : (
-                      <SkipPreviousIcon />
-                    )}
-                  </IconButton>
-                  <IconButton aria-label="play/pause">
-                    <PlayArrowIcon sx={{ height: 38, width: 38 }} />
-                  </IconButton>
-                  <IconButton aria-label="next">
-                    {theme.direction === 'rtl' ? (
-                      <SkipPreviousIcon />
-                    ) : (
-                      <SkipNextIcon />
-                    )}
-                  </IconButton>
-                </Box>
-              </Box>
-            </Card>
             <Box>
-              <iframe
-                width="100%"
-                height="315"
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
+              <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                {PostDetails?.content}
+              </ReactMarkdown>
             </Box>
-            <Typography>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-              Inventore tenetur eius beatae omnis aliquam rerum quas corrupti
-              illum obcaecati nisi quia repellendus illo dignissimos, adipisci
-              est, delectus fugit vitae aperiam. Lorem ipsum, dolor sit amet
-              consectetur adipisicing elit. Ipsum maiores dolorem ea, quo,
-              repellendus minima delectus culpa laboriosam officia assumenda
-              obcaecati, mollitia accusantium voluptate nobis. Consequatur
-              voluptatum obcaecati fuga aspernatur?
-            </Typography>
+            {PostDetails?.image_url && (
+              <CardMedia
+                component="img"
+                alt="green iguana"
+                image={PostDetails?.image_url}
+                sx={{
+                  // aspectRatio: '16 / 9',
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                  width: '100%',
+                  maxWidth: '600px',
+                  margin: '0 auto',
+                }}
+              />
+            )}
+            {PostDetails?.video_url && (
+              <Box>
+                <iframe
+                  width="100%"
+                  height="315"
+                  src={PostDetails?.video_url}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </Box>
+            )}
+            {PostDetails?.link_url && (
+              <Box textAlign="center" mt={4}>
+                <Link
+                  href={PostDetails?.link_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  underline="hover"
+                >
+                  {PostDetails?.link_url}
+                </Link>
+              </Box>
+            )}
+            <Card sx={{ width: '100%', mx: 'auto', p: 2 }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Listen to this Audio
+                </Typography>
+                <audio
+                  controls
+                  controlsList="nodownload"
+                  style={{ width: '100%' }}
+                  onContextMenu={(e) => e.preventDefault()}
+                >
+                  <source
+                    src={
+                      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+                    }
+                    type="audio/mpeg"
+                  />
+                  Your browser does not support the audio element.
+                </audio>
+              </CardContent>
+            </Card>
           </Box>
 
           <Divider orientation="vertical" variant="middle" flexItem />
@@ -178,7 +188,7 @@ export default function HubDetails() {
               }}
             >
               <Typography variant="h6" gutterBottom>
-                Related post
+                Related posts
               </Typography>
               <Grid container spacing={2} columns={12}>
                 {articleInfo.map((article, index) => (
@@ -207,6 +217,62 @@ export default function HubDetails() {
                 ))}
               </Grid>
               <Divider />
+              <Box>
+                <Typography variant="h6" gutterBottom>
+                  Share
+                </Typography>
+                <Box display="flex" gap={1}>
+                  <Box
+                    sx={{
+                      svg: {
+                        borderRadius: '50%',
+                        height: '35px',
+                        width: '35px',
+                        overflow: 'hidden',
+                      },
+                    }}
+                  >
+                    <FacebookShareButton
+                      url={url}
+                      hashtag={AppConfig.SITE_NAME}
+                    >
+                      <FacebookIcon />
+                    </FacebookShareButton>
+                  </Box>
+                  <Box
+                    sx={{
+                      svg: {
+                        borderRadius: '50%',
+                        height: '35px',
+                        width: '35px',
+                        overflow: 'hidden',
+                      },
+                    }}
+                  >
+                    <TwitterShareButton
+                      url={url}
+                      title={PostDetails?.title}
+                      hashtags={[AppConfig.SITE_NAME]}
+                    >
+                      <XIcon />
+                    </TwitterShareButton>
+                  </Box>
+                  <Box
+                    sx={{
+                      svg: {
+                        borderRadius: '50%',
+                        height: '35px',
+                        width: '35px',
+                        overflow: 'hidden',
+                      },
+                    }}
+                  >
+                    <WhatsappShareButton url={url} title={PostDetails?.title}>
+                      <WhatsappIcon />
+                    </WhatsappShareButton>
+                  </Box>
+                </Box>
+              </Box>
             </Box>
           </Box>
         </Box>

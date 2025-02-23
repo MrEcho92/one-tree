@@ -26,7 +26,7 @@ async def get_contexts(db=Depends(get_db)) -> List[CulturalContext]:
         return [
             CulturalContext.from_dict(context.to_dict())
             for context in contexts
-            if context.status == ContextStatus.APPROVED
+            if context.to_dict().get("status") == ContextStatus.APPROVED.value
         ]
     except Exception as e:
         raise HTTPException(
@@ -53,7 +53,7 @@ async def get_user_contexts(user_id: str, db=Depends(get_db)) -> List[CulturalCo
 
 
 @router.get(
-    "/contexts/{context_id}",
+    "/contexts/{context_id}/post",
     response_model=CulturalContext,
     status_code=status.HTTP_200_OK,
 )
@@ -61,6 +61,7 @@ async def get_context_by_id(context_id: str, db=Depends(get_db)) -> CulturalCont
     """Get a cultural context by ID"""
     try:
         context = db.collection(CULTURAL_CONTEXT).document(context_id).get()
+        print('context', context)
         if not context.exists:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -103,7 +104,7 @@ async def create_context(
 
 
 @router.put(
-    "/contexts/{context_id}",
+    "/contexts/{context_id}/update",
     response_model=CulturalContext,
     status_code=status.HTTP_200_OK,
 )

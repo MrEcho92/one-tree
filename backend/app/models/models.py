@@ -85,7 +85,7 @@ class CulturalContext(AbstractBaseModel):
     image_url: Optional[str] = None
     link_url: Optional[str] = None
     tags: List[str] = []
-    status: ContextStatus = ContextStatus.PENDING.value
+    status: str = ContextStatus.PENDING.value
 
 
 class MigrationEvent(AbstractBaseModel):

@@ -21,6 +21,8 @@ import 'react-quill-new/dist/quill.snow.css';
 import UploadIcon from '@mui/icons-material/Upload';
 import { topTags } from '../../family-tree';
 import { useModal } from '../../../components/common';
+import { useCreateCulturalPost } from '../../../hooks/hubHooks';
+import { CreateCulturalFormValues } from '../../../types';
 
 const maxSize = 10 * 1024 * 1024; // 10MB
 
@@ -33,13 +35,7 @@ export default function CreateCulturalPost() {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<{
-    title: string;
-    content: string;
-    tags: string[];
-    media: FormData;
-    link_url: string;
-  }>({
+  } = useForm<CreateCulturalFormValues>({
     defaultValues: {
       title: '',
       content: '',
@@ -54,6 +50,8 @@ export default function CreateCulturalPost() {
     setValueTab(newValue);
   };
 
+  const mutation = useCreateCulturalPost();
+
   const onSubmit = (data: any) => {
     const payload: { [key: string]: any } = {
       title: data.title,
@@ -65,6 +63,8 @@ export default function CreateCulturalPost() {
     };
 
     let uploadType: string | null = null;
+
+    // handle audio upload type="audio/mpeg"
 
     const formData = new FormData();
     if (data.media) {
@@ -83,7 +83,20 @@ export default function CreateCulturalPost() {
       payload[uploadType] = formData;
     }
 
-    console.log('payload', payload);
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        enqueueSnackbar('Cultural post added successfully!', {
+          variant: 'success',
+        });
+        closeModal?.();
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to add cultural post', {
+          variant: 'error',
+        });
+        console.error('Error adding cultural post:', error);
+      },
+    });
   };
 
   return (
@@ -102,7 +115,7 @@ export default function CreateCulturalPost() {
           sx={{
             fontWeight: typography.h1.fontWeight,
             fontSize: {
-              xs: typography.h4.fontSize,
+              xs: typography.h5.fontSize,
               md: typography.h3.fontSize,
             },
             color: palette.text.primary,
@@ -158,7 +171,7 @@ export default function CreateCulturalPost() {
                       placeholder="Add tags"
                       fullWidth
                       margin="dense"
-                      helperText="Please note you can add new tags e.g. Marriage, Nigeria, Ghana, Tradition"
+                      helperText="Note you can add new tags e.g. Marriage, Nigeria, Ghana, Tradition"
                     />
                   )}
                 />
@@ -228,7 +241,7 @@ export default function CreateCulturalPost() {
                 </TabPanel>
                 <TabPanel
                   value="2"
-                  sx={{ p: { xs: '0', md: 2, minHeight: 400 } }}
+                  sx={{ p: { xs: '0', md: 2, minHeight: 300 } }}
                 >
                   <Controller
                     name="media"
@@ -285,7 +298,9 @@ export default function CreateCulturalPost() {
                         fullWidth
                         margin="dense"
                         error={!!errors.link_url}
-                        helperText={errors.link_url ? errors.link_url.message : ''}
+                        helperText={
+                          errors.link_url ? errors.link_url.message : ''
+                        }
                       />
                     )}
                   />

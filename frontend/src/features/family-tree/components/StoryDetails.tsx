@@ -138,7 +138,7 @@ export default function StoryDetails({
                       placeholder="Add tags"
                       fullWidth
                       margin="dense"
-                      helperText="Please note you can add new tags"
+                      helperText="Note you can add new tags e.g. marriage, tradition"
                     />
                   )}
                 />
