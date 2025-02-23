@@ -1,8 +1,32 @@
 import { useApiMutation, useApiQuery } from './base';
-import { CulturalPost, UpdateCulturalPostPayload } from '../types';
+import {
+  CulturalPost,
+  UpdateCulturalPostPayload,
+  CulturalContextResponse,
+} from '../types';
 
-export const useGetCulturalPosts = () => {
-  return useApiQuery<CulturalPost[]>(['culturalPosts'], `/contexts`);
+export const useGetCulturalPosts = (
+  query: string = '',
+  page: number = 1,
+  limit: number = 10,
+) => {
+  // Only add parameters that have values
+  const params = new URLSearchParams();
+
+  if (query.trim()) {
+    params.append('q', query.trim());
+  }
+
+  params.append('page', page.toString());
+  params.append('limit', limit.toString());
+  params.append('latest', 'true');
+
+  const queryString = params.toString();
+
+  return useApiQuery<CulturalContextResponse>(
+    ['culturalPosts', query, page, limit],
+    `/contexts?${queryString ? queryString : ''}`,
+  );
 };
 
 export const useGetCulturalPostsByUser = (contextId: string) => {

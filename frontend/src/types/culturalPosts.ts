@@ -14,6 +14,7 @@ export interface CulturalPost {
   content: string;
   video_url?: string;
   image_url?: string;
+  audio_url?: string;
   link_url?: string;
   tags: string[];
   status: ContextStatus;
@@ -25,6 +26,7 @@ export interface CreateCulturalPost {
   content: string;
   video_url?: string;
   image_url?: string;
+  audio_url?: string;
   link_url?: string;
   tags?: string[];
 }
@@ -35,6 +37,7 @@ export interface UpdateCulturalPostPayload {
   content?: string;
   video_url?: string;
   image_url?: string;
+  audio_url?: string;
   link_url?: string;
   tags?: string[];
 }
@@ -45,4 +48,11 @@ export interface CreateCulturalFormValues {
   tags: string[];
   media: FormData;
   link_url: string;
+}
+
+export interface CulturalContextResponse {
+  cultural_context: CulturalPost[];
+  total_items: number;
+  total_pages: number;
+  current_page: number;
 }

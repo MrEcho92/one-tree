@@ -64,8 +64,6 @@ export default function CreateCulturalPost() {
 
     let uploadType: string | null = null;
 
-    // handle audio upload type="audio/mpeg"
-
     const formData = new FormData();
     if (data.media) {
       if (['image/png', 'image/jpeg', 'image/jpg'].includes(data.media.type)) {
@@ -76,6 +74,13 @@ export default function CreateCulturalPost() {
       ) {
         uploadType = 'video_url';
         formData.append('video_url', data.media);
+      } else if (
+        ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'].includes(
+          data.media.type,
+        )
+      ) {
+        uploadType = 'audio_url';
+        formData.append('audio_url', data.media);
       }
     }
 
@@ -182,7 +187,7 @@ export default function CreateCulturalPost() {
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                   <TabList onChange={handleChange} aria-label="create post">
                     <Tab label="Text" value="1" />
-                    <Tab label="Image & Video" value="2" />
+                    <Tab label="Image & Video & Audio" value="2" />
                     <Tab label="Link" value="3" />
                   </TabList>
                 </Box>
@@ -249,7 +254,7 @@ export default function CreateCulturalPost() {
                     render={({ field }) => (
                       <Box>
                         <input
-                          accept="image/*,video/*"
+                          accept="image/*,video/*,audio/*"
                           style={{ display: 'none' }}
                           id="upload-media"
                           type="file"

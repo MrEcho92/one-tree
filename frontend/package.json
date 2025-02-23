@@ -23,6 +23,7 @@
     "i18next": "^23.2.3",
     "i18next-browser-languagedetector": "^8.0.2",
     "i18next-http-backend": "^3.0.1",
+    "lodash": "^4.17.21",
     "material-react-table": "^3.1.0",
     "notistack": "^3.0.2",
     "react": "^19.0.0",
@@ -74,6 +75,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.15",
     "@types/node": "^22.10.2",
     "@types/react-query": "^1.2.8",
     "husky": "^8.0.0",

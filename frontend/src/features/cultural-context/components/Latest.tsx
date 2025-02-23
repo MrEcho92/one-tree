@@ -1,93 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid2';
 import { styled } from '@mui/material/styles';
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
+import { CulturalPost } from '../../../types';
+import { capitalize } from '../../../utils';
+import { formatDate } from '../../../utils';
 
-const articleInfo = [
-  {
-    tag: 'Engineering',
-    title: 'The future of AI in software engineering',
-    description:
-      'Artificial intelligence is revolutionizing software engineering. Explore how AI-driven tools are enhancing development processes and improving software quality.',
-    authors: [
-      { name: 'Remy Sharp', avatar: '/static/images/avatar/1.jpg' },
-      { name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' },
-    ],
-  },
-  {
-    tag: 'Product',
-    title: 'Driving growth with user-centric product design',
-    description:
-      'Our user-centric product design approach is driving significant growth. Learn about the strategies we employ to create products that resonate with users.',
-    authors: [{ name: 'Erica Johns', avatar: '/static/images/avatar/6.jpg' }],
-  },
-  {
-    tag: 'Design',
-    title: 'Embracing minimalism in modern design',
-    description:
-      'Minimalism is a key trend in modern design. Discover how our design team incorporates minimalist principles to create clean and impactful user experiences.',
-    authors: [{ name: 'Kate Morrison', avatar: '/static/images/avatar/7.jpg' }],
-  },
-  {
-    tag: 'Company',
-    title: 'Cultivating a culture of innovation',
-    description:
-      'Innovation is at the heart of our company culture. Learn about the initiatives we have in place to foster creativity and drive groundbreaking solutions.',
-    authors: [{ name: 'Cindy Baker', avatar: '/static/images/avatar/3.jpg' }],
-  },
-  {
-    tag: 'Engineering',
-    title: 'Advancing cybersecurity with next-gen solutions',
-    description:
-      'Our next-generation cybersecurity solutions are setting new standards in the industry. Discover how we protect our clients from evolving cyber threats.',
-    authors: [
-      { name: 'Agnes Walker', avatar: '/static/images/avatar/4.jpg' },
-      { name: 'Trevor Henderson', avatar: '/static/images/avatar/5.jpg' },
-    ],
-  },
-  {
-    tag: 'Product',
-    title: 'Enhancing customer experience through innovation',
-    description:
-      'Our innovative approaches are enhancing customer experience. Learn about the new features and improvements that are delighting our users.',
-    authors: [{ name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' }],
-  },
-  {
-    tag: 'Engineering',
-    title: 'Pioneering sustainable engineering solutions',
-    description:
-      "Learn about our commitment to sustainability and the innovative engineering solutions we're implementing to create a greener future. Discover the impact of our eco-friendly initiatives.",
-    authors: [
-      { name: 'Agnes Walker', avatar: '/static/images/avatar/4.jpg' },
-      { name: 'Trevor Henderson', avatar: '/static/images/avatar/5.jpg' },
-    ],
-  },
-  {
-    tag: 'Product',
-    title: 'Maximizing efficiency with our latest product updates',
-    description:
-      'Our recent product updates are designed to help you maximize efficiency and achieve more. Get a detailed overview of the new features and improvements that can elevate your workflow.',
-    authors: [{ name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' }],
-  },
-  {
-    tag: 'Design',
-    title: 'Designing for the future: trends and insights',
-    description:
-      'Stay ahead of the curve with the latest design trends and insights. Our design team shares their expertise on creating intuitive and visually stunning user experiences.',
-    authors: [{ name: 'Kate Morrison', avatar: '/static/images/avatar/7.jpg' }],
-  },
-  {
-    tag: 'Company',
-    title: "Our company's journey: milestones and achievements",
-    description:
-      "Take a look at our company's journey and the milestones we've achieved along the way. From humble beginnings to industry leader, discover our story of growth and success.",
-    authors: [{ name: 'Cindy Baker', avatar: '/static/images/avatar/3.jpg' }],
-  },
-];
 const StyledTypography = styled(Typography)({
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
@@ -133,46 +56,12 @@ const TitleTypography = styled(Typography)(({ theme }) => ({
   },
 }));
 
-function Author({ authors }: { authors: { name: string; avatar: string }[] }) {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 2,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '16px',
-      }}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 1,
-          alignItems: 'center',
-        }}
-      >
-        <AvatarGroup max={3}>
-          {authors.map((author, index) => (
-            <Avatar
-              key={index}
-              alt={author.name}
-              src={author.avatar}
-              sx={{ width: 24, height: 24 }}
-            />
-          ))}
-        </AvatarGroup>
-        <Typography variant="caption">
-          {authors.map((author) => author.name).join(', ')}
-        </Typography>
-      </Box>
-      <Typography variant="caption">July 14, 2021</Typography>
-    </Box>
-  );
-}
+type LatestProps = {
+  posts: CulturalPost[];
+};
 
-export default function Latest() {
+export default function Latest({ posts }: LatestProps) {
+  const navigate = useNavigate();
   const [focusedCardIndex, setFocusedCardIndex] = useState<number | null>(null);
 
   const handleFocus = (index: number) => {
@@ -183,18 +72,14 @@ export default function Latest() {
     setFocusedCardIndex(null);
   };
 
-  const handleClick = () => {
-    console.info('You clicked the filter chip.');
-  };
-
   return (
     <Box>
       <Typography variant="h2" gutterBottom>
         Latest
       </Typography>
       <Grid container spacing={4} columns={12} sx={{ my: 4 }}>
-        {articleInfo.map((article, index) => (
-          <Grid key={index} size={{ xs: 12, sm: 6 }}>
+        {posts?.map((post, index) => (
+          <Grid key={`latest_${index}`} size={{ xs: 12, sm: 6 }}>
             <Box
               sx={{
                 display: 'flex',
@@ -207,32 +92,50 @@ export default function Latest() {
                 borderRadius: '8px',
               }}
             >
-              <Typography gutterBottom variant="caption" component="div">
-                {article.tag}
-              </Typography>
+              <Stack direction="row" spacing={1}>
+                {post.tags.map((tag) => (
+                  <Chip label={tag} variant="outlined" size="small" />
+                ))}
+              </Stack>
               <TitleTypography
                 gutterBottom
                 variant="h6"
                 onFocus={() => handleFocus(index)}
                 onBlur={handleBlur}
-                tabIndex={0}
+                tabIndex={index}
                 className={focusedCardIndex === index ? 'Mui-focused' : ''}
+                onClick={() => navigate(`/hub/${post.id}`)}
               >
-                {article.title}
+                {capitalize(post.title)}
                 <NavigateNextRoundedIcon
                   className="arrow"
                   sx={{ fontSize: '1rem' }}
                 />
               </TitleTypography>
-              <StyledTypography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: 2,
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '16px',
+                }}
               >
-                {article.description}
-              </StyledTypography>
-
-              <Author authors={article.authors} />
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 1,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography variant="caption">{post.created_by}</Typography>
+                </Box>
+                <Typography variant="caption">
+                  {formatDate(post.updated_at)}
+                </Typography>
+              </Box>
             </Box>
           </Grid>
         ))}
