@@ -29,13 +29,13 @@ export const useGetCulturalPosts = (
   );
 };
 
-export const useGetCulturalPostsByUser = (contextId: string) => {
+export const useGetCulturalPostsByUser = (userId: string) => {
   return useApiQuery<CulturalPost[]>(
-    ['culturalPosts', contextId],
-    `/contexts/${contextId}/post`,
+    ['culturalPosts', userId],
+    `/contexts/${userId}/user`,
     {
-      queryKey: ['culturalPosts', contextId],
-      enabled: !!contextId,
+      queryKey: ['culturalPosts', userId],
+      enabled: !!userId,
     },
   );
 };

@@ -9,6 +9,8 @@ import Typography from '@mui/material/Typography';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import Button from '@mui/material/Button';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
@@ -19,8 +21,12 @@ import { Header } from '../components';
 import { useModal } from '../../../components/common';
 import CreateTree from '../../family-tree/components/CreateTree';
 import { useGetFamilyTreesByUser } from '../../../hooks/treeHooks';
+import { useGetCulturalPostsByUser } from '../../../hooks/hubHooks';
 import { transformDate } from '../../../utils/date';
 import CreateCulturalPost from '../../cultural-context/components/CreatePost';
+import { capitalize } from '../../../utils';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 
 const data = [
   {
@@ -61,11 +67,19 @@ export function DashboardPage() {
     isError,
   } = useGetFamilyTreesByUser(userId ?? '');
   const treeData = familyTrees as any;
-  if (isLoading) {
-    return <Box>Loading...</Box>;
+
+  const {
+    data: Posts,
+    isLoading: isPostsLoading,
+    isError: isPostError,
+  } = useGetCulturalPostsByUser(userId ?? '');
+  const postsData = Posts as any;
+
+  if (isLoading || isPostsLoading) {
+    return <Box mt={isSmallScreen ? '64px' : ''}>Loading...</Box>;
   }
-  if (isError) {
-    return <Box>Error...</Box>;
+  if (isError || isPostError) {
+    return <Box mt={isSmallScreen ? '64px' : ''}>Error...</Box>;
   }
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
@@ -171,7 +185,7 @@ export function DashboardPage() {
                               </Typography>
                               <Typography
                                 component="p"
-                                variant="subtitle2"
+                                variant="caption"
                                 sx={{ color: theme.palette.text.secondary }}
                               >
                                 {t('dashboard:update')}{' '}
@@ -200,24 +214,57 @@ export function DashboardPage() {
                       {t('dashboard:labels.cultural')}
                     </Typography>
                     <Stack sx={{ justifyContent: 'space-between' }}>
-                      <Stack
-                        direction="row"
-                        sx={{
-                          alignContent: { xs: 'center', sm: 'flex-start' },
-                          alignItems: 'center',
-                          gap: 1,
-                        }}
-                      >
-                        <Typography variant="h4" component="p">
-                          13,277
-                        </Typography>
-                      </Stack>
-                      <Typography
-                        variant="caption"
-                        sx={{ color: 'text.secondary' }}
-                      >
-                        Sessions per day for the last 30 days
-                      </Typography>
+                      {postsData &&
+                        postsData.map((post: any) => {
+                          return (
+                            <Stack
+                              key={post.id}
+                              direction="row"
+                              sx={{
+                                alignContent: {
+                                  xs: 'center',
+                                  sm: 'flex-start',
+                                },
+                                alignItems: 'center',
+                                gap: 1,
+                                justifyContent: 'space-between',
+                                p: 1,
+                              }}
+                            >
+                              <Box>
+                                <Typography component="h2" variant="subtitle2">
+                                  {capitalize(post.title)}
+                                </Typography>
+                                <Typography
+                                  component="p"
+                                  variant="caption"
+                                  sx={{ color: theme.palette.text.secondary }}
+                                >
+                                  {t('dashboard:update')}{' '}
+                                  {transformDate(post.updated_at)}
+                                </Typography>
+                              </Box>
+                              <Box>
+                                <Tooltip title="Edit">
+                                  <IconButton
+                                    onClick={() =>
+                                      openModal(
+                                        <CreateCulturalPost post={post} />,
+                                      )
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Delete">
+                                  <IconButton onClick={() => {}}>
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Tooltip>
+                              </Box>
+                            </Stack>
+                          );
+                        })}
                     </Stack>
                   </CardContent>
                 </Card>

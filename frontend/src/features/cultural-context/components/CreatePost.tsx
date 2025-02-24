@@ -26,10 +26,17 @@ import { CreateCulturalFormValues } from '../../../types';
 
 const maxSize = 10 * 1024 * 1024; // 10MB
 
-export default function CreateCulturalPost() {
+type CreateCulturalPostProps = {
+  post?: any;
+};
+
+export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
   const { typography, palette } = useTheme();
   const { closeModal } = useModal();
   const { enqueueSnackbar } = useSnackbar();
+
+  const editMode = !!post;
+
   const {
     control,
     handleSubmit,
