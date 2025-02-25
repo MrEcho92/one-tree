@@ -1,24 +1,12 @@
 from typing import List, Optional
 
-from fastapi import Form
 from pydantic import BaseModel
 
-
-class CreateCulturalContextSchema(BaseModel):
-    title: str
-    content: str
-    video_url: Optional[str] = Form(None)
-    image_url: Optional[str] = Form(None)
-    link_url: Optional[str] = None
-    tags: List[str] = []
-    created_by: str
+from app.models.models import CulturalContext
 
 
-class UpdateCulturalContextSchema(BaseModel):
-    title: Optional[str]
-    content: Optional[str]
-    video_url: Optional[str] = Form(None)
-    image_url: Optional[str] = Form(None)
-    link_url: Optional[str] = None
-    tags: Optional[List[str]] = []
-    updated_by: str
+class CulturalContextResponse(BaseModel):
+    cultural_contexts: List[CulturalContext] = []
+    total_items: Optional[int]
+    total_pages: Optional[int]
+    current_page: Optional[int]

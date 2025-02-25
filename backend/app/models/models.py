@@ -83,6 +83,7 @@ class CulturalContext(AbstractBaseModel):
     content: str
     video_url: Optional[str] = None
     image_url: Optional[str] = None
+    audio_url: Optional[str] = None
     link_url: Optional[str] = None
     tags: List[str] = []
     status: str = ContextStatus.PENDING.value

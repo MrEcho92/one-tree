@@ -6,6 +6,7 @@ httpx==0.26.0
 mypy==0.910
 pydantic-settings==2.2.1
 pydantic[email]
+python-multipart
 
 # dev packages
 pytest==7.4.3
