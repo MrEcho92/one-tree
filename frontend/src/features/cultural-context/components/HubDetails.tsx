@@ -31,7 +31,6 @@ import {
   useGetCulturalPosts,
   useGetCulturalPostsById,
 } from '../../../hooks/hubHooks';
-import { capitalize } from '../../../utils';
 import { formatDate } from '../../../utils';
 import { AppConfig } from '../../../core/constants';
 
@@ -116,7 +115,7 @@ export default function HubDetails() {
           >
             <Box>
               <Typography variant="h1" gutterBottom>
-                {capitalize(postDetails?.title)}
+                {postDetails?.title}
               </Typography>
               <Box display="flex" gap={1}>
                 <Typography variant="subtitle2">

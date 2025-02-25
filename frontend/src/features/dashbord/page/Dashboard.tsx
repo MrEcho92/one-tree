@@ -29,7 +29,6 @@ import { useGetFamilyTreesByUser } from '../../../hooks/treeHooks';
 import { useGetCulturalPostsByUser } from '../../../hooks/hubHooks';
 import { transformDate } from '../../../utils/date';
 import CreateCulturalPost from '../../cultural-context/components/CreateEditPost';
-import { capitalize } from '../../../utils';
 import { useDeleteCulturalPost } from '../../../hooks/hubHooks';
 import queryClient from '../../../core/http/react-query';
 import DeletePostModal from '../../cultural-context/components/DeletePostModal';
@@ -282,7 +281,7 @@ export function DashboardPage() {
                             >
                               <Box>
                                 <Typography component="h2" variant="subtitle2">
-                                  {capitalize(post.title)}
+                                  {post.title}
                                 </Typography>
                                 <Box
                                   display="flex"
