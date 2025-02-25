@@ -7,7 +7,7 @@ from google.cloud import firestore
 from app.core.constants import FAMILY_STORY, FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
-from app.schemas.schemas import (
+from app.schemas.tree_schemas import (
     AddCollaboratorSchema,
     AddFamilyStorySchema,
     AddPersonSchema,
@@ -52,7 +52,9 @@ async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTrees]:
 
 
 @router.get(
-    "/trees/{tree_id}/tree", response_model=FamilyTree, status_code=status.HTTP_200_OK
+    "/trees/{tree_id}/tree",
+    response_model=FamilyTree,
+    status_code=status.HTTP_200_OK,
 )
 async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
     """Get a family tree by ID"""
@@ -60,7 +62,8 @@ async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
         tree = db.collection(FAMILY_TREE).document(tree_id).get()
         if not tree.exists:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family tree not found",
             )
 
         tree_data = tree.to_dict()
@@ -92,7 +95,9 @@ async def create_tree_with_members(
         def add_member(member_data: dict, tree_id: str) -> str:
             """Helper function to add a member"""
             member = Person(
-                **member_data, tree_id=tree_id, created_by=family_tree.created_by
+                **member_data,
+                tree_id=tree_id,
+                created_by=family_tree.created_by,
             )
             db.collection(PEOPLE).document(member.id).set(member.to_dict())
             return member.id
@@ -155,7 +160,8 @@ async def add_collaborator(
         tree = tree_ref.get()
         if not tree.exists:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family tree not found",
             )
 
         tree_ref.update(
@@ -318,7 +324,9 @@ async def add_member_tree(
 
 
 @router.put(
-    "/trees/{tree_id}", response_model=FamilyTree, status_code=status.HTTP_200_OK
+    "/trees/{tree_id}",
+    response_model=FamilyTree,
+    status_code=status.HTTP_200_OK,
 )
 async def update_tree(
     tree_id: str, tree_data: UpdateTreeSchema, db=Depends(get_db)
@@ -329,7 +337,8 @@ async def update_tree(
         tree = tree_ref.get()
         if not tree.exists:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family tree not found",
             )
 
         updated_data = tree_data.model_dump(exclude_unset=True)
@@ -362,7 +371,8 @@ async def update_member(
         person = person_ref.get()
         if not person.exists:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family member not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family member not found",
             )
         updated_data = member.model_dump(exclude_unset=True)
         updated_data["updated_by"] = member.updated_by
@@ -384,7 +394,8 @@ async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
         tree = tree_ref.get()
         if not tree.exists:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family tree not found",
             )
 
         # Batch delete all members of the tree
@@ -525,9 +536,10 @@ async def get_family_tree_by_id(story_id: str, db=Depends(get_db)) -> FamilyStor
         story = db.collection(FAMILY_STORY).document(story_id).get()
         if not story.exists:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family story not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family story not found",
             )
-        
+
         return FamilyStory.from_dict(story.to_dict())
     except Exception as e:
         raise HTTPException(
@@ -568,7 +580,8 @@ async def update_family_story(
         story = story_ref.get()
         if not story.exists:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family story not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family story not found",
             )
 
         updated_story_data = updated_data.model_dump(exclude_unset=True)
@@ -592,7 +605,8 @@ async def delete_family_story(story_id: str, db=Depends(get_db)) -> None:
         story = story_ref.get()
         if not story.exists:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Family story not found"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family story not found",
             )
         story_ref.delete()
     except Exception as e:

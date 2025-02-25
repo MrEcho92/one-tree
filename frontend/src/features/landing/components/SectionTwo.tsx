@@ -32,7 +32,7 @@ export function SectionTwo() {
       >
         <img
           src={familyLogo}
-          alt="photo of beautiful family smiling"
+          alt="beautiful family smiling"
           loading="lazy"
           style={{
             width: '100%',

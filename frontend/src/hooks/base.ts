@@ -42,10 +42,14 @@ export const useApiMutation = <TData, TVariables>(
   return useMutation<ApiResponse<TData>, ErrorResponse, TVariables>({
     mutationFn: async (variables: TVariables) => {
       try {
+        const isFormData = variables instanceof FormData;
         const response = await HTTPInstance.request<ApiResponse<TData>>({
           url,
           method,
           data: variables,
+          headers: isFormData
+            ? { 'Content-Type': 'multipart/form-data' }
+            : { 'Content-Type': 'application/json' },
         });
         return response.data;
       } catch (error: any) {

@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useSnackbar } from 'notistack';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid2';
@@ -9,8 +11,13 @@ import Typography from '@mui/material/Typography';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import Chip from '@mui/material/Chip';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -19,7 +26,12 @@ import { Header } from '../components';
 import { useModal } from '../../../components/common';
 import CreateTree from '../../family-tree/components/CreateTree';
 import { useGetFamilyTreesByUser } from '../../../hooks/treeHooks';
-import { transformDate } from '../../../utils/transformDate';
+import { useGetCulturalPostsByUser } from '../../../hooks/hubHooks';
+import { transformDate } from '../../../utils/date';
+import CreateCulturalPost from '../../cultural-context/components/CreateEditPost';
+import { useDeleteCulturalPost } from '../../../hooks/hubHooks';
+import queryClient from '../../../core/http/react-query';
+import DeletePostModal from '../../cultural-context/components/DeletePostModal';
 
 const data = [
   {
@@ -49,9 +61,14 @@ const data = [
 export function DashboardPage() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { openModal } = useModal();
+  const { openModal, closeModal } = useModal();
   const { t } = useTranslation('dashboard');
+  const { enqueueSnackbar } = useSnackbar();
+
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const [itemToDelete, setItemToDelete] = useState<string>('');
+
   // TODO: add user email
   const userId = '123@gmail.com';
   const {
@@ -60,12 +77,44 @@ export function DashboardPage() {
     isError,
   } = useGetFamilyTreesByUser(userId ?? '');
   const treeData = familyTrees as any;
-  if (isLoading) {
-    return <Box>Loading...</Box>;
+
+  const {
+    data: Posts,
+    isLoading: isPostsLoading,
+    isError: isPostError,
+  } = useGetCulturalPostsByUser(userId ?? '');
+  const postsData = Posts as any;
+
+  const deleteMutation = useDeleteCulturalPost(itemToDelete);
+
+  if (isLoading || isPostsLoading) {
+    return <Box mt={isSmallScreen ? '64px' : ''}>Loading...</Box>;
   }
-  if (isError) {
-    return <Box>Error...</Box>;
+  if (isError || isPostError) {
+    return <Box mt={isSmallScreen ? '64px' : ''}>Error...</Box>;
   }
+
+  function handleDeletePost() {
+    deleteMutation.mutate(undefined, {
+      onSuccess: () => {
+        enqueueSnackbar('Cultural post deleted successfully!', {
+          variant: 'success',
+        });
+        queryClient.refetchQueries({
+          queryKey: ['culturalPosts', userId],
+          exact: true,
+        });
+        closeModal?.();
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to delete cultural post', {
+          variant: 'error',
+        });
+        console.error('Error deleting post:', error);
+      },
+    });
+  }
+
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
       <Stack
@@ -119,6 +168,9 @@ export function DashboardPage() {
                       onClick={() => {
                         if (data.id === 'family-tree')
                           openModal(<CreateTree />);
+                        else if (data.id === 'hub')
+                          openModal(<CreateCulturalPost />);
+                        else openModal(<div>migration tracking</div>);
                       }}
                     >
                       {data?.btnTitle}
@@ -139,9 +191,16 @@ export function DashboardPage() {
               <Card variant="outlined" sx={{ width: '100%' }}>
                 <CardContent>
                   <Typography component="h2" variant="subtitle1" gutterBottom>
-                    {t('dashboard:labels.familyTrees')}
+                    {t('dashboard:labels.familyTrees')} (
+                    {treeData && treeData.length})
                   </Typography>
-                  <Stack sx={{ justifyContent: 'space-between' }}>
+                  <Stack
+                    sx={{
+                      justifyContent: 'space-between',
+                      overflowY: 'scroll',
+                      maxHeight: 250,
+                    }}
+                  >
                     {treeData &&
                       treeData.map((tree: any) => {
                         return (
@@ -167,7 +226,7 @@ export function DashboardPage() {
                               </Typography>
                               <Typography
                                 component="p"
-                                variant="subtitle2"
+                                variant="caption"
                                 sx={{ color: theme.palette.text.secondary }}
                               >
                                 {t('dashboard:update')}{' '}
@@ -193,27 +252,86 @@ export function DashboardPage() {
                 <Card variant="outlined" sx={{ width: '100%' }}>
                   <CardContent>
                     <Typography component="h2" variant="subtitle1" gutterBottom>
-                      {t('dashboard:labels.cultural')}
+                      {t('dashboard:labels.cultural')} (
+                      {postsData && postsData.length})
                     </Typography>
-                    <Stack sx={{ justifyContent: 'space-between' }}>
-                      <Stack
-                        direction="row"
-                        sx={{
-                          alignContent: { xs: 'center', sm: 'flex-start' },
-                          alignItems: 'center',
-                          gap: 1,
-                        }}
-                      >
-                        <Typography variant="h4" component="p">
-                          13,277
-                        </Typography>
-                      </Stack>
-                      <Typography
-                        variant="caption"
-                        sx={{ color: 'text.secondary' }}
-                      >
-                        Sessions per day for the last 30 days
-                      </Typography>
+                    <Stack
+                      sx={{
+                        justifyContent: 'space-between',
+                        overflowY: 'scroll',
+                        maxHeight: 250,
+                      }}
+                    >
+                      {postsData &&
+                        postsData.map((post: any) => {
+                          return (
+                            <Stack
+                              key={post.id}
+                              direction="row"
+                              sx={{
+                                alignContent: {
+                                  xs: 'center',
+                                  sm: 'flex-start',
+                                },
+                                alignItems: 'center',
+                                gap: 1,
+                                justifyContent: 'space-between',
+                                p: 1,
+                              }}
+                            >
+                              <Box>
+                                <Typography component="h2" variant="subtitle2">
+                                  {post.title}
+                                </Typography>
+                                <Box
+                                  display="flex"
+                                  alignItems="center"
+                                  justifyContent="flex-start"
+                                  gap={1}
+                                >
+                                  <Typography
+                                    component="p"
+                                    variant="caption"
+                                    sx={{ color: theme.palette.text.secondary }}
+                                  >
+                                    {t('dashboard:update')}{' '}
+                                    {transformDate(post.updated_at)}
+                                  </Typography>
+                                  <Chip label={post.status} size="small" />
+                                </Box>
+                              </Box>
+                              <Box>
+                                <Tooltip title="Edit">
+                                  <IconButton
+                                    onClick={() =>
+                                      openModal(
+                                        <CreateCulturalPost post={post} />,
+                                      )
+                                    }
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Delete">
+                                  <IconButton
+                                    onClick={() => {
+                                      setItemToDelete(post.id);
+                                      openModal(
+                                        <DeletePostModal
+                                          closeModal={closeModal}
+                                          onDelete={handleDeletePost}
+                                          name={post.title}
+                                        />,
+                                      );
+                                    }}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Tooltip>
+                              </Box>
+                            </Stack>
+                          );
+                        })}
                     </Stack>
                   </CardContent>
                 </Card>
@@ -229,7 +347,13 @@ export function DashboardPage() {
                     <Typography component="h2" variant="subtitle1" gutterBottom>
                       {t('dashboard:labels.migration')}
                     </Typography>
-                    <Stack sx={{ justifyContent: 'space-between' }}>
+                    <Stack
+                      sx={{
+                        justifyContent: 'space-between',
+                        overflowY: 'scroll',
+                        maxHeight: 250,
+                      }}
+                    >
                       <Stack
                         direction="row"
                         sx={{

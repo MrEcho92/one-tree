@@ -27,7 +27,7 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AddMemberDialog from './AddMemberDialog';
 import { Person, UpdateMemberPayload } from '../../../types/tree';
-import { transformDate } from '../../../utils/transformDate';
+import { transformDate } from '../../../utils/date';
 import { useUpdateMember } from '../../../hooks/treeHooks';
 import queryClient from '../../../core/http/react-query';
 import { stringAvatar } from '../../../utils/transformTree';

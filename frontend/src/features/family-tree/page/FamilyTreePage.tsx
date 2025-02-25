@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -8,7 +8,6 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Typography from '@mui/material/Typography';
-import { useParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Header } from '../../dashbord/components';
 import { Drawer } from '@mui/material';
@@ -26,7 +25,7 @@ import {
 import { TreeWrapper } from '../components/TreeWrapper';
 import EditFamilyMember from '../components/EditFamilyMember';
 import {
-  useGetFamilyTrees,
+  useGetFamilyTree,
   useAddMemberFamilyTree,
   useDeleteFamilyTreeMember,
   useDeleteFamilyTree,
@@ -79,7 +78,7 @@ export default function FamilyTreePage() {
     setDrawerOpen(false);
   };
 
-  const { data, isLoading, isError } = useGetFamilyTrees(treeId ?? '');
+  const { data, isLoading, isError } = useGetFamilyTree(treeId ?? '');
   const mutation = useAddMemberFamilyTree(treeId ?? '');
   const deleteTreeMemberMutation = useDeleteFamilyTreeMember(treeId ?? '');
   const deleteFamilyTreeMutation = useDeleteFamilyTree(treeId ?? '');

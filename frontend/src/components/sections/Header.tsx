@@ -9,6 +9,7 @@ import {
   Drawer,
   Divider,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import { useState, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +21,7 @@ import { AppConfig } from '../../core/constants';
 
 export function Header() {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { t } = useTranslation(['common', 'header']);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -79,6 +81,7 @@ export function Header() {
             <Button
               variant="text"
               size="small"
+              onClick={() => navigate('/')}
               sx={{
                 color() {
                   return theme.palette.primary.contrastText;
@@ -90,7 +93,9 @@ export function Header() {
             <Button
               variant="text"
               size="small"
-              onClick={() => scrollToSection('features')}
+              onClick={() => {
+                scrollToSection('features');
+              }}
               sx={{
                 color() {
                   return theme.palette.primary.contrastText;
@@ -102,6 +107,19 @@ export function Header() {
             <Button
               variant="text"
               size="small"
+              onClick={() => navigate('/hub')}
+              sx={{
+                color() {
+                  return theme.palette.primary.contrastText;
+                },
+              }}
+            >
+              {t('header:hub')}
+            </Button>
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => navigate('/about')}
               sx={{
                 color() {
                   return theme.palette.primary.contrastText;
@@ -218,11 +236,33 @@ export function Header() {
                     flexGrow: 1,
                   }}
                 ></Box>
-                <MenuItem onClick={() => {}}>Home</MenuItem>
-                <MenuItem onClick={() => scrollToSection('features')}>
-                  Our features
+                <MenuItem
+                  onClick={() => {
+                    navigate('/');
+                    setOpenMenu(false);
+                  }}
+                >
+                  {t('header:home')}
                 </MenuItem>
-                <MenuItem onClick={() => {}}>About us</MenuItem>
+                <MenuItem onClick={() => scrollToSection('features')}>
+                  {t('header:ourFeatures')}
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    navigate('/hub');
+                    setOpenMenu(false);
+                  }}
+                >
+                  {t('header:hub')}
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    navigate('/about');
+                    setOpenMenu(false);
+                  }}
+                >
+                  {t('header:aboutUs')}
+                </MenuItem>
                 <Divider />
                 <MenuItem>
                   <Button

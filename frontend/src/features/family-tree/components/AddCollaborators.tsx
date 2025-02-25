@@ -7,7 +7,7 @@ import { AddCollaboratorsPayload } from '../../../types/tree';
 import { useForm, Controller } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 
-type AddCollaborators = {
+type AddCollaboratorsProps = {
   closeModal: () => void;
   onAddCollaborators: (payload: AddCollaboratorsPayload) => void;
 };
@@ -15,7 +15,7 @@ type AddCollaborators = {
 export default function AddCollaborators({
   closeModal,
   onAddCollaborators,
-}: AddCollaborators) {
+}: AddCollaboratorsProps) {
   const {
     control,
     handleSubmit,

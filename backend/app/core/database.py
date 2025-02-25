@@ -27,7 +27,7 @@ def get_db() -> firestore.Client:
     """
     if db is None:
         raise RuntimeError(
-            "Database not initialized. Ensure the application has started properly."
+            "Database not initialized. Ensure the application " " has started properly."
         )
     return db
 

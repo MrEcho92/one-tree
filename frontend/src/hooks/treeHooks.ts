@@ -22,7 +22,7 @@ export const useGetFamilyTreesByUser = (userId: string) => {
   );
 };
 
-export const useGetFamilyTrees = (treeId: string) => {
+export const useGetFamilyTree = (treeId: string) => {
   return useApiQuery<FamilyTree>(
     ['familyTrees', treeId],
     `/trees/${treeId}/tree`,

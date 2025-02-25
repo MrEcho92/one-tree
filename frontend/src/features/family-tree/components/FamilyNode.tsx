@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import type { ExtNode } from 'relatives-tree/lib/types';
-import { brown, grey, orange } from '@mui/material/colors';
+import { grey } from '@mui/material/colors';
 import { useTheme } from '@mui/material';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import { transformDate } from '../../../utils/transformDate';
+import { transformDate } from '../../../utils/date';
 import { Person } from '../../../types/tree';
 import { stringAvatar } from '../../../utils/transformTree';
 
