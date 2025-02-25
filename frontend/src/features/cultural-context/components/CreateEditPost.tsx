@@ -60,10 +60,8 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<string | null>(null);
 
-  // Set initial tab based on post content
   useEffect(() => {
     if (editMode && post) {
-      // Set form values from existing post
       reset({
         title: post.title || '',
         content: post.content || '',
@@ -92,7 +90,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
     }
   }, [editMode, post, reset]);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setValueTab(newValue);
   };
 
@@ -102,7 +100,6 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
   const mutation = editMode ? updateMutation : createMutation;
 
   const onSubmit = (data: any) => {
-    let uploadType: string | null = null;
     const formData = new FormData();
 
     formData.append('title', data.title);
@@ -170,7 +167,6 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
     });
   };
 
-  // Function to handle file preview
   const handleFileChange = (file: File) => {
     if (file.size > maxSize) {
       enqueueSnackbar('File size exceeds the maximum limit of 10MB', {
@@ -387,14 +383,6 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                           onChange={(e) => {
                             if (e.target.files && e.target.files[0]) {
                               const file = e.target.files[0];
-                              // if (file.size > maxSize) {
-                              //   enqueueSnackbar(
-                              //     'File size exceeds the maximum limit of 10MB',
-                              //     { variant: 'error' },
-                              //   );
-                              //   return;
-                              // }
-                              // field.onChange(file);
                               handleFileChange(file);
                             }
                           }}

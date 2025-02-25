@@ -63,7 +63,7 @@ export default function HubDetails() {
     isError: isRelatedDataError,
   } = useGetCulturalPosts(searchQuery || '', 1, 5);
 
-  if (isLoading) {
+  if (isLoading || isRelatedDataLoading) {
     return (
       <Box
         sx={{
@@ -79,7 +79,7 @@ export default function HubDetails() {
     );
   }
 
-  if (isError) {
+  if (isError || isRelatedDataError) {
     return <Box mt="64px">Error...</Box>;
   }
 

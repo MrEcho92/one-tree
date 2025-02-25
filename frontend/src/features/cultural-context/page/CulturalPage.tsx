@@ -48,7 +48,6 @@ export function CulturalPage() {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
 
-  // Debounced search handler
   const debouncedSearch = useCallback(
     debounce((query) => {
       setSearchQuery(query);
@@ -68,7 +67,7 @@ export function CulturalPage() {
   );
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     value: number,
   ) => {
     setPage(value);
@@ -105,7 +104,7 @@ export function CulturalPage() {
     remainingPosts = Posts?.cultural_contexts?.slice(3) || [];
   }
   return (
-    <Box mt={'64px'}>
+    <Box mt="64px">
       <Container
         maxWidth="xl"
         component="main"
