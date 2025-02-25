@@ -41,14 +41,6 @@ const StyledCardContent = styled(CardContent)({
   },
 });
 
-const StyledTypography = styled(Typography)({
-  display: '-webkit-box',
-  WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 2,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-});
-
 type HubListProps = {
   posts: CulturalPost[];
 };

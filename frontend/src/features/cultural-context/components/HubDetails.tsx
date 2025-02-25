@@ -35,26 +35,6 @@ import { capitalize } from '../../../utils';
 import { formatDate } from '../../../utils';
 import { AppConfig } from '../../../core/constants';
 
-const articleInfo = [
-  {
-    tag: 'Engineering',
-    title: 'The future of AI in software engineering',
-    description:
-      'Artificial intelligence is revolutionizing software engineering. Explore how AI-driven tools are enhancing development processes and improving software quality.',
-    authors: [
-      { name: 'Remy Sharp', avatar: '/static/images/avatar/1.jpg' },
-      { name: 'Travis Howard', avatar: '/static/images/avatar/2.jpg' },
-    ],
-  },
-  {
-    tag: 'Product',
-    title: 'Driving growth with user-centric product design',
-    description:
-      'Our user-centric product design approach is driving significant growth. Learn about the strategies we employ to create products that resonate with users.',
-    authors: [{ name: 'Erica Johns', avatar: '/static/images/avatar/6.jpg' }],
-  },
-];
-
 export default function HubDetails() {
   const { contextId } = useParams();
   const navigate = useNavigate();

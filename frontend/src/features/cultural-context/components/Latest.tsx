@@ -11,14 +11,6 @@ import { CulturalPost } from '../../../types';
 import { capitalize } from '../../../utils';
 import { formatDate } from '../../../utils';
 
-const StyledTypography = styled(Typography)({
-  display: '-webkit-box',
-  WebkitBoxOrient: 'vertical',
-  WebkitLineClamp: 2,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-});
-
 const TitleTypography = styled(Typography)(({ theme }) => ({
   position: 'relative',
   textDecoration: 'none',

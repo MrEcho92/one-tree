@@ -1,9 +1,5 @@
 import { useApiMutation, useApiQuery } from './base';
-import {
-  CulturalPost,
-  UpdateCulturalPostPayload,
-  CulturalContextResponse,
-} from '../types';
+import { CulturalPost, CulturalContextResponse } from '../types';
 
 export const useGetCulturalPosts = (
   query: string = '',
@@ -41,11 +37,11 @@ export const useGetCulturalPostsByUser = (userId: string) => {
 };
 
 export const useCreateCulturalPost = () => {
-  return useApiMutation<CulturalPost, any>('/contexts', 'POST');
+  return useApiMutation<CulturalPost, FormData>('/contexts', 'POST');
 };
 
 export const useUpdateCulturalPost = (contextId: string) => {
-  return useApiMutation<CulturalPost, UpdateCulturalPostPayload>(
+  return useApiMutation<CulturalPost, FormData>(
     `/contexts/${contextId}/update`,
     'PUT',
   );

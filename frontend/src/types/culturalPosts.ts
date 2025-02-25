@@ -46,7 +46,7 @@ export interface CreateCulturalFormValues {
   title: string;
   content: string;
   tags: string[];
-  media: FormData;
+  media: FormData & string;
   link_url: string;
 }
 

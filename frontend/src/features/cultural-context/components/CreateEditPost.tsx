@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { useForm, Controller } from 'react-hook-form';
 import {
@@ -21,8 +21,12 @@ import 'react-quill-new/dist/quill.snow.css';
 import UploadIcon from '@mui/icons-material/Upload';
 import { topTags } from '../../family-tree';
 import { useModal } from '../../../components/common';
-import { useCreateCulturalPost } from '../../../hooks/hubHooks';
+import {
+  useCreateCulturalPost,
+  useUpdateCulturalPost,
+} from '../../../hooks/hubHooks';
 import { CreateCulturalFormValues } from '../../../types';
+import queryClient from '../../../core/http/react-query';
 
 const maxSize = 10 * 1024 * 1024; // 10MB
 
@@ -42,6 +46,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
     handleSubmit,
     setValue,
     formState: { errors },
+    reset,
   } = useForm<CreateCulturalFormValues>({
     defaultValues: {
       title: '',
@@ -51,64 +56,179 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
       link_url: '',
     },
   });
-  const [valueTab, setValueTab] = useState('1');
+  const [valueTab, setValueTab] = useState<string>('1');
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [mediaType, setMediaType] = useState<string | null>(null);
+
+  // Set initial tab based on post content
+  useEffect(() => {
+    if (editMode && post) {
+      // Set form values from existing post
+      reset({
+        title: post.title || '',
+        content: post.content || '',
+        tags: post.tags || [],
+        link_url: post.link_url || '',
+      });
+
+      // Determine which tab to show based on post content
+      if (post.image_url) {
+        setValueTab('2');
+        setMediaPreview(post.image_url);
+        setMediaType('image');
+      } else if (post.video_url) {
+        setValueTab('2');
+        setMediaPreview(post.video_url);
+        setMediaType('video');
+      } else if (post.audio_url) {
+        setValueTab('2');
+        setMediaPreview(post.audio_url);
+        setMediaType('audio');
+      } else if (post.link_url) {
+        setValueTab('3');
+      } else {
+        setValueTab('1');
+      }
+    }
+  }, [editMode, post, reset]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValueTab(newValue);
   };
 
-  const mutation = useCreateCulturalPost();
+  const createMutation = useCreateCulturalPost();
+  const updateMutation = useUpdateCulturalPost(post?.id ?? '');
+
+  const mutation = editMode ? updateMutation : createMutation;
 
   const onSubmit = (data: any) => {
-    const payload: { [key: string]: any } = {
-      title: data.title,
-      content: data.content,
-      tags: data.tags,
-      link_url: data.link,
-      // TODO: add user email
-      created_by: '123@gmail.com',
-    };
-
     let uploadType: string | null = null;
-
     const formData = new FormData();
+
+    formData.append('title', data.title);
+    formData.append('content', data.content);
+    formData.append('link_url', data.link_url);
+    data.tags.forEach((tag: any) => {
+      formData.append('tags', tag);
+    });
+
+    // TODO: add user email
+    if (editMode) {
+      formData.append('updated_by', '123@gmail.com');
+    } else {
+      formData.append('created_by', '123@gmail.com');
+    }
+
     if (data.media) {
-      if (['image/png', 'image/jpeg', 'image/jpg'].includes(data.media.type)) {
-        uploadType = 'image_url';
+      const { type } = data.media;
+
+      if (['image/png', 'image/jpeg', 'image/jpg'].includes(type)) {
         formData.append('image_url', data.media);
       } else if (
-        ['video/mp4', 'video/mpeg', 'video/quicktime'].includes(data.media.type)
+        ['video/mp4', 'video/mpeg', 'video/quicktime'].includes(type)
       ) {
-        uploadType = 'video_url';
         formData.append('video_url', data.media);
       } else if (
-        ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'].includes(
-          data.media.type,
-        )
+        ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'].includes(type)
       ) {
-        uploadType = 'audio_url';
         formData.append('audio_url', data.media);
       }
     }
 
-    if (uploadType) {
-      payload[uploadType] = formData;
+    if (editMode) {
+      if (post?.image_url) formData.append('image_url', post.image_url);
+      if (post?.video_url) formData.append('video_url', post.video_url);
+      if (post?.audio_url) formData.append('audio_url', post.audio_url);
     }
 
-    mutation.mutate(payload, {
+    mutation.mutate(formData, {
       onSuccess: () => {
-        enqueueSnackbar('Cultural post added successfully!', {
-          variant: 'success',
+        enqueueSnackbar(
+          `Cultural post ${editMode ? 'updated' : 'added'} successfully!`,
+          {
+            variant: 'success',
+          },
+        );
+        queryClient.refetchQueries({
+          queryKey: ['culturalPosts', post.created_by],
+          exact: true,
         });
         closeModal?.();
       },
       onError: (error) => {
-        enqueueSnackbar('Failed to add cultural post', {
-          variant: 'error',
-        });
-        console.error('Error adding cultural post:', error);
+        enqueueSnackbar(
+          `Failed to ${editMode ? 'update' : 'add'} cultural post`,
+          {
+            variant: 'error',
+          },
+        );
+        console.error(
+          `Error ${editMode ? 'updating' : 'adding'} cultural post:`,
+          error,
+        );
       },
     });
+  };
+
+  // Function to handle file preview
+  const handleFileChange = (file: File) => {
+    if (file.size > maxSize) {
+      enqueueSnackbar('File size exceeds the maximum limit of 10MB', {
+        variant: 'error',
+      });
+      return;
+    }
+
+    setValue('media', file as any);
+
+    // Create preview URL
+    const fileUrl = URL.createObjectURL(file);
+    setMediaPreview(fileUrl);
+
+    // Set media type for preview display
+    if (file.type.startsWith('image/')) {
+      setMediaType('image');
+    } else if (file.type.startsWith('video/')) {
+      setMediaType('video');
+    } else if (file.type.startsWith('audio/')) {
+      setMediaType('audio');
+    }
+  };
+
+  // Function to render media preview
+  const renderMediaPreview = () => {
+    if (!mediaPreview) return null;
+
+    switch (mediaType) {
+      case 'image':
+        return (
+          <Box mt={2}>
+            <img
+              src={mediaPreview}
+              alt="Preview"
+              style={{ maxWidth: '100%', maxHeight: '300px' }}
+            />
+          </Box>
+        );
+      case 'video':
+        return (
+          <Box mt={2}>
+            <video
+              controls
+              src={mediaPreview}
+              style={{ maxWidth: '100%', maxHeight: '300px' }}
+            />
+          </Box>
+        );
+      case 'audio':
+        return (
+          <Box mt={2}>
+            <audio controls src={mediaPreview} style={{ width: '100%' }} />
+          </Box>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -133,7 +253,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
             color: palette.text.primary,
           }}
         >
-          Create a cultural post
+          {editMode ? 'Edit cultural post' : 'Create a cultural post'}
         </Typography>
         <IconButton onClick={closeModal}>
           <ClearIcon />
@@ -183,7 +303,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                       placeholder="Add tags"
                       fullWidth
                       margin="dense"
-                      helperText="Note you can add new tags e.g. Marriage, Nigeria, Ghana, Tradition"
+                      helperText="Note you can add new tags e.g. Marriage, Ghana, Tradition"
                     />
                   )}
                 />
@@ -194,13 +314,13 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                   <TabList onChange={handleChange} aria-label="create post">
                     <Tab label="Text" value="1" />
-                    <Tab label="Image & Video & Audio" value="2" />
+                    <Tab label="Image/ Video/ Audio" value="2" />
                     <Tab label="Link" value="3" />
                   </TabList>
                 </Box>
                 <TabPanel
                   value="1"
-                  sx={{ p: { xs: '0', md: 2 }, minHeight: 400 }}
+                  sx={{ p: { xs: '0', md: 1 }, minHeight: 400 }}
                 >
                   <Controller
                     name="content"
@@ -242,7 +362,6 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                           'strike',
                           'blockquote',
                           'list',
-                          'bullet',
                           'indent',
                           'image',
                           'video',
@@ -253,13 +372,13 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                 </TabPanel>
                 <TabPanel
                   value="2"
-                  sx={{ p: { xs: '0', md: 2, minHeight: 300 } }}
+                  sx={{ p: { xs: '0', md: 1, minHeight: 300 } }}
                 >
                   <Controller
                     name="media"
                     control={control}
                     render={({ field }) => (
-                      <Box>
+                      <Box py={1}>
                         <input
                           accept="image/*,video/*,audio/*"
                           style={{ display: 'none' }}
@@ -268,14 +387,15 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                           onChange={(e) => {
                             if (e.target.files && e.target.files[0]) {
                               const file = e.target.files[0];
-                              if (file.size > maxSize) {
-                                enqueueSnackbar(
-                                  'File size exceeds the maximum limit of 10MB',
-                                  { variant: 'error' },
-                                );
-                                return;
-                              }
-                              field.onChange(file);
+                              // if (file.size > maxSize) {
+                              //   enqueueSnackbar(
+                              //     'File size exceeds the maximum limit of 10MB',
+                              //     { variant: 'error' },
+                              //   );
+                              //   return;
+                              // }
+                              // field.onChange(file);
+                              handleFileChange(file);
                             }
                           }}
                         />
@@ -286,14 +406,17 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                             component="span"
                             endIcon={<UploadIcon />}
                           >
-                            Upload media
+                            {editMode && mediaPreview
+                              ? 'Change media'
+                              : 'Upload media'}
                           </Button>
                         </label>
+                        {renderMediaPreview()}
                       </Box>
                     )}
                   />
                 </TabPanel>
-                <TabPanel value="3" sx={{ p: { xs: '0', md: 2 } }}>
+                <TabPanel value="3" sx={{ p: { xs: '0', md: 1 } }}>
                   <Controller
                     name="link_url"
                     control={control}
@@ -329,7 +452,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
         fullWidth
         onClick={handleSubmit(onSubmit)}
       >
-        Post
+        {editMode ? 'Update' : 'Post'}
       </Button>
     </Box>
   );
