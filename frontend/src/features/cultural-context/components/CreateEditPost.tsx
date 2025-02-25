@@ -110,10 +110,11 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
     });
 
     // TODO: add user email
+    const userId = '123@gmail.com';
     if (editMode) {
-      formData.append('updated_by', '123@gmail.com');
+      formData.append('updated_by', userId);
     } else {
-      formData.append('created_by', '123@gmail.com');
+      formData.append('created_by', userId);
     }
 
     if (data.media) {
@@ -147,7 +148,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
           },
         );
         queryClient.refetchQueries({
-          queryKey: ['culturalPosts', post.created_by],
+          queryKey: ['culturalPosts', editMode ? post.created_by : userId],
           exact: true,
         });
         closeModal?.();
@@ -344,7 +345,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                               { indent: '-1' },
                               { indent: '+1' },
                             ],
-                            ['link', 'image', 'video'],
+                            // ['link', 'image', 'video'],
                             ['clean'],
                           ],
                         }}
@@ -359,8 +360,8 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                           'blockquote',
                           'list',
                           'indent',
-                          'image',
-                          'video',
+                          // 'image',
+                          // 'video',
                         ]}
                       />
                     )}

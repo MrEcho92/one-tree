@@ -85,8 +85,13 @@ export default function Latest({ posts }: LatestProps) {
               }}
             >
               <Stack direction="row" spacing={1}>
-                {post.tags.map((tag) => (
-                  <Chip label={tag} variant="outlined" size="small" />
+                {post.tags.map((tag, index) => (
+                  <Chip
+                    label={tag}
+                    key={`latest_chip_${index}`}
+                    variant="outlined"
+                    size="small"
+                  />
                 ))}
               </Stack>
               <TitleTypography

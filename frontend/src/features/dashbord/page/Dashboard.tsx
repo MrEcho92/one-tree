@@ -192,13 +192,14 @@ export function DashboardPage() {
               <Card variant="outlined" sx={{ width: '100%' }}>
                 <CardContent>
                   <Typography component="h2" variant="subtitle1" gutterBottom>
-                    {t('dashboard:labels.familyTrees')}
+                    {t('dashboard:labels.familyTrees')} (
+                    {treeData && treeData.length})
                   </Typography>
                   <Stack
                     sx={{
                       justifyContent: 'space-between',
                       overflowY: 'scroll',
-                      maxHeight: 300,
+                      maxHeight: 250,
                     }}
                   >
                     {treeData &&
@@ -252,13 +253,14 @@ export function DashboardPage() {
                 <Card variant="outlined" sx={{ width: '100%' }}>
                   <CardContent>
                     <Typography component="h2" variant="subtitle1" gutterBottom>
-                      {t('dashboard:labels.cultural')}
+                      {t('dashboard:labels.cultural')} (
+                      {postsData && postsData.length})
                     </Typography>
                     <Stack
                       sx={{
                         justifyContent: 'space-between',
                         overflowY: 'scroll',
-                        maxHeight: 300,
+                        maxHeight: 250,
                       }}
                     >
                       {postsData &&
@@ -350,7 +352,7 @@ export function DashboardPage() {
                       sx={{
                         justifyContent: 'space-between',
                         overflowY: 'scroll',
-                        maxHeight: 300,
+                        maxHeight: 250,
                       }}
                     >
                       <Stack

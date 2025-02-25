@@ -28,8 +28,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid2';
 import {
-  useGetCulturalPostsByUser,
   useGetCulturalPosts,
+  useGetCulturalPostsById,
 } from '../../../hooks/hubHooks';
 import { capitalize } from '../../../utils';
 import { formatDate } from '../../../utils';
@@ -46,9 +46,7 @@ export default function HubDetails() {
     setUrl(window.location.href);
   }, []);
 
-  const { data, isLoading, isError } = useGetCulturalPostsByUser(
-    contextId ?? '',
-  );
+  const { data, isLoading, isError } = useGetCulturalPostsById(contextId ?? '');
 
   useEffect(() => {
     let postData = data as any;
@@ -96,7 +94,7 @@ export default function HubDetails() {
   return (
     <Box mt="64px">
       <Container
-        maxWidth="xl"
+        maxWidth="lg"
         component="main"
         sx={{ display: 'flex', flexDirection: 'column', my: 14, gap: 4 }}
       >

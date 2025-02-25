@@ -200,7 +200,11 @@ export default function StoryDetails({
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {story?.tags?.map((tag, index) => (
-              <Chip key={index} label={tag} variant="outlined" />
+              <Chip
+                key={`story_chip_${index}`}
+                label={tag}
+                variant="outlined"
+              />
             ))}
           </Box>
         </Box>

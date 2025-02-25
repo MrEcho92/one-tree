@@ -36,6 +36,17 @@ export const useGetCulturalPostsByUser = (userId: string) => {
   );
 };
 
+export const useGetCulturalPostsById = (contextId: string) => {
+  return useApiQuery<CulturalPost[]>(
+    ['culturalPosts', contextId],
+    `/contexts/${contextId}/post`,
+    {
+      queryKey: ['culturalPosts', contextId],
+      enabled: !!contextId,
+    },
+  );
+};
+
 export const useCreateCulturalPost = () => {
   return useApiMutation<CulturalPost, FormData>('/contexts', 'POST');
 };

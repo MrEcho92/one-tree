@@ -69,20 +69,27 @@ export default function HubList({ posts }: HubListProps) {
             className={focusedCardIndex === index ? 'Mui-focused' : ''}
             onClick={() => navigate(`/hub/${post.id}`)}
           >
-            <CardMedia
-              component="img"
-              alt="hublist_image"
-              image={post.image_url ?? ''}
-              sx={{
-                aspectRatio: '16 / 9',
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-              }}
-            />
+            {post?.image_url && (
+              <CardMedia
+                component="img"
+                alt="hublist_image"
+                image={post.image_url}
+                sx={{
+                  aspectRatio: '16 / 9',
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                }}
+              />
+            )}
             <StyledCardContent>
               <Stack direction="row" spacing={1}>
-                {post.tags.map((tag) => (
-                  <Chip label={tag} variant="outlined" size="small" />
+                {post.tags.map((tag, index) => (
+                  <Chip
+                    label={tag}
+                    key={`hublist_chip_${index}`}
+                    variant="outlined"
+                    size="small"
+                  />
                 ))}
               </Stack>
               <Typography gutterBottom variant="h6" component="div">
