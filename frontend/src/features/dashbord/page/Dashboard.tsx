@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
+import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid2';
@@ -88,7 +89,19 @@ export function DashboardPage() {
   const deleteMutation = useDeleteCulturalPost(itemToDelete);
 
   if (isLoading || isPostsLoading) {
-    return <Box mt={isSmallScreen ? '64px' : ''}>Loading...</Box>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          mt: isSmallScreen ? '64px' : '',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
   if (isError || isPostError) {
     return <Box mt={isSmallScreen ? '64px' : ''}>Error...</Box>;

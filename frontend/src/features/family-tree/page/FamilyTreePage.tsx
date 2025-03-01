@@ -10,7 +10,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import Typography from '@mui/material/Typography';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Header } from '../../dashbord/components';
-import { Drawer } from '@mui/material';
+import { CircularProgress, Drawer } from '@mui/material';
 import ReactFamilyTree from 'react-family-tree';
 import { useTheme } from '@mui/material';
 import { useSnackbar } from 'notistack';
@@ -112,7 +112,19 @@ export default function FamilyTreePage() {
   );
 
   if (isLoading) {
-    return <Box>Loading...</Box>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          mt: '64px',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (isError) {

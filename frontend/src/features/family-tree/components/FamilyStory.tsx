@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useSnackbar } from 'notistack';
+import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -34,7 +35,7 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
   const [selectedStoryId, setSelectedStoryId] = useState<string>('');
 
   const handleListItemClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    _event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
     storyId: string,
   ) => {
@@ -69,7 +70,19 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
   const storyDetails = getStoryDetails();
 
   if (isLoading || isStoryLoading) {
-    return <Box>Loading...</Box>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          mt: '64px',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (isError || isStoryError) {

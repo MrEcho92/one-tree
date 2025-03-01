@@ -20,6 +20,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "env-cmd": "^10.1.0",
+    "firebase": "^11.4.0",
     "i18next": "^23.2.3",
     "i18next-browser-languagedetector": "^8.0.2",
     "i18next-http-backend": "^3.0.1",
