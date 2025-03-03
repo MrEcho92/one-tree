@@ -8,8 +8,10 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
+import GoogleIcon from '@mui/icons-material/Google';
 
-export default function SignInPage() {
+export default function LogInPage() {
   // const [showPassword, setShowPassword] = React.useState(false);
 
   // const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -47,7 +49,7 @@ export default function SignInPage() {
             alignItems: 'center',
           }}
         >
-          <Typography component="h1" variant="h4">
+          <Typography variant="h1" fontWeight="bold">
             Welcome back!
           </Typography>
           <Box
@@ -91,6 +93,18 @@ export default function SignInPage() {
                 </Link>
               </Grid>
             </Grid>
+            <Divider>
+              <Typography sx={{ color: 'text.secondary' }}>or</Typography>
+            </Divider>
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={() => alert('Sign up with Google')}
+              startIcon={<GoogleIcon />}
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign up with Google
+            </Button>
           </Box>
         </Box>
       </Container>

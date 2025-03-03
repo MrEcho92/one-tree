@@ -3,14 +3,9 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
+import { envVariables } from '../constants';
 
-export const envVariables = {
-  localEnv: {
-    apiURL: 'REACT_APP_API_URL',
-  },
-};
-
-export const getBaseURL = (key: string) => {
+export const getBaseURL = (key: string): string => {
   const apiURL = process.env[key];
   if (!apiURL) throw new Error('missing base API url');
   return apiURL || '';

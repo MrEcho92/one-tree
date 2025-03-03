@@ -140,7 +140,7 @@ export function Header() {
               variant="text"
               color="secondary"
               size="small"
-              onClick={() => {}}
+              onClick={() => navigate('/auth/login')}
             >
               {t('common:login')}
             </Button>
@@ -148,8 +148,7 @@ export function Header() {
               variant="outlined"
               color="secondary"
               size="small"
-              onClick={() => {}}
-              sx={{}}
+              onClick={() => navigate('/auth/signup')}
             >
               {t('common:signUp')}
             </Button>
@@ -269,6 +268,7 @@ export function Header() {
                     color="primary"
                     variant="contained"
                     sx={{ width: '100%' }}
+                    onClick={() => navigate('/auth/signup')}
                   >
                     {t('common:signUp')}
                   </Button>
@@ -278,6 +278,7 @@ export function Header() {
                     color="primary"
                     variant="outlined"
                     sx={{ width: '100%' }}
+                    onClick={() => navigate('/auth/login')}
                   >
                     {t('common:login')}
                   </Button>
