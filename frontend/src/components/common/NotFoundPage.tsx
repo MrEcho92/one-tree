@@ -14,7 +14,7 @@ export function NotFoundPage() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: 2
+            gap: 2,
           }}
         >
           <Typography variant="h3" sx={{ mb: 2 }}>
@@ -25,11 +25,11 @@ export function NotFoundPage() {
             Sorry, we couldn’t find the page you’re looking for. Perhaps you’ve
             mistyped the URL? Be sure to check your spelling.
           </Typography>
-          
+
           <Button href="/" variant="text">
             Go back to homepage
           </Button>
-          
+
           <Box
             component="img"
             src={NotFoundImage}
