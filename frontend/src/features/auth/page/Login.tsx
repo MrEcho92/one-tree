@@ -109,7 +109,7 @@ export default function LogInPage() {
             alignItems: 'center',
           }}
         >
-          <Typography variant="h1" fontWeight="bold">
+          <Typography component="h1" variant="h2">
             Welcome back!
           </Typography>
           {error && (
@@ -224,6 +224,16 @@ export default function LogInPage() {
             >
               Log in with Google
             </Button>
+            <Typography sx={{ textAlign: 'center' }}>
+              Don&apos;t have an account?{' '}
+              <Link
+                href="/auth/signup"
+                variant="body2"
+                sx={{ alignSelf: 'center' }}
+              >
+                Sign up
+              </Link>
+            </Typography>
           </Box>
         </Box>
       </Container>

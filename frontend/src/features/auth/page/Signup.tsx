@@ -100,7 +100,7 @@ export default function SignUpPage() {
             alignItems: 'center',
           }}
         >
-          <Typography component="h1" variant="h1" fontWeight="bold">
+          <Typography component="h1" variant="h2">
             Sign up
           </Typography>
           {error && (
