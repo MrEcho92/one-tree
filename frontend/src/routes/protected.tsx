@@ -17,6 +17,10 @@ export const protectedRoutes: RouteObject[] = [
         element: <TreeRoutes />,
       },
       {
+        path: 'settings',
+        element: <div>Settings</div>,
+      },
+      {
         path: '*',
         element: <Navigate to="/" replace />,
       },

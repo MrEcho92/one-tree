@@ -15,6 +15,7 @@ import {
 import { firebaseApp } from '../../core';
 
 interface AuthContextType {
+  auth: any;
   currentUser: User | null;
   loading: boolean;
   signUp: (
@@ -153,7 +154,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const isAuthenticated = !!currentUser;
+
   const value = {
+    auth,
+    isAuthenticated,
     currentUser,
     loading,
     signUp,
