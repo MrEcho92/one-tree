@@ -2,26 +2,24 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import Divider from '@mui/material/Divider';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import { IconButton, InputAdornment, useTheme } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useAuth } from '../../../components/auth/AuthProvider';
 import FormHelperText from '@mui/material/FormHelperText';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { AppConfig } from '../../../core';
 
 export default function SignUpPage() {
-  const { signUp, loginWithGoogle } = useAuth();
+  const { signUp, loginWithGoogle, loading } = useAuth();
   const navigate = useNavigate();
   const { palette } = useTheme();
 
-  const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -49,30 +47,24 @@ export default function SignUpPage() {
     if (email !== confirmEmail) {
       return setError('Emails do not match');
     }
-    setLoading(true);
     setError('');
 
     try {
       await signUp(email, password, displayName);
-      navigate('/app');
+      navigate('/auth/login');
     } catch (err: any) {
       setError(err.message || 'Failed to create an account');
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
     setError('');
-    setLoading(true);
 
     try {
       await loginWithGoogle();
       navigate('/app');
     } catch (err: any) {
       setError(err.message || 'Failed to log in with Google');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -87,14 +79,15 @@ export default function SignUpPage() {
           display: 'flex',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
-        </Avatar>
+        <Typography variant="h2" gutterBottom>
+          {AppConfig.appName}
+        </Typography>
       </Box>
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
             marginTop: 12,
+            marginBottom: 6,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',

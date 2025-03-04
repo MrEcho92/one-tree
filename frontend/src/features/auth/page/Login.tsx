@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
-import Avatar from '@mui/material/Avatar';
+import { useSnackbar } from 'notistack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
@@ -18,21 +17,34 @@ import { useAuth } from '../../../components/auth/AuthProvider';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import FormHelperText from '@mui/material/FormHelperText';
+import ForgotPassword from '../components/ForgotPassword';
+import { useModal } from '../../../components/common';
+import EmailVerification from '../components/EmailVerification';
+import { AppConfig } from '../../../core';
 
 export default function LogInPage() {
   const navigate = useNavigate();
   const { palette } = useTheme();
-  const { login, loginWithGoogle } = useAuth();
+  const { openModal, closeModal } = useModal();
+  const {
+    login,
+    loginWithGoogle,
+    loading,
+    resendVerificationEmail,
+    forgotPassword,
+  } = useAuth();
 
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<{ email: string; password: string }>();
 
-  const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [error, setError] = React.useState('');
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const firebaseErrorMessages: Record<string, string> = {
     'auth/invalid-email': 'The email address is badly formatted.',
@@ -46,6 +58,33 @@ export default function LogInPage() {
     'auth/invalid-credential': 'Invalid credentials',
   };
 
+  const handleResendVerification = async () => {
+    const { email, password } = getValues();
+    try {
+      const result = await resendVerificationEmail(email, password);
+      if (result.success) {
+        closeModal?.();
+      }
+    } catch (error: any) {
+      console.error('Error resending verification:', error);
+    }
+  };
+
+  const handleForgotPassword = async (email: string) => {
+    if (!email) {
+      enqueueSnackbar('Please enter your email to reset your password.', {
+        variant: 'error',
+      });
+      return;
+    }
+    try {
+      await forgotPassword(email);
+      closeModal?.();
+    } catch (error) {
+      console.error('Error resetting password. Try again.');
+    }
+  };
+
   const onSubmit = async (data: any) => {
     const email = data['email'];
     const password = data['password'];
@@ -53,12 +92,23 @@ export default function LogInPage() {
     if (!email || !password) {
       return;
     }
-    setLoading(true);
     setError('');
 
     try {
-      await login(email, password);
-      navigate('/app');
+      const result = await login(email, password);
+
+      if (!result.isEmailVerified) {
+        openModal(
+          <EmailVerification
+            handleResendVerification={handleResendVerification}
+            handleClose={closeModal}
+          />,
+        );
+      }
+
+      if (result.success && result.isEmailVerified) {
+        navigate('/app');
+      }
     } catch (err: any) {
       const errorCode = err.code;
       if (firebaseErrorMessages[errorCode]) {
@@ -66,24 +116,28 @@ export default function LogInPage() {
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
     setError('');
-    setLoading(true);
 
     try {
       await loginWithGoogle();
       navigate('/app');
     } catch (err: any) {
       setError(err.message || 'Failed to log in with Google');
-    } finally {
-      setLoading(false);
     }
   };
+
+  function openForgotPasswordModal(): void {
+    openModal(
+      <ForgotPassword
+        handleClose={closeModal}
+        handleForgotPassword={handleForgotPassword}
+      />,
+    );
+  }
 
   return (
     <Box>
@@ -96,14 +150,15 @@ export default function LogInPage() {
           display: 'flex',
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-          <LockOutlinedIcon />
-        </Avatar>
+        <Typography variant="h2" gutterBottom>
+          {AppConfig.appName}
+        </Typography>
       </Box>
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
             marginTop: 12,
+            marginBottom: 6,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -206,7 +261,12 @@ export default function LogInPage() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
+                <Link
+                  variant="body2"
+                  component="button"
+                  onClick={openForgotPasswordModal}
+                  sx={{ alignSelf: 'center' }}
+                >
                   Forgot password?
                 </Link>
               </Grid>

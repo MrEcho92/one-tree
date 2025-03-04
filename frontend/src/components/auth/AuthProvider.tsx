@@ -9,6 +9,8 @@ import {
   onAuthStateChanged,
   updateProfile,
   User,
+  sendEmailVerification,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { firebaseApp } from '../../core';
 
@@ -20,10 +22,12 @@ interface AuthContextType {
     password: string,
     displayName: string,
   ) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<any>;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   getIdToken: () => Promise<string | null>;
+  resendVerificationEmail: (email: string, password: string) => Promise<any>;
+  forgotPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -55,9 +59,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         email,
         password,
       );
-      // Update the user's profile with their display name
+      // Update the user's profile with their display name and email verification
       if (result.user) {
         await updateProfile(result.user, { displayName });
+        await sendEmailVerification(result.user);
       }
     } catch (error) {
       console.error('Error signing up:', error);
@@ -67,7 +72,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (email: string, password: string) => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      if (!result.user.emailVerified) {
+        await signOut(auth); // Log them out immediately
+        return { success: true, isEmailVerified: false };
+      }
+
+      return { success: true, isEmailVerified: result.user.emailVerified };
     } catch (error) {
       console.error('Error logging in:', error);
       throw error;
@@ -103,6 +114,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const resendVerificationEmail = async (email: string, password: string) => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+
+      if (result.user) {
+        if (result.user.emailVerified) {
+          await auth.signOut();
+          return {
+            success: true,
+            message: 'Your email is already verified. You can log in now.',
+          };
+        }
+
+        // Send verification email again
+        await sendEmailVerification(result.user);
+
+        // Sign out since we're just sending the verification
+        await auth.signOut();
+
+        return {
+          success: true,
+          message: 'Verification email resent. Please check your inbox.',
+        };
+      }
+    } catch (error: any) {
+      console.error('Error resending verification:', error);
+      throw error;
+    }
+  };
+
+  const forgotPassword = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      throw error;
+    }
+  };
+
   const value = {
     currentUser,
     loading,
@@ -111,6 +161,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     loginWithGoogle,
     logout,
     getIdToken,
+    resendVerificationEmail,
+    forgotPassword,
   };
 
   return (
