@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 export default function About() {
   return (
     <Box mt="64px">
-      <Container maxWidth="md" component="main">
+      <Container maxWidth="xl" component="main">
         About us
       </Container>
     </Box>
