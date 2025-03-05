@@ -4,6 +4,7 @@ import { LandingRoutes } from '../features/landing/routes';
 import { AuthRoutes } from '../features/auth';
 import { CulturalRoutes } from '../features/cultural-context/routes';
 import { NotFoundPage } from '../components/common/NotFoundPage';
+import About from '../features/landing/page/About';
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -20,7 +21,7 @@ export const publicRoutes: RouteObject[] = [
       },
       {
         path: '/about',
-        element: <div>About us</div>,
+        element: <About />,
       },
     ],
   },
