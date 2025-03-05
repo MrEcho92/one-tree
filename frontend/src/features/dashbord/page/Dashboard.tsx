@@ -207,7 +207,7 @@ export function DashboardPage() {
                 <CardContent>
                   <Typography component="h2" variant="subtitle1" gutterBottom>
                     {t('dashboard:labels.familyTrees')}
-                    {treeData?.length > 0 && treeData.length}
+                    {treeData?.length > 0 &&  ` (${treeData.length})`}
                   </Typography>
                   <Stack
                     sx={{
@@ -272,7 +272,7 @@ export function DashboardPage() {
                   <CardContent>
                     <Typography component="h2" variant="subtitle1" gutterBottom>
                       {t('dashboard:labels.cultural')}
-                      {postsData?.length > 0 && postsData.length}
+                      {postsData?.length > 0 && ` (${postsData.length})`}
                     </Typography>
                     <Stack
                       sx={{
