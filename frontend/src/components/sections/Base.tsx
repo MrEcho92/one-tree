@@ -50,6 +50,7 @@ export function ProtectedBase() {
           <AppNavBar />
           <Box flexGrow={1}>
             <Outlet />
+            <Footer />
           </Box>
         </Box>
       </Suspense>
