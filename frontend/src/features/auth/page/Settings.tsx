@@ -129,7 +129,9 @@ export default function ProfileSettings() {
               <Avatar
                 src={currentUser?.photoURL ?? ''}
                 sx={{ width: 80, height: 80, margin: 'auto' }}
-              />
+              >
+                P
+              </Avatar>
             </Box>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Controller
