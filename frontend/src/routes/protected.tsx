@@ -1,7 +1,9 @@
 import { Navigate, RouteObject } from 'react-router-dom';
 import { ProtectedBase } from '../components/sections';
 import { DashboardPage } from '../features/dashbord/page';
+import AdminPage from '../features/auth/page/AdminPage';
 import { TreeRoutes } from '../features/family-tree/routes/treeRoutes';
+import ProfileSettings from '../features/auth/page/Settings';
 
 export const protectedRoutes: RouteObject[] = [
   {
@@ -18,7 +20,11 @@ export const protectedRoutes: RouteObject[] = [
       },
       {
         path: 'settings',
-        element: <div>Settings</div>,
+        element: <ProfileSettings />,
+      },
+      {
+        path: 'admin',
+        element: <AdminPage />,
       },
       {
         path: '*',

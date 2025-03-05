@@ -7,6 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 
@@ -15,6 +16,7 @@ const mainListItems = [
 ];
 
 const secondaryListItems = [
+  { text: 'Admin', icon: <AdminPanelSettingsIcon />, path: '/app/admin' },
   { text: 'Settings', icon: <SettingsRoundedIcon />, path: '/app/settings' },
   { text: 'About', icon: <InfoRoundedIcon />, path: '/about' },
   { text: 'Feedback', icon: <HelpRoundedIcon />, path: '' },

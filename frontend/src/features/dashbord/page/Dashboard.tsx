@@ -73,7 +73,7 @@ export function DashboardPage() {
   const [itemToDelete, setItemToDelete] = useState<string>('');
 
   const userId = currentUser?.uid;
-  console.log('currentUser', currentUser);
+
   const {
     data: familyTrees,
     isLoading,
