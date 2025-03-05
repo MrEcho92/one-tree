@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import { useState, MouseEvent } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';

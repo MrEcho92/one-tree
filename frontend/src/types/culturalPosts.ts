@@ -6,6 +6,7 @@ enum ContextStatus {
 
 export interface CulturalPost {
   id: string;
+  name: string;
   created_by: string;
   created_at: string;
   updated_by: string;

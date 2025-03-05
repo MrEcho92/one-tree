@@ -39,7 +39,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
   const { typography, palette } = useTheme();
   const { closeModal } = useModal();
   const { enqueueSnackbar } = useSnackbar();
-  const { currentUser } = useAuth()
+  const { currentUser } = useAuth();
 
   const editMode = !!post;
 
@@ -103,10 +103,9 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
 
   const onSubmit = (data: any) => {
     if (!currentUser) {
-      return 
+      return;
     }
     const formData = new FormData();
-
     formData.append('title', data.title);
     formData.append('content', data.content);
     formData.append('link_url', data.link_url);
@@ -120,6 +119,8 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
     } else {
       formData.append('created_by', userId);
     }
+    if (currentUser.displayName)
+      formData.append('name', currentUser.displayName);
 
     if (data.media) {
       const { type } = data.media;

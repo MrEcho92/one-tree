@@ -119,7 +119,7 @@ export default function HubDetails() {
               </Typography>
               <Box display="flex" gap={1}>
                 <Typography variant="subtitle2">
-                  Written by {postDetails?.created_by}
+                  Written by {postDetails?.name}
                 </Typography>
                 <Typography variant="subtitle2">
                   {formatDate(postDetails?.updated_at)}

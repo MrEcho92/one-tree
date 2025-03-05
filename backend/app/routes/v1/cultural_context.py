@@ -163,6 +163,7 @@ async def get_context_by_id(context_id: str, db=Depends(get_db)) -> CulturalCont
 async def create_context(
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
+    name: str = Form(...),
     created_by: str = Form(...),
     title: str = Form(...),
     content: str = Form(...),
@@ -196,6 +197,7 @@ async def create_context(
             video_url = "https://test_audio_url"
 
         context = CulturalContext(
+            name=name,
             created_by=created_by,
             title=title,
             content=content,

@@ -114,7 +114,7 @@ export default function HubList({ posts }: HubListProps) {
                   alignItems: 'center',
                 }}
               >
-                <Typography variant="caption">{post.created_by}</Typography>
+                <Typography variant="caption">{post.name}</Typography>
               </Box>
               <Typography variant="caption">
                 {formatDate(post.updated_at)}
