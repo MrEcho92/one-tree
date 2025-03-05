@@ -4,6 +4,7 @@ from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException, status
 from google.cloud import firestore
 
+from app.common.firebase import verify_firebase_token
 from app.core.constants import FAMILY_STORY, FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
@@ -40,8 +41,16 @@ def fetch_members(members_data: List[str], db: Any):
     response_model=List[FamilyTrees],
     status_code=status.HTTP_200_OK,
 )
-async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTrees]:
+async def get_user_trees(
+    user_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+) -> List[FamilyTrees]:
     """Get all family trees created by a user"""
+    if current_user["uid"] != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to access this resource",
+        )
+
     try:
         trees = db.collection(FAMILY_TREE).where("created_by", "==", user_id).stream()
         return [FamilyTrees(**tree.to_dict()) for tree in trees]
@@ -56,7 +65,9 @@ async def get_user_trees(user_id: str, db=Depends(get_db)) -> List[FamilyTrees]:
     response_model=FamilyTree,
     status_code=status.HTTP_200_OK,
 )
-async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
+async def get_family_tree(
+    tree_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+) -> FamilyTree:
     """Get a family tree by ID"""
     try:
         tree = db.collection(FAMILY_TREE).document(tree_id).get()
@@ -67,6 +78,13 @@ async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
             )
 
         tree_data = tree.to_dict()
+        if current_user["uid"] != tree_data.get("created_by") and current_user[
+            "email"
+        ] not in tree_data.get("collaborators", []):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
 
         # Fetch members details
         tree_data["members"] = fetch_members(tree_data.get("members", []), db)
@@ -80,9 +98,16 @@ async def get_family_tree(tree_id: str, db=Depends(get_db)) -> FamilyTree:
 
 @router.post("/trees", response_model=FamilyTree, status_code=status.HTTP_201_CREATED)
 async def create_tree_with_members(
-    family_tree: CreateFamilyTreeSchema, db=Depends(get_db)
+    family_tree: CreateFamilyTreeSchema,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> FamilyTree:
     """Create a new family tree with root member, father, and mother"""
+    if current_user["uid"] != family_tree.created_by:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to access this resource",
+        )
     try:
         tree = FamilyTree(
             name=family_tree.name,
@@ -152,7 +177,10 @@ async def create_tree_with_members(
     status_code=status.HTTP_200_OK,
 )
 async def add_collaborator(
-    tree_id: str, data: AddCollaboratorSchema, db=Depends(get_db)
+    tree_id: str,
+    data: AddCollaboratorSchema,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> FamilyTree:
     """Add collaborators to a family tree"""
     try:
@@ -162,6 +190,12 @@ async def add_collaborator(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Family tree not found",
+            )
+        tree_data = tree.to_dict()
+        if current_user["uid"] != tree_data.get("created_by"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
             )
 
         tree_ref.update(
@@ -187,6 +221,7 @@ async def add_member_tree(
     tree_id: str,
     member: AddPersonSchema,
     relation: RelationToMemberSchema,
+    current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
 ) -> FamilyTree:
     """
@@ -202,6 +237,14 @@ async def add_member_tree(
         if not tree.exists:
             raise HTTPException(status_code=404, detail="Family tree not found")
 
+        tree_data = tree.to_dict()
+        if current_user["uid"] != tree_data.get("created_by") and current_user[
+            "email"
+        ] not in tree_data.get("collaborators"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
         # Create a new person entry
         person = Person(
             **member.model_dump(),
@@ -329,7 +372,10 @@ async def add_member_tree(
     status_code=status.HTTP_200_OK,
 )
 async def update_tree(
-    tree_id: str, tree_data: UpdateTreeSchema, db=Depends(get_db)
+    tree_id: str,
+    tree_data: UpdateTreeSchema,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> FamilyTree:
     """Update a family tree"""
     try:
@@ -339,6 +385,12 @@ async def update_tree(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Family tree not found",
+            )
+
+        if current_user["uid"] != tree_data.updated_by:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
             )
 
         updated_data = tree_data.model_dump(exclude_unset=True)
@@ -363,7 +415,10 @@ async def update_tree(
     status_code=status.HTTP_200_OK,
 )
 async def update_member(
-    member: UpdatePersonSchema, person_id: str, db=Depends(get_db)
+    member: UpdatePersonSchema,
+    person_id: str,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> Person:
     """Update a family member"""
     try:
@@ -374,6 +429,25 @@ async def update_member(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Family member not found",
             )
+        person_data = person.to_dict()
+        tree_id = person_data.get("tree_id")
+        tree_ref = db.collection(FAMILY_TREE).document(tree_id)
+        tree = tree_ref.get()
+        if not tree.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family tree not found",
+            )
+
+        tree_data = tree.to_dict()
+        if current_user["uid"] != tree_data.get("created_by") and current_user[
+            "email"
+        ] not in tree_data.get("collaborators", []):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
+
         updated_data = member.model_dump(exclude_unset=True)
         updated_data["updated_by"] = member.updated_by
         updated_data["updated_at"] = firestore.SERVER_TIMESTAMP
@@ -387,7 +461,9 @@ async def update_member(
 
 
 @router.delete("/trees/{tree_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
+async def delete_tree(
+    tree_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+) -> None:
     """Delete a family tree"""
     try:
         tree_ref = db.collection(FAMILY_TREE).document(tree_id)
@@ -396,6 +472,13 @@ async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Family tree not found",
+            )
+
+        tree_data = tree.to_dict()
+        if current_user["uid"] != tree_data.get("created_by"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
             )
 
         # Batch delete all members of the tree
@@ -415,7 +498,10 @@ async def delete_tree(tree_id: str, db=Depends(get_db)) -> None:
 
 @router.delete("/trees/{tree_id}/member", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tree_member(
-    tree_id: str, item: DeleteMemberSchema, db=Depends(get_db)
+    tree_id: str,
+    item: DeleteMemberSchema,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ):
     """
     Deletes a member from the family tree while updating relationships.
@@ -430,11 +516,25 @@ async def delete_tree_member(
         # Read necessary documents before starting the deletion
         tree = tree_ref.get()
         if not tree.exists:
-            raise HTTPException(status_code=404, detail="Family tree not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+            )
 
         user_doc = user_ref.get()
         if not user_doc.exists:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+
+        tree_data = tree.to_dict()
+
+        if current_user["uid"] != tree_data.get("created_by") and current_user[
+            "email"
+        ] not in tree_data.get("collaborators"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
 
         user_data = user_doc.to_dict()
 
@@ -513,10 +613,26 @@ async def delete_tree_member(
     status_code=status.HTTP_200_OK,
 )
 async def get_family_stories(
-    tree_id: str, db=Depends(get_db)
+    tree_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
 ) -> List[FamilyStoriesSchema]:
     """Get all family stories for a specific family tree"""
     try:
+        tree_ref = db.collection(FAMILY_TREE).document(tree_id)
+        tree = tree_ref.get()
+        if not tree.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+            )
+
+        tree_data = tree.to_dict()
+        if current_user["uid"] != tree_data.get("created_by") and current_user[
+            "email"
+        ] not in tree_data.get("collaborators"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
+
         stories = db.collection(FAMILY_STORY).where("tree_id", "==", tree_id).stream()
         return [FamilyStory(**story.to_dict()) for story in stories]
     except Exception as e:
@@ -530,7 +646,9 @@ async def get_family_stories(
     response_model=FamilyStory,
     status_code=status.HTTP_200_OK,
 )
-async def get_family_tree_by_id(story_id: str, db=Depends(get_db)) -> FamilyStory:
+async def get_family_tree_by_id(
+    story_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+) -> FamilyStory:
     """Get a family story by ID"""
     try:
         story = db.collection(FAMILY_STORY).document(story_id).get()
@@ -538,6 +656,24 @@ async def get_family_tree_by_id(story_id: str, db=Depends(get_db)) -> FamilyStor
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Family story not found",
+            )
+        story_data = story.to_dict()
+        tree_id = story_data.get("tree_id")
+        tree_ref = db.collection(FAMILY_TREE).document(tree_id)
+        tree = tree_ref.get()
+        if not tree.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family tree not found",
+            )
+
+        tree_data = tree.to_dict()
+        if current_user["uid"] != tree_data.get("created_by") and current_user[
+            "email"
+        ] not in tree_data.get("collaborators", []):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
             )
 
         return FamilyStory.from_dict(story.to_dict())
@@ -551,10 +687,29 @@ async def get_family_tree_by_id(story_id: str, db=Depends(get_db)) -> FamilyStor
     "/stories", response_model=FamilyStory, status_code=status.HTTP_201_CREATED
 )
 async def add_family_story(
-    story: AddFamilyStorySchema, db=Depends(get_db)
+    story: AddFamilyStorySchema,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> FamilyStory:
     """Add a new family story to a family tree"""
     try:
+        tree_ref = db.collection(FAMILY_TREE).document(story.tree_id)
+        tree = tree_ref.get()
+        if not tree.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Family tree not found",
+            )
+
+        tree_data = tree.to_dict()
+        if current_user["uid"] != tree_data.get("created_by") and current_user[
+            "email"
+        ] not in tree_data.get("collaborators", []):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
+
         new_story = FamilyStory(
             **story.model_dump(),
         )
@@ -572,10 +727,19 @@ async def add_family_story(
     status_code=status.HTTP_200_OK,
 )
 async def update_family_story(
-    story_id: str, updated_data: UpdatedFamilyStorySchema, db=Depends(get_db)
+    story_id: str,
+    updated_data: UpdatedFamilyStorySchema,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> FamilyStory:
     """Update a family story"""
     try:
+        if current_user["uid"] != updated_data.updated_by:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
+
         story_ref = db.collection(FAMILY_STORY).document(story_id)
         story = story_ref.get()
         if not story.exists:
@@ -598,7 +762,9 @@ async def update_family_story(
 
 
 @router.delete("/stories/{story_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_family_story(story_id: str, db=Depends(get_db)) -> None:
+async def delete_family_story(
+    story_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+) -> None:
     """Delete a family story"""
     try:
         story_ref = db.collection(FAMILY_STORY).document(story_id)
@@ -608,6 +774,14 @@ async def delete_family_story(story_id: str, db=Depends(get_db)) -> None:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Family story not found",
             )
+
+        story_data = story.to_dict()
+        if current_user["uid"] != story_data.get("created_by"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
+
         story_ref.delete()
     except Exception as e:
         raise HTTPException(

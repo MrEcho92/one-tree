@@ -13,6 +13,7 @@ from fastapi import (
 )
 from google.cloud import firestore
 
+from app.common.firebase import verify_firebase_token
 from app.core.constants import CULTURAL_CONTEXT
 from app.core.database import get_db
 from app.models.models import ContextStatus, CulturalContext
@@ -106,9 +107,17 @@ async def get_contexts(
     response_model=List[CulturalContext],
     status_code=status.HTTP_200_OK,
 )
-async def get_user_contexts(user_id: str, db=Depends(get_db)) -> List[CulturalContext]:
+async def get_user_contexts(
+    user_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+) -> List[CulturalContext]:
     """Get all cultural contexts by a user"""
     try:
+        if current_user["uid"] != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
+
         contexts = (
             db.collection(CULTURAL_CONTEXT).where("created_by", "==", user_id).stream()
         )
@@ -152,6 +161,7 @@ async def get_context_by_id(context_id: str, db=Depends(get_db)) -> CulturalCont
     status_code=status.HTTP_201_CREATED,
 )
 async def create_context(
+    current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
     created_by: str = Form(...),
     title: str = Form(...),
@@ -164,6 +174,12 @@ async def create_context(
 ) -> CulturalContext:
     """Create a new cultural context"""
     try:
+        if current_user["uid"] != created_by:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
+
         if video_url:
             # Handle video URL (e.g., validate, process, etc.)
             # upload to Google cloud storage and generate url
@@ -205,6 +221,7 @@ async def create_context(
 )
 async def update_context(
     context_id: str,
+    current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
     updated_by: str = Form(...),
     title: str = Form(...),
@@ -217,6 +234,12 @@ async def update_context(
 ) -> CulturalContext:
     """Update a cultural context by ID"""
     try:
+        if current_user["uid"] != updated_by:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
+
         # Get reference to the context document
         context_ref = db.collection(CULTURAL_CONTEXT).document(context_id)
         context = context_ref.get()
@@ -272,7 +295,9 @@ async def update_context(
     "/contexts/{context_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_context(context_id: str, db=Depends(get_db)) -> None:
+async def delete_context(
+    context_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+) -> None:
     """Delete a cultural context by ID"""
     try:
         context_ref = db.collection(CULTURAL_CONTEXT).document(context_id)
@@ -282,6 +307,14 @@ async def delete_context(context_id: str, db=Depends(get_db)) -> None:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Cultural context not found",
             )
+
+        context_data = context.to_dict()
+        if current_user["uid"] != context_data.get("created_by"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not authorized to access this resource",
+            )
+
         context_ref.delete()
     except Exception as e:
         raise HTTPException(
