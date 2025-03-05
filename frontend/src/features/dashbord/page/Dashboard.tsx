@@ -73,7 +73,7 @@ export function DashboardPage() {
   const [itemToDelete, setItemToDelete] = useState<string>('');
 
   const userId = currentUser?.uid;
-
+  console.log('currentUser', currentUser);
   const {
     data: familyTrees,
     isLoading,
@@ -213,7 +213,7 @@ export function DashboardPage() {
                     sx={{
                       justifyContent: 'space-between',
                       overflowY: 'scroll',
-                      maxHeight: 250,
+                      height: 250,
                     }}
                   >
                     {treeData &&
@@ -278,7 +278,7 @@ export function DashboardPage() {
                       sx={{
                         justifyContent: 'space-between',
                         overflowY: 'scroll',
-                        maxHeight: 250,
+                        height: 250,
                       }}
                     >
                       {postsData &&
@@ -375,7 +375,7 @@ export function DashboardPage() {
                       sx={{
                         justifyContent: 'space-between',
                         overflowY: 'scroll',
-                        maxHeight: 250,
+                        height: 250,
                       }}
                     >
                       <Stack
