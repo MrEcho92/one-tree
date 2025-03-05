@@ -26,6 +26,7 @@ import { capitalize } from '../../../utils/capitalize';
 import { getMemberNames } from '../../../utils/getMembers';
 import { MemberId } from '../../../types/tree';
 import { Person } from '../../../types/tree';
+import { useAuth } from '../../../components/auth/AuthProvider';
 
 type AddMemberDialogProps = {
   isAddMemberOpen: boolean;
@@ -44,6 +45,7 @@ export default function AddMemberDialog({
   spouseMembers,
   selectedPerson,
 }: AddMemberDialogProps) {
+  const { currentUser } = useAuth();
   const { control, handleSubmit, register, reset } = useForm<AddMemberTreeForm>(
     {
       defaultValues: {
@@ -75,8 +77,7 @@ export default function AddMemberDialog({
         last_name: data.last_name,
         date_of_birth: data.date_of_birth,
         gender: data.gender,
-        // TODO: add user email
-        created_by: '123@gmail.com',
+        created_by: currentUser?.uid,
       },
       relation: {
         primary_user_id: selectedPerson?.id,

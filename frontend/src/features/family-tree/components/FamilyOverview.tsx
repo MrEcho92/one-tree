@@ -20,6 +20,7 @@ import FamilyMemberTable from './FamilyTable';
 import { transformDate } from '../../../utils/date';
 import { capitalize } from '../../../utils/capitalize';
 import { UpdateTreePayload } from '../../../types/tree';
+import { useAuth } from '../../../components/auth/AuthProvider';
 
 type TreeOverviewProps = {
   initialData?: any;
@@ -41,13 +42,17 @@ export default function FamilyTreeOverview({
   const [isEditing, setIsEditing] = useState(false);
 
   const handleEdit = () => setIsEditing(!isEditing);
+  const { currentUser } = useAuth();
+
   const handleSave = (data: any) => {
+    if (!currentUser) {
+      return;
+    }
     const payload: UpdateTreePayload = {
       name: data.name,
       description: data.description,
       is_public: data.is_public,
-      // TODO: add user email
-      updated_by: '123@gmail.com',
+      updated_by: currentUser.uid,
     };
     onSave(payload);
     setIsEditing(false);

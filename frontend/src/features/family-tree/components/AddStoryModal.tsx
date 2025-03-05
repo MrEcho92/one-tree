@@ -11,6 +11,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import { AddStoryPayload } from '../../../types';
 import { topTags } from './constants';
+import { useAuth } from '../../../components/auth/AuthProvider';
 
 type AddStoryProps = {
   closeModal: () => void;
@@ -30,6 +31,7 @@ export default function AddStoryToTree({
   onAddStory,
   treeId,
 }: AddStoryProps) {
+  const { currentUser } = useAuth();
   const { control, handleSubmit, setValue } = useForm<FormValues>({
     defaultValues: {
       title: '',
@@ -40,18 +42,19 @@ export default function AddStoryToTree({
   });
 
   function onSubmit(data: any) {
-    const payload: AddStoryPayload = {
-      title: data.title,
-      content: data.content,
-      tags: data.tags,
-      is_public: data.is_public,
-      tree_id: treeId,
-      // TODO: add user email
-      created_by: '123@gmail.com',
-    };
+    if (currentUser) {
+      const payload: AddStoryPayload = {
+        title: data.title,
+        content: data.content,
+        tags: data.tags,
+        is_public: data.is_public,
+        tree_id: treeId,
+        created_by: currentUser.uid,
+      };
 
-    if (onAddStory) {
-      onAddStory(payload);
+      if (onAddStory) {
+        onAddStory(payload);
+      }
     }
   }
 

@@ -32,6 +32,7 @@ import { useUpdateMember } from '../../../hooks/treeHooks';
 import queryClient from '../../../core/http/react-query';
 import { stringAvatar } from '../../../utils/transformTree';
 import { capitalize } from '../../../utils';
+import { useAuth } from '../../../components/auth/AuthProvider';
 
 type EditFamilyMemberProps = {
   defaultValues: Person;
@@ -73,6 +74,7 @@ export default function EditFamilyMember({
     setAnchorEl(null);
   };
   const [updatedData, setUpdatedData] = useState<any>(defaultValues);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     if (updatedData) {
@@ -83,10 +85,12 @@ export default function EditFamilyMember({
   const updateMutation = useUpdateMember(defaultValues?.id);
 
   const handleUpdate = (data: any) => {
+    if (!currentUser) {
+      return;
+    }
     const payload: UpdateMemberPayload = {
       ...data,
-      // TODO: add user email
-      updated_by: '123@gmail.com',
+      updated_by: currentUser.uid,
     };
     updateMutation.mutate(payload, {
       onSuccess: (updatedPerson) => {

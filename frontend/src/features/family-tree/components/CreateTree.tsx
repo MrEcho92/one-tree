@@ -26,9 +26,11 @@ import {
 } from '../../../types/tree';
 import { useCreateFamilyTree } from '../../../hooks/treeHooks';
 import { ApiResponse } from '../../../types/api';
+import { useAuth } from '../../../components/auth/AuthProvider';
 
 export default function CreateTree() {
   const { typography, palette } = useTheme();
+  const { currentUser } = useAuth();
   const { closeModal } = useModal();
   const { control, handleSubmit, register } = useForm<CreateTreeFormValues>({
     defaultValues: {
@@ -44,12 +46,14 @@ export default function CreateTree() {
   const mutation = useCreateFamilyTree();
 
   const onSubmit = async (data: CreateTreeFormValues) => {
+    if (!currentUser) {
+      return;
+    }
     const payload: CreateFamilyTreePayload = {
       name: data.name,
       description: data.description,
       is_public: data.is_public,
-      // TODO: Update with user details
-      created_by: '123@gmail.com',
+      created_by: currentUser.uid,
       root_member: {
         first_name: data.root_first_name,
         last_name: data.root_last_name,
