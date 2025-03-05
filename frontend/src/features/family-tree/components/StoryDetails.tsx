@@ -22,6 +22,7 @@ import { useModal } from '../../../components/common';
 import DeleteStory from './DeleteStory';
 import { StoryForm } from '../../../types/tree';
 import { topTags } from './constants';
+import { useAuth } from '../../../components/auth/AuthProvider';
 
 type StoryDetailsProps = {
   story: FamilyStory;
@@ -45,6 +46,8 @@ export default function StoryDetails({
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const { currentUser } = useAuth();
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -64,13 +67,15 @@ export default function StoryDetails({
   }
 
   function onSubmit(data: any) {
-    // TODO: add user email
+    if (!currentUser) {
+      return;
+    }
     const payload: UpdateStoryPayload = {
       title: data.title,
       content: data.content,
       tags: data.tags,
       is_public: data.is_public,
-      updated_by: '123@gmail.com',
+      updated_by: currentUser.uid,
     };
 
     if (onUpdateStory) {

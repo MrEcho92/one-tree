@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
+import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid2';
@@ -32,6 +33,7 @@ import CreateCulturalPost from '../../cultural-context/components/CreateEditPost
 import { useDeleteCulturalPost } from '../../../hooks/hubHooks';
 import queryClient from '../../../core/http/react-query';
 import DeletePostModal from '../../cultural-context/components/DeletePostModal';
+import { useAuth } from '../../../components/auth/AuthProvider';
 
 const data = [
   {
@@ -64,13 +66,14 @@ export function DashboardPage() {
   const { openModal, closeModal } = useModal();
   const { t } = useTranslation('dashboard');
   const { enqueueSnackbar } = useSnackbar();
+  const { currentUser } = useAuth();
 
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [itemToDelete, setItemToDelete] = useState<string>('');
 
-  // TODO: add user email
-  const userId = '123@gmail.com';
+  const userId = currentUser?.uid;
+
   const {
     data: familyTrees,
     isLoading,
@@ -88,7 +91,19 @@ export function DashboardPage() {
   const deleteMutation = useDeleteCulturalPost(itemToDelete);
 
   if (isLoading || isPostsLoading) {
-    return <Box mt={isSmallScreen ? '64px' : ''}>Loading...</Box>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          mt: isSmallScreen ? '64px' : '',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
   if (isError || isPostError) {
     return <Box mt={isSmallScreen ? '64px' : ''}>Error...</Box>;
@@ -191,14 +206,14 @@ export function DashboardPage() {
               <Card variant="outlined" sx={{ width: '100%' }}>
                 <CardContent>
                   <Typography component="h2" variant="subtitle1" gutterBottom>
-                    {t('dashboard:labels.familyTrees')} (
-                    {treeData && treeData.length})
+                    {t('dashboard:labels.familyTrees')}
+                    {treeData?.length > 0 && ` (${treeData.length})`}
                   </Typography>
                   <Stack
                     sx={{
                       justifyContent: 'space-between',
                       overflowY: 'scroll',
-                      maxHeight: 250,
+                      height: 250,
                     }}
                   >
                     {treeData &&
@@ -239,7 +254,11 @@ export function DashboardPage() {
                           </Stack>
                         );
                       })}
-                    {!treeData && <Box>{t('dashboard:noFamilyAvailable')}</Box>}
+                    {!treeData.length && (
+                      <Typography variant="caption">
+                        {t('dashboard:noFamilyAvailable')}
+                      </Typography>
+                    )}
                   </Stack>
                 </CardContent>
               </Card>
@@ -252,14 +271,14 @@ export function DashboardPage() {
                 <Card variant="outlined" sx={{ width: '100%' }}>
                   <CardContent>
                     <Typography component="h2" variant="subtitle1" gutterBottom>
-                      {t('dashboard:labels.cultural')} (
-                      {postsData && postsData.length})
+                      {t('dashboard:labels.cultural')}
+                      {postsData?.length > 0 && ` (${postsData.length})`}
                     </Typography>
                     <Stack
                       sx={{
                         justifyContent: 'space-between',
                         overflowY: 'scroll',
-                        maxHeight: 250,
+                        height: 250,
                       }}
                     >
                       {postsData &&
@@ -332,6 +351,11 @@ export function DashboardPage() {
                             </Stack>
                           );
                         })}
+                      {!postsData.length && (
+                        <Typography variant="caption">
+                          {t('dashboard:noCulturalStoryAvailable')}
+                        </Typography>
+                      )}
                     </Stack>
                   </CardContent>
                 </Card>
@@ -351,7 +375,7 @@ export function DashboardPage() {
                       sx={{
                         justifyContent: 'space-between',
                         overflowY: 'scroll',
-                        maxHeight: 250,
+                        height: 250,
                       }}
                     >
                       <Stack

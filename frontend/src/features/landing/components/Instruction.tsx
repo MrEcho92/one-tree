@@ -1,5 +1,6 @@
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -9,6 +10,7 @@ import Button from '@mui/material/Button';
 export function Instructions() {
   const { palette, typography } = useTheme();
   const { t } = useTranslation(['common', 'landing']);
+  const navigate = useNavigate();
   return (
     <Box id="instructions">
       <Container
@@ -79,7 +81,11 @@ export function Instructions() {
                   {t('landing:instructions.steps.stepThree')}
                 </Typography>
               </Box>
-              <Button variant="contained" color="info">
+              <Button
+                variant="contained"
+                color="info"
+                onClick={() => navigate('/auth/signup')}
+              >
                 {t('common:signUp')}
               </Button>
             </Box>

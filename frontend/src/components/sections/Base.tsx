@@ -2,11 +2,12 @@ import React, { Suspense } from 'react';
 import Box from '@mui/material/Box';
 import { CssBaseline } from '@mui/material';
 import { CircularProgress } from '@mui/material';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { SideMenu } from './SideBar';
 import { AppNavBar } from './AppMenu';
+import { useAuth } from '../auth/AuthProvider';
 
 type BaseProps = {
   children: React.ReactNode;
@@ -36,6 +37,11 @@ export function PublicBase() {
 }
 
 export function ProtectedBase() {
+  const { currentUser } = useAuth();
+  if (!currentUser) {
+    return <Navigate to="/auth/login" replace />;
+  }
+
   return (
     <Base>
       <Suspense fallback={<CircularProgress />}>
@@ -44,6 +50,7 @@ export function ProtectedBase() {
           <AppNavBar />
           <Box flexGrow={1}>
             <Outlet />
+            <Footer />
           </Box>
         </Box>
       </Suspense>

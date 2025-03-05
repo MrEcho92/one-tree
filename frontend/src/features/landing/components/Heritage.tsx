@@ -1,4 +1,5 @@
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -7,6 +8,7 @@ import Button from '@mui/material/Button';
 
 export function Heritage() {
   const { palette, typography } = useTheme();
+  const navigate = useNavigate();
   const { t } = useTranslation('landing');
   return (
     <Box id="heritage" sx={{ backgroundColor: palette.primary.main }}>
@@ -55,7 +57,7 @@ export function Heritage() {
           >
             {t('landing:heritage.subTitle')}
           </Typography>
-          <Button variant="contained" color="secondary">
+          <Button variant="contained" color="secondary" onClick={() => navigate('/auth/login')}>
             {t('landing:heritage.btnTitle')}
           </Button>
         </Box>

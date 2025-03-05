@@ -79,6 +79,7 @@ class ContextStatus(Enum):
 
 
 class CulturalContext(AbstractBaseModel):
+    name: str
     title: str
     content: str
     video_url: Optional[str] = None

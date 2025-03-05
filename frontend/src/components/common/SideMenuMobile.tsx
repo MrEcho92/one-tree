@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -10,6 +9,7 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
 import MenuButton from './MenuButton';
 import MenuContent from './MenuContent';
+import { useAuth } from '../auth/AuthProvider';
 
 interface SideMenuMobileProps {
   open: boolean | undefined;
@@ -21,6 +21,8 @@ export default function SideMenuMobile({
   toggleDrawer,
 }: SideMenuMobileProps) {
   const { palette } = useTheme();
+  const { currentUser, logout } = useAuth();
+
   return (
     <Drawer
       anchor="right"
@@ -48,11 +50,11 @@ export default function SideMenuMobile({
             <Avatar
               sizes="small"
               alt="Riley Carter"
-              src="/static/images/avatar/7.jpg"
+              src={currentUser?.photoURL ?? '/static/images/avatar/7.jpg'}
               sx={{ width: 24, height: 24 }}
             />
             <Typography component="p" variant="h6">
-              Riley Carter
+              {currentUser?.displayName}
             </Typography>
           </Stack>
           <MenuButton showBadge>
@@ -69,6 +71,7 @@ export default function SideMenuMobile({
             variant="outlined"
             fullWidth
             startIcon={<LogoutRoundedIcon />}
+            onClick={() => logout()}
           >
             Logout
           </Button>

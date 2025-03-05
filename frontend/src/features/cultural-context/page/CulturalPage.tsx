@@ -242,7 +242,7 @@ export function CulturalPage() {
         {Posts && Posts?.cultural_contexts?.length === 0 && (
           <Box sx={{ textAlign: 'center', py: 2 }}>
             <Typography variant="h6">
-              No post found {searchQuery && `for "${searchQuery}"`}
+              No post found {searchQuery && `for ${searchQuery}`}
             </Typography>
           </Box>
         )}

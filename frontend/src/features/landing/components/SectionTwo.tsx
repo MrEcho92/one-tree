@@ -1,5 +1,6 @@
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -9,6 +10,7 @@ import familyLogo from '../assets/black-family.png';
 export function SectionTwo() {
   const { palette, typography } = useTheme();
   const { t } = useTranslation('landing');
+  const navigate = useNavigate();
   return (
     <Box
       id="section2"
@@ -73,6 +75,7 @@ export function SectionTwo() {
             alignSelf: 'center',
             width: 'auto',
           }}
+          onClick={() => navigate('/auth/signup')}
         >
           {t('landing:sectionTwo.btnCTA')}
         </Button>

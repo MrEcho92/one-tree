@@ -3,14 +3,11 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
+import { getAuth, signOut } from 'firebase/auth';
+import { firebaseApp } from '../firebase';
+import { envVariables } from '../constants';
 
-export const envVariables = {
-  localEnv: {
-    apiURL: 'REACT_APP_API_URL',
-  },
-};
-
-export const getBaseURL = (key: string) => {
+export const getBaseURL = (key: string): string => {
   const apiURL = process.env[key];
   if (!apiURL) throw new Error('missing base API url');
   return apiURL || '';
@@ -24,12 +21,18 @@ export const HTTPInstance = axios.create({
 });
 
 HTTPInstance.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    // Add Authorization header if a token is present
-    // const token = localStorage.getItem('authToken');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+  async (config: InternalAxiosRequestConfig) => {
+    const auth = getAuth(firebaseApp);
+    const user = auth.currentUser;
+
+    if (user) {
+      try {
+        const token = await user.getIdToken();
+        config.headers.Authorization = `Bearer ${token}`;
+      } catch (error) {
+        console.error('Error getting token:', error);
+      }
+    }
     return config;
   },
   (error) => {
@@ -43,56 +46,40 @@ HTTPInstance.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    // const message = error.response?.data.message || error.message;
-    // use Notification e.g. snackbar
-    // const originalRequest = error.config;
+    const auth = getAuth(firebaseApp);
 
-    // // Handle 401 Unauthorized
-    // if (error.response?.status === 401) {
-    //   // If refresh token exists, try to get new access token
-    //   const refreshToken = localStorage.getItem('refreshToken');
+    const originalRequest = error.config;
 
-    //   if (refreshToken && originalRequest) {
-    //     try {
-    //       const response = await axios.post('/api/auth/refresh', {
-    //         refresh_token: refreshToken,
-    //       });
+    // Handle 401 Unauthorized
+    if (error.response?.status === 401 && originalRequest) {
+      try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('User not authenticated');
 
-    //       const { token } = response.data;
-    //       localStorage.setItem('token', token);
+        // Get a new access token using Firebase refresh mechanism
+        const newToken = await user.getIdToken(true); // Forces token refresh
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
 
-    //       // Retry original request with new token
-    //       if (originalRequest.headers) {
-    //         originalRequest.headers.Authorization = `Bearer ${token}`;
-    //       }
-    //       return axios(originalRequest);
-    //     } catch (refreshError) {
-    //       // If refresh fails, logout user
-    //       localStorage.removeItem('token');
-    //       localStorage.removeItem('refreshToken');
-    //       window.location.href = '/login';
-    //     }
-    //   } else {
-    //     // No refresh token, redirect to login
-    //     window.location.href = '/login';
-    //   }
-    // }
+        return axios(originalRequest); // Retry original request with new token
+      } catch (refreshError) {
+        console.error('Token refresh failed. Logging out...');
+        await signOut(auth);
+        window.location.href = '/auth/login'; // Redirect to login
+      }
+    }
+    // Handle other error scenarios
+    switch (error.response?.status) {
+      case 403:
+        console.error('Forbidden access:', error);
+        break;
+      case 404:
+        console.error('Resource not found:', error);
+        break;
+      case 500:
+        console.error('Server error:', error);
+        break;
+    }
 
-    // // Handle 403 Forbidden
-    // if (error.response?.status === 403) {
-    //   // Handle forbidden access
-    //   console.error('Forbidden access:', error);
-    // }
-
-    // // Handle 404 Not Found
-    // if (error.response?.status === 404) {
-    //   console.error('Resource not found:', error);
-    // }
-
-    // // Handle 500 Internal Server Error
-    // if (error.response?.status === 500) {
-    //   console.error('Server error:', error);
-    // }
     return Promise.reject(error);
   },
 );

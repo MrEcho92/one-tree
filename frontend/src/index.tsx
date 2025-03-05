@@ -4,14 +4,15 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@mui/material';
-import queryClient from './core/http/react-query';
 import { SnackbarProvider } from 'notistack';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
+import queryClient from './core/http/react-query';
 import './index.scss';
 import App from './App';
 import { theme } from './core/theme/theme';
 import { ModalProvider } from './components/common/modal/ModalContext';
+import { AuthProvider } from './components/auth/AuthProvider';
 import './i18n';
 
 const root = ReactDOM.createRoot(
@@ -26,9 +27,11 @@ root.render(
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <ThemeProvider theme={theme}>
             <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
-              <ModalProvider>
-                <App />
-              </ModalProvider>
+              <AuthProvider>
+                <ModalProvider>
+                  <App />
+                </ModalProvider>
+              </AuthProvider>
             </SnackbarProvider>
           </ThemeProvider>
         </LocalizationProvider>

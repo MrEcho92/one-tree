@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
@@ -9,6 +8,7 @@ import MenuContent from '../common/MenuContent';
 import OptionsMenu from '../common/OptionsMenu';
 import Divider from '@mui/material/Divider';
 import { AppConfig } from '../../core/constants';
+import { useAuth } from '../auth/AuthProvider';
 
 const drawerWidth = 200;
 
@@ -25,6 +25,7 @@ const Drawer = styled(MuiDrawer)({
 
 export function SideMenu() {
   const { palette, typography } = useTheme();
+  const { currentUser } = useAuth();
   return (
     <Drawer
       variant="permanent"
@@ -69,7 +70,7 @@ export function SideMenu() {
         <Avatar
           sizes="small"
           alt="Riley Carter"
-          src="/static/images/avatar/7.jpg"
+          src={currentUser?.photoURL ?? '/static/images/avatar/7.jpg'}
           sx={{ width: 36, height: 36 }}
         />
         <Box sx={{ mr: 'auto' }}>
@@ -77,10 +78,10 @@ export function SideMenu() {
             variant="body2"
             sx={{ fontWeight: 500, lineHeight: '16px' }}
           >
-            Riley Carter
+            {currentUser?.displayName}
           </Typography>
-          <Typography variant="caption" sx={{ color: palette.text.secondary }}>
-            riley@email.com
+          <Typography sx={{ color: palette.text.secondary, fontSize: '8px' }}>
+            {currentUser?.email}
           </Typography>
         </Box>
         <OptionsMenu />

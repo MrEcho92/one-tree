@@ -27,6 +27,7 @@ import {
 } from '../../../hooks/hubHooks';
 import { CreateCulturalFormValues } from '../../../types';
 import queryClient from '../../../core/http/react-query';
+import { useAuth } from '../../../components/auth/AuthProvider';
 
 const maxSize = 10 * 1024 * 1024; // 10MB
 
@@ -38,6 +39,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
   const { typography, palette } = useTheme();
   const { closeModal } = useModal();
   const { enqueueSnackbar } = useSnackbar();
+  const { currentUser } = useAuth();
 
   const editMode = !!post;
 
@@ -100,8 +102,10 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
   const mutation = editMode ? updateMutation : createMutation;
 
   const onSubmit = (data: any) => {
+    if (!currentUser) {
+      return;
+    }
     const formData = new FormData();
-
     formData.append('title', data.title);
     formData.append('content', data.content);
     formData.append('link_url', data.link_url);
@@ -109,13 +113,14 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
       formData.append('tags', tag);
     });
 
-    // TODO: add user email
-    const userId = '123@gmail.com';
+    const userId = currentUser.uid;
     if (editMode) {
       formData.append('updated_by', userId);
     } else {
       formData.append('created_by', userId);
     }
+    if (currentUser.displayName)
+      formData.append('name', currentUser.displayName);
 
     if (data.media) {
       const { type } = data.media;

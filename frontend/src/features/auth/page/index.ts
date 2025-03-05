@@ -1,2 +1,3 @@
-export * from './Signin';
+export * from './Login';
 export * from './Signup';
+export * from './Settings';

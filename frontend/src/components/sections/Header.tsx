@@ -11,11 +11,9 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
-import { useState, MouseEvent } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { AppConfig } from '../../core/constants';
 
@@ -23,14 +21,6 @@ export function Header() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation(['common', 'header']);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
 
@@ -140,7 +130,7 @@ export function Header() {
               variant="text"
               color="secondary"
               size="small"
-              onClick={() => {}}
+              onClick={() => navigate('/auth/login')}
             >
               {t('common:login')}
             </Button>
@@ -148,61 +138,10 @@ export function Header() {
               variant="outlined"
               color="secondary"
               size="small"
-              onClick={() => {}}
-              sx={{}}
+              onClick={() => navigate('/auth/signup')}
             >
               {t('common:signUp')}
             </Button>
-            <IconButton
-              onClick={handleClick}
-              size="small"
-              sx={{ ml: 2 }}
-              aria-controls={open ? 'account-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-            >
-              <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              id="account-menu"
-              open={open}
-              onClose={handleClose}
-              onClick={handleClose}
-              PaperProps={{
-                elevation: 0,
-                sx: {
-                  overflow: 'visible',
-                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                  mt: 1.5,
-                  '& .MuiAvatar-root': {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  '&::before': {
-                    content: '""',
-                    display: 'block',
-                    position: 'absolute',
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: 'background.paper',
-                    transform: 'translateY(-50%) rotate(45deg)',
-                    zIndex: 0,
-                  },
-                },
-              }}
-              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
-              <MenuItem onClick={handleClose}>Settings</MenuItem>
-              <MenuItem onClick={handleClose}>{t('common:logout')}</MenuItem>
-            </Menu>
           </Box>
 
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -269,6 +208,7 @@ export function Header() {
                     color="primary"
                     variant="contained"
                     sx={{ width: '100%' }}
+                    onClick={() => navigate('/auth/signup')}
                   >
                     {t('common:signUp')}
                   </Button>
@@ -278,6 +218,7 @@ export function Header() {
                     color="primary"
                     variant="outlined"
                     sx={{ width: '100%' }}
+                    onClick={() => navigate('/auth/login')}
                   >
                     {t('common:login')}
                   </Button>

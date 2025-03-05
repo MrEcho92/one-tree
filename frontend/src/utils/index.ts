@@ -3,3 +3,4 @@ export * from './getMembers';
 export * from './date';
 export * from './transformTree';
 export * from './treeGraph';
+export * from './decodeToken';

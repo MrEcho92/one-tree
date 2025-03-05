@@ -1,59 +1,121 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
-import Divider from '@mui/material/Divider';
+import { useSnackbar } from 'notistack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { IconButton, InputAdornment, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
 import GoogleIcon from '@mui/icons-material/Google';
-import { useAuth } from '../../../components/auth/AuthProvider';
-import FormHelperText from '@mui/material/FormHelperText';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useAuth } from '../../../components/auth/AuthProvider';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import FormHelperText from '@mui/material/FormHelperText';
+import ForgotPassword from '../components/ForgotPassword';
+import { useModal } from '../../../components/common';
+import EmailVerification from '../components/EmailVerification';
 import { AppConfig } from '../../../core';
 
-export default function SignUpPage() {
-  const { signUp, loginWithGoogle, loading } = useAuth();
+export default function LogInPage() {
   const navigate = useNavigate();
   const { palette } = useTheme();
-
-  const [error, setError] = React.useState('');
-  const [showPassword, setShowPassword] = React.useState(false);
+  const { openModal, closeModal } = useModal();
+  const {
+    login,
+    loginWithGoogle,
+    loading,
+    resendVerificationEmail,
+    forgotPassword,
+  } = useAuth();
 
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
-  } = useForm<{
-    displayName: string;
-    email: string;
-    password: string;
-    confirmEmail: string;
-  }>();
+  } = useForm<{ email: string; password: string }>();
 
-  const onSubmit = async (data: any) => {
-    if (!data) {
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const firebaseErrorMessages: Record<string, string> = {
+    'auth/invalid-email': 'The email address is badly formatted.',
+    'auth/user-not-found': 'No user found with this email.',
+    'auth/wrong-password': 'Incorrect password. Please try again.',
+    'auth/too-many-requests':
+      'Too many unsuccessful login attempts. Please try again later.',
+    'auth/email-already-in-use': 'This email address is already in use.',
+    'auth/network-request-failed':
+      'Network error. Please check your connection.',
+    'auth/invalid-credential': 'Invalid credentials',
+  };
+
+  const handleResendVerification = async () => {
+    const { email, password } = getValues();
+    try {
+      const result = await resendVerificationEmail(email, password);
+      if (result.success) {
+        closeModal?.();
+      }
+    } catch (error: any) {
+      console.error('Error resending verification:', error);
+    }
+  };
+
+  const handleForgotPassword = async (email: string) => {
+    if (!email) {
+      enqueueSnackbar('Please enter your email to reset your password.', {
+        variant: 'error',
+      });
       return;
     }
+    try {
+      await forgotPassword(email);
+      closeModal?.();
+    } catch (error) {
+      console.error('Error resetting password. Try again.');
+    }
+  };
 
-    const displayName = data['displayName'];
+  const onSubmit = async (data: any) => {
     const email = data['email'];
     const password = data['password'];
-    const confirmEmail = data['confirmEmail'];
 
-    if (email !== confirmEmail) {
-      return setError('Emails do not match');
+    if (!email || !password) {
+      return;
     }
     setError('');
 
     try {
-      await signUp(email, password, displayName);
-      navigate('/auth/login');
+      const result = await login(email, password);
+
+      if (!result.isEmailVerified) {
+        openModal(
+          <EmailVerification
+            handleResendVerification={handleResendVerification}
+            handleClose={closeModal}
+          />,
+        );
+      }
+
+      if (result.success && result.isEmailVerified) {
+        navigate('/app');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to create an account');
+      const errorCode = err.code;
+      if (firebaseErrorMessages[errorCode]) {
+        setError(firebaseErrorMessages[errorCode]);
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     }
   };
 
@@ -67,6 +129,15 @@ export default function SignUpPage() {
       setError(err.message || 'Failed to log in with Google');
     }
   };
+
+  function openForgotPasswordModal(): void {
+    openModal(
+      <ForgotPassword
+        handleClose={closeModal}
+        handleForgotPassword={handleForgotPassword}
+      />,
+    );
+  }
 
   return (
     <Box>
@@ -94,7 +165,7 @@ export default function SignUpPage() {
           }}
         >
           <Typography component="h1" variant="h2">
-            Sign up
+            Welcome back!
           </Typography>
           {error && (
             <Box sx={{ p: 2, mb: 1, color: palette.error.main }}>{error}</Box>
@@ -102,28 +173,6 @@ export default function SignUpPage() {
           <Box sx={{ mt: 3 }}>
             <form>
               <Box>
-                <Controller
-                  name="displayName"
-                  control={control}
-                  rules={{
-                    required: 'Name is required',
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      variant="outlined"
-                      fullWidth
-                      id="displayName"
-                      label="Name"
-                      error={!!errors.displayName}
-                      helperText={
-                        errors.displayName ? errors.displayName.message : ''
-                      }
-                      required
-                      sx={{ mb: 2 }}
-                    />
-                  )}
-                />
                 <Controller
                   name="email"
                   control={control}
@@ -149,42 +198,11 @@ export default function SignUpPage() {
                   )}
                 />
                 <Controller
-                  name="confirmEmail"
-                  control={control}
-                  rules={{
-                    required: 'Email is required',
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Confirm email address"
-                      variant="outlined"
-                      fullWidth
-                      error={!!errors.confirmEmail}
-                      helperText={
-                        errors.confirmEmail ? errors.confirmEmail.message : ''
-                      }
-                      required
-                      sx={{ mb: 2 }}
-                    />
-                  )}
-                />
-                <Controller
                   name="password"
                   control={control}
                   defaultValue=""
                   rules={{
                     required: 'Password is required',
-                    minLength: {
-                      value: 8,
-                      message: 'Password must be at least 8 characters long',
-                    },
-                    pattern: {
-                      value:
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                      message:
-                        'Password must include uppercase, lowercase, number, and special character',
-                    },
                   }}
                   render={({ field }) => (
                     <TextField
@@ -238,30 +256,42 @@ export default function SignUpPage() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
               onClick={handleSubmit(onSubmit)}
-              loading={loading}
             >
-              Sign up with email
+              Log In
             </Button>
+            <Grid container>
+              <Grid item xs>
+                <Link
+                  variant="body2"
+                  component="button"
+                  onClick={openForgotPasswordModal}
+                  sx={{ alignSelf: 'center' }}
+                >
+                  Forgot password?
+                </Link>
+              </Grid>
+            </Grid>
             <Divider>
               <Typography sx={{ color: 'text.secondary' }}>or</Typography>
             </Divider>
             <Button
               fullWidth
               variant="outlined"
+              onClick={handleGoogleLogin}
               startIcon={<GoogleIcon />}
               sx={{ mt: 3, mb: 2 }}
-              onClick={handleGoogleLogin}
+              loading={loading}
             >
-              Sign in with Google
+              Log in with Google
             </Button>
-            <Typography sx={{ textAlign: 'center', py: 2, mb: 8 }}>
-              Already have an account?{' '}
+            <Typography sx={{ textAlign: 'center' }}>
+              Don&apos;t have an account?{' '}
               <Link
-                href="/auth/login/"
+                href="/auth/signup"
                 variant="body2"
                 sx={{ alignSelf: 'center' }}
               >
-                Log in
+                Sign up
               </Link>
             </Typography>
           </Box>

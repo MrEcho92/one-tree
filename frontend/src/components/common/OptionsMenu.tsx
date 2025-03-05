@@ -11,6 +11,7 @@ import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MenuButton from './MenuButton';
+import { useAuth } from '../auth/AuthProvider';
 
 const MenuItem = styled(MuiMenuItem)({
   margin: '2px 0',
@@ -18,6 +19,8 @@ const MenuItem = styled(MuiMenuItem)({
 
 export default function OptionsMenu() {
   const { palette } = useTheme();
+  const { logout } = useAuth();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -55,14 +58,10 @@ export default function OptionsMenu() {
           },
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <Divider />
-        <MenuItem onClick={handleClose}>Add another account</MenuItem>
         <MenuItem onClick={handleClose}>Settings</MenuItem>
         <Divider />
         <MenuItem
-          onClick={handleClose}
+          onClick={() => logout()}
           sx={{
             [`& .${listItemIconClasses.root}`]: {
               ml: 'auto',
