@@ -18,7 +18,7 @@ class CreateMigrationRecordSchema(BaseModel):
     description: str
     timeline: List[MigrationEventSchema] = []
     tree_id: Optional[str] = None
-    media: Optional[List[str]] = None
+    media: Optional[List[str]] = []
 
 
 class MigrationRecordUpdateSchema(BaseModel):

@@ -6,7 +6,7 @@ from google.cloud import firestore
 from app.common.firebase import verify_firebase_token
 from app.core.constants import MIGRATION_RECORDS
 from app.core.database import get_db
-from app.models.models import MigrationEvent, MigrationRecord
+from app.models.models import MigrationRecord
 from app.schemas.tracking_schema import (
     CreateMigrationRecordSchema,
     MigrationRecordUpdateSchema,
