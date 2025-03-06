@@ -91,14 +91,16 @@ class CulturalContext(AbstractBaseModel):
 
 
 class MigrationEvent(AbstractBaseModel):
-    id: str
     year: int
     event: str
+    location: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 
 class MigrationRecord(AbstractBaseModel):
-    family_tree_id: str
+    tree_id: Optional[str] = None
     title: str
     description: str
     timeline: List[MigrationEvent] = []
-    media_url: Optional[str] = None
+    media: Optional[List[str]] = None
