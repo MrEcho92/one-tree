@@ -15,7 +15,7 @@ import {
   IconButton,
   Paper,
   TextField,
-  useTheme,
+  Tooltip,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Header } from '../../dashbord/components';
@@ -35,16 +35,20 @@ import AddIcon from '@mui/icons-material/Add';
 import {
   useGetMigrationRecord,
   useUpdateMigrationRecord,
+  useDeleteMigrationRecord,
 } from '../../../hooks';
 import { MigrationEvent } from '../../../types/migration';
 import { useAuth } from '../../../components/auth/AuthProvider';
 import queryClient from '../../../core/http/react-query';
+import { useModal } from '../../../components/common';
+import DeleteModal from '../../../components/common/DeleteModal';
 
 export default function MigrationPage() {
   const { recordId } = useParams();
-  const { palette } = useTheme();
   const { currentUser } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
+  const { openModal, closeModal } = useModal();
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -63,6 +67,8 @@ export default function MigrationPage() {
   const { data, isLoading, isError } = useGetMigrationRecord(recordId ?? '');
 
   const updateMutation = useUpdateMigrationRecord(recordId ?? '');
+
+  const deleteMutation = useDeleteMigrationRecord(recordId ?? '');
 
   const migrationRecord = useMemo(() => {
     if (data) {
@@ -172,6 +178,24 @@ export default function MigrationPage() {
       },
     });
   };
+
+  function handleDeleteRecord() {
+    deleteMutation.mutate(undefined, {
+      onSuccess: () => {
+        enqueueSnackbar('Migration record deleted successfully!', {
+          variant: 'success',
+        });
+        closeModal?.();
+        navigate('/app');
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to delete migration record', {
+          variant: 'error',
+        });
+        console.error('Error deleting migration record:', error);
+      },
+    });
+  }
 
   const TimeLineView = () => (
     <Box
@@ -320,15 +344,40 @@ export default function MigrationPage() {
             <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
               {migrationRecord?.title}
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
-              onClick={() => setIsEditing(!isEditing)}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 2,
+              }}
             >
-              {isEditing ? 'Save' : 'Edit'}
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                {isEditing ? 'Save' : 'Edit'}
+              </Button>
+              <Tooltip title="Delete migration record">
+                <IconButton
+                  onClick={() => {
+                    openModal(
+                      <DeleteModal
+                        closeModal={closeModal}
+                        onDelete={handleDeleteRecord}
+                        deleteMessage={`Are you sure you want to delete migration record: ${migrationRecord?.title}?`}
+                        deleteTitle={'Delete migration record'}
+                      />,
+                    );
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Box>
           <Typography component="p" variant="body1" sx={{ my: 2 }}>
             {migrationRecord?.description}
@@ -509,10 +558,11 @@ export default function MigrationPage() {
               <Box
                 sx={{
                   height: '100vh',
-                  py: 2,
+                  p: 2,
                 }}
               >
-                <MapView />
+                {/* <MapView /> */}
+                <Typography>Map view feature coming soon!</Typography>
               </Box>
             </TabPanel>
           </TabContext>

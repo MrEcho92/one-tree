@@ -32,9 +32,9 @@ import { transformDate } from '../../../utils/date';
 import CreateCulturalPost from '../../cultural-context/components/CreateEditPost';
 import { useDeleteCulturalPost } from '../../../hooks/hubHooks';
 import queryClient from '../../../core/http/react-query';
-import DeletePostModal from '../../cultural-context/components/DeletePostModal';
 import { useAuth } from '../../../components/auth/AuthProvider';
 import CreateMigrationRecord from '../../tracking/components/CreateMigrationRecord';
+import DeleteModal from '../../../components/common/DeleteModal';
 
 const data = [
   {
@@ -345,10 +345,11 @@ export function DashboardPage() {
                                     onClick={() => {
                                       setItemToDelete(post.id);
                                       openModal(
-                                        <DeletePostModal
+                                        <DeleteModal
                                           closeModal={closeModal}
                                           onDelete={handleDeletePost}
-                                          name={post.title}
+                                          deleteMessage={`Are you sure you want to delete post: ${post.title}?`}
+                                          deleteTitle="Delete cultural post"
                                         />,
                                       );
                                     }}
