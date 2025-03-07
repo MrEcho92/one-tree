@@ -1,7 +1,6 @@
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 export default function About() {
@@ -43,7 +42,10 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="md" sx={{ bgcolor: palette.secondary.main, p: 5, my: 2, borderRadius: 2 }}>
+        <Container
+          maxWidth="md"
+          sx={{ bgcolor: palette.secondary.main, p: 5, my: 2, borderRadius: 2 }}
+        >
           <Typography
             textAlign="center"
             sx={{
@@ -58,7 +60,7 @@ export default function About() {
           >
             Our mission
           </Typography>
-          <Typography textAlign="center" variant='body1'>
+          <Typography textAlign="center" variant="body1">
             We believe every family has a story worth preserving. Our platform
             helps African diaspora families reconnect with their heritage,
             document traditions, and celebrate their journey across generations.
@@ -89,9 +91,10 @@ export default function About() {
             Who We Serve
           </Typography>
           <Typography textAlign="center">
-            We are building this platform for African diaspora families all over the world, especially first- and second-generation members who
-            want to explore their roots, share cultural knowledge, and stay
-            connected despite geographic distance.
+            We are building this platform for African diaspora families all over
+            the world, especially first- and second-generation members who want
+            to explore their roots, share cultural knowledge, and stay connected
+            despite geographic distance.
           </Typography>
         </Container>
       </Box>
