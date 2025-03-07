@@ -2,6 +2,7 @@ import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import { AppConfig } from '../../../core';
 
 export default function About() {
   const { palette, typography } = useTheme();
@@ -31,10 +32,20 @@ export default function About() {
           mb: 2,
         }}
       >
-        We make it easy for families to connect with their family stories,
-        traditions and families. Connecting with each other and visualising
-        their family stories.
+        Preserving Heritage, Connecting Generations
       </Typography>
+      <Container maxWidth="md">
+        <Typography textAlign={'center'}>
+          Welcome to {`${AppConfig.appName}`} – where your family's unique
+          journey is honored, preserved, and celebrated.{' '}
+          {`${AppConfig.appName}`} was born from a simple observation: as
+          African diaspora families build lives all over the world, vital
+          stories, traditions, and connections risk being lost between
+          generations. Our platform serves as the bridge between your past and
+          future, helping your family maintain its cultural identity while
+          strengthening bonds across generations.
+        </Typography>
+      </Container>
       <Box
         id="about-section-2"
         sx={{
@@ -134,6 +145,38 @@ export default function About() {
       </Box>
       <Box
         id="about-section-5"
+        sx={{
+          width: '100%',
+          bgcolor: palette.primary.contrastText,
+          py: 6,
+        }}
+      >
+        <Container maxWidth="sm">
+          <Typography
+            textAlign="center"
+            sx={{
+              color: palette.primary.main,
+              fontSize: {
+                xs: typography.body1.fontSize,
+                md: typography.h3.fontSize,
+              },
+              fontWeight: { xs: 'none', md: typography.h1.fontWeight },
+              py: 2,
+            }}
+          >
+            Our Team
+          </Typography>
+          <Typography textAlign="center">
+            Our team is made up of passionate individuals who are dedicated to
+            creating a platform that empowers African diaspora families to
+            preserve and celebrate their cultural heritage. We're a team of
+            developers, designers, and cultural heritage experts who are
+            committed to delivering a world-class platform.
+          </Typography>
+        </Container>
+      </Box>
+      <Box
+        id="about-section-6"
         sx={{
           width: '100%',
           py: 6,
