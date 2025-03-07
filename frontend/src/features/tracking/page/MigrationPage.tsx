@@ -395,7 +395,7 @@ export default function MigrationPage() {
             <TabPanel value="1" sx={{ p: { xs: '0' } }}>
               {isEditing && (
                 <Card sx={{ my: 2, borderRadius: 2 }}>
-                  <CardHeader title="Add Migration Event" />
+                  <CardHeader title="Add migration event" />
                   <CardContent>
                     <Box
                       component="form"
@@ -522,8 +522,18 @@ export default function MigrationPage() {
                               display: 'flex',
                               justifyContent: 'flex-end',
                               mt: 2,
+                              gap: 2,
                             }}
                           >
+                            <Button
+                              type="submit"
+                              variant="text"
+                              color="primary"
+                              size="small"
+                              onClick={() => setIsEditing(false)}
+                            >
+                              Cancel
+                            </Button>
                             <Button
                               type="submit"
                               variant="contained"
@@ -531,7 +541,7 @@ export default function MigrationPage() {
                               size="small"
                               startIcon={<AddIcon />}
                             >
-                              Add Migration Event
+                              Add migration event
                             </Button>
                           </Box>
                         </Grid>
