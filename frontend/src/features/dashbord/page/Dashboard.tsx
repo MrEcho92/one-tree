@@ -34,6 +34,7 @@ import { useDeleteCulturalPost } from '../../../hooks/hubHooks';
 import queryClient from '../../../core/http/react-query';
 import DeletePostModal from '../../cultural-context/components/DeletePostModal';
 import { useAuth } from '../../../components/auth/AuthProvider';
+import CreateMigrationRecord from '../../tracking/components/CreateMigrationRecord';
 
 const data = [
   {
@@ -181,11 +182,19 @@ export function DashboardPage() {
                       endIcon={<ChevronRightRoundedIcon />}
                       fullWidth={isSmallScreen}
                       onClick={() => {
-                        if (data.id === 'family-tree')
-                          openModal(<CreateTree />);
-                        else if (data.id === 'hub')
-                          openModal(<CreateCulturalPost />);
-                        else openModal(<div>migration tracking</div>);
+                        switch (data.id) {
+                          case 'family-tree':
+                            openModal(<CreateTree />);
+                            break;
+                          case 'hub':
+                            openModal(<CreateCulturalPost />);
+                            break;
+                          case 'migration-tracker':
+                            openModal(<CreateMigrationRecord />);
+                            break;
+                          default:
+                            break;
+                        }
                       }}
                     >
                       {data?.btnTitle}

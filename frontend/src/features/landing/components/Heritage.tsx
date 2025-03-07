@@ -60,7 +60,7 @@ export function Heritage() {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => navigate('/auth/login')}
+            onClick={() => navigate('/app')}
           >
             {t('landing:heritage.btnTitle')}
           </Button>

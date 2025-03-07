@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class MigrationEventSchema(BaseModel):
-    year: int
+    year: str
     event: str
     location: Optional[str] = None
     latitude: Optional[float] = None

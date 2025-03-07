@@ -16,6 +16,7 @@ import { firebaseApp } from '../../core';
 
 interface AuthContextType {
   auth: any;
+  isAuthenticated: boolean;
   currentUser: User | null;
   loading: boolean;
   signUp: (

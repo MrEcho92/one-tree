@@ -16,7 +16,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/migration-records/",
+    "/migration-records",
     response_model=MigrationRecord,
     status_code=status.HTTP_201_CREATED,
 )
@@ -32,9 +32,9 @@ async def create_migration_record(
                 detail="Not authorized to access this resource",
             )
 
-        record_dict = record.model_dump()
+        record = MigrationRecord(**record.model_dump())
         record_ref = db.collection(MIGRATION_RECORDS).document(record.id)
-        record_ref.set(record_dict)
+        record_ref.set(record.to_dict())
         return record
     except Exception as e:
         raise HTTPException(

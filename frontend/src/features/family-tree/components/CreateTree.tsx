@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import { useModal } from '../../../components/common';
 import {
   Box,
@@ -32,6 +33,7 @@ export default function CreateTree() {
   const { typography, palette } = useTheme();
   const { currentUser } = useAuth();
   const { closeModal } = useModal();
+  const { enqueueSnackbar } = useSnackbar();
   const { control, handleSubmit, register } = useForm<CreateTreeFormValues>({
     defaultValues: {
       is_public: false,
@@ -78,6 +80,9 @@ export default function CreateTree() {
 
     mutation.mutate(payload, {
       onSuccess: (response: ApiResponse<{ id: string }>) => {
+        enqueueSnackbar('Family tree added successfully', {
+          variant: 'success',
+        });
         if ('id' in response) {
           navigate(`/app/tree/${response.id}`);
         } else if (response.data && 'id' in response.data) {
@@ -87,6 +92,9 @@ export default function CreateTree() {
       },
       onError: (error) => {
         console.error('Error creating family tree:', error);
+        enqueueSnackbar(`Error creating family tree: ${error.message}`, {
+          variant: 'error',
+        });
       },
     });
   };
