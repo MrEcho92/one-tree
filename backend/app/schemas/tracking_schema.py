@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -27,3 +28,11 @@ class MigrationRecordUpdateSchema(BaseModel):
     media: Optional[List[str]] = None
     tree_id: Optional[str] = None
     updated_by: Optional[str] = None
+
+
+class MigrationRecordsGetResponse(BaseModel):
+    id: str
+    title: str
+    created_by: str
+    title: str
+    updated_at: datetime

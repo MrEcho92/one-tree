@@ -122,3 +122,8 @@ class UpdatedFamilyStorySchema(BaseModel):
     tags: Optional[List[str]] = []
     is_public: Optional[bool]
     updated_by: str
+
+class FamilyTreesResponse(BaseModel):
+    id: str
+    updated_at: datetime
+    name: str

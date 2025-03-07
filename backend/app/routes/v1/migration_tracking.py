@@ -9,6 +9,7 @@ from app.core.database import get_db
 from app.models.models import MigrationRecord
 from app.schemas.tracking_schema import (
     CreateMigrationRecordSchema,
+    MigrationRecordsGetResponse,
     MigrationRecordUpdateSchema,
 )
 
@@ -44,7 +45,7 @@ async def create_migration_record(
 
 @router.get(
     "/migration-records",
-    response_model=list[MigrationRecord],
+    response_model=list[MigrationRecordsGetResponse],
     status_code=status.HTTP_200_OK,
 )
 async def get_migration_records(
@@ -52,7 +53,7 @@ async def get_migration_records(
     tree_id: Optional[str] = Query(None),
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
-):
+) -> list[MigrationRecordsGetResponse]:
     try:
         if current_user["uid"] != user_id:
             raise HTTPException(
@@ -64,11 +65,13 @@ async def get_migration_records(
 
         # Apply filters if provided
         if user_id:
-            records_ref = records_ref.where("user_id", "==", user_id)
+            records_ref = records_ref.where("created_by", "==", user_id)
         if tree_id:
             records_ref = records_ref.where("tree_id", "==", tree_id)
 
-        records = [MigrationRecord(**doc.to_dict()) for doc in records_ref.stream()]
+        records = [
+            MigrationRecordsGetResponse(**doc.to_dict()) for doc in records_ref.stream()
+        ]
 
         return records
 

@@ -23,6 +23,17 @@ export const useGetMigrationRecord = (recordId: string) => {
   );
 };
 
+export const useGetMigrationRecordByUser = (userId: string) => {
+  return useApiQuery<MigrationRecord[]>(
+    ['migrationRecords', userId],
+    `/migration-records/?user_id=${userId}`,
+    {
+      queryKey: ['migrationRecords', userId],
+      enabled: !!userId,
+    },
+  );
+};
+
 export const useUpdateMigrationRecord = (recordId: string) => {
   return useApiMutation<MigrationRecord, UpdateMigrationRecordPayload>(
     `/migration-records/${recordId}`,

@@ -101,7 +101,7 @@ export default function MigrationPage() {
   }
 
   if (isError) {
-    return <Box>Error occured</Box>;
+    return <Box mt="64px">Error occured</Box>;
   }
 
   const handleAddEvent = (data: any) => {
