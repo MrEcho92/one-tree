@@ -1,4 +1,3 @@
 export * from './HubList';
 export * from './Latest';
 export * from './CreateEditPost';
-export * from './DeletePostModal';

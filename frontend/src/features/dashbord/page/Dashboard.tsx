@@ -32,8 +32,10 @@ import { transformDate } from '../../../utils/date';
 import CreateCulturalPost from '../../cultural-context/components/CreateEditPost';
 import { useDeleteCulturalPost } from '../../../hooks/hubHooks';
 import queryClient from '../../../core/http/react-query';
-import DeletePostModal from '../../cultural-context/components/DeletePostModal';
 import { useAuth } from '../../../components/auth/AuthProvider';
+import CreateMigrationRecord from '../../tracking/components/CreateMigrationRecord';
+import DeleteModal from '../../../components/common/DeleteModal';
+import { useGetMigrationRecordByUser } from '../../../hooks';
 
 const data = [
   {
@@ -84,13 +86,20 @@ export function DashboardPage() {
   const {
     data: Posts,
     isLoading: isPostsLoading,
-    isError: isPostError,
+    isError: isPostsError,
   } = useGetCulturalPostsByUser(userId ?? '');
   const postsData = Posts as any;
 
+  const {
+    data: Records,
+    isLoading: isRecordsLoading,
+    isError: isRecordsError,
+  } = useGetMigrationRecordByUser(userId ?? '');
+  const recordsData = Records as any;
+
   const deleteMutation = useDeleteCulturalPost(itemToDelete);
 
-  if (isLoading || isPostsLoading) {
+  if (isLoading || isPostsLoading || isRecordsLoading) {
     return (
       <Box
         sx={{
@@ -105,7 +114,7 @@ export function DashboardPage() {
       </Box>
     );
   }
-  if (isError || isPostError) {
+  if (isError || isPostsError || isRecordsError) {
     return <Box mt={isSmallScreen ? '64px' : ''}>Error...</Box>;
   }
 
@@ -181,11 +190,19 @@ export function DashboardPage() {
                       endIcon={<ChevronRightRoundedIcon />}
                       fullWidth={isSmallScreen}
                       onClick={() => {
-                        if (data.id === 'family-tree')
-                          openModal(<CreateTree />);
-                        else if (data.id === 'hub')
-                          openModal(<CreateCulturalPost />);
-                        else openModal(<div>migration tracking</div>);
+                        switch (data.id) {
+                          case 'family-tree':
+                            openModal(<CreateTree />);
+                            break;
+                          case 'hub':
+                            openModal(<CreateCulturalPost />);
+                            break;
+                          case 'migration-tracker':
+                            openModal(<CreateMigrationRecord />);
+                            break;
+                          default:
+                            break;
+                        }
                       }}
                     >
                       {data?.btnTitle}
@@ -336,10 +353,11 @@ export function DashboardPage() {
                                     onClick={() => {
                                       setItemToDelete(post.id);
                                       openModal(
-                                        <DeletePostModal
+                                        <DeleteModal
                                           closeModal={closeModal}
                                           onDelete={handleDeletePost}
-                                          name={post.title}
+                                          deleteMessage={`Are you sure you want to delete post: ${post.title}?`}
+                                          deleteTitle="Delete cultural post"
                                         />,
                                       );
                                     }}
@@ -362,44 +380,65 @@ export function DashboardPage() {
               </Stack>
             </Grid>
             <Grid size={{ xs: 12, lg: 6 }}>
-              <Stack
-                gap={2}
-                direction={{ xs: 'column', sm: 'row', lg: 'column' }}
-              >
-                <Card variant="outlined" sx={{ width: '100%' }}>
-                  <CardContent>
-                    <Typography component="h2" variant="subtitle1" gutterBottom>
-                      {t('dashboard:labels.migration')}
-                    </Typography>
-                    <Stack
-                      sx={{
-                        justifyContent: 'space-between',
-                        overflowY: 'scroll',
-                        height: 250,
-                      }}
-                    >
-                      <Stack
-                        direction="row"
-                        sx={{
-                          alignContent: { xs: 'center', sm: 'flex-start' },
-                          alignItems: 'center',
-                          gap: 1,
-                        }}
-                      >
-                        <Typography variant="h4" component="p">
-                          13,277
-                        </Typography>
-                      </Stack>
-                      <Typography
-                        variant="caption"
-                        sx={{ color: 'text.secondary' }}
-                      >
-                        Sessions per day for the last 30 days
+              <Card variant="outlined" sx={{ width: '100%' }}>
+                <CardContent>
+                  <Typography component="h2" variant="subtitle1" gutterBottom>
+                    {t('dashboard:labels.migration')}
+                    {recordsData?.length > 0 && ` (${recordsData.length})`}
+                  </Typography>
+                  <Stack
+                    sx={{
+                      justifyContent: 'space-between',
+                      overflowY: 'scroll',
+                      height: 250,
+                    }}
+                  >
+                    {recordsData &&
+                      recordsData.map((record: any) => {
+                        return (
+                          <Stack
+                            key={record.id}
+                            direction="row"
+                            sx={{
+                              alignContent: { xs: 'center', sm: 'flex-start' },
+                              alignItems: 'center',
+                              gap: 1,
+                              justifyContent: 'space-between',
+                              '&:hover': {
+                                backgroundColor: theme.palette.grey[200],
+                                cursor: 'pointer',
+                              },
+                              p: 1,
+                            }}
+                            onClick={() => navigate(`/app/record/${record.id}`)}
+                          >
+                            <Box>
+                              <Typography component="h2" variant="subtitle2">
+                                {record.title}
+                              </Typography>
+                              <Typography
+                                component="p"
+                                variant="caption"
+                                sx={{ color: theme.palette.text.secondary }}
+                              >
+                                {t('dashboard:update')}{' '}
+                                {transformDate(record.updated_at)}
+                              </Typography>
+                            </Box>
+                            <Box>
+                              <ChevronRightOutlinedIcon />
+                            </Box>
+                          </Stack>
+                        );
+                      })}
+                    {!recordsData.length && (
+                      <Typography variant="caption">
+                        {t('dashboard:noMigrationRecordAvailable')}
                       </Typography>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Stack>
+                    )}
+                  </Stack>
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
         </Box>

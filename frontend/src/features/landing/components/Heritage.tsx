@@ -57,7 +57,11 @@ export function Heritage() {
           >
             {t('landing:heritage.subTitle')}
           </Typography>
-          <Button variant="contained" color="secondary" onClick={() => navigate('/auth/login')}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => navigate('/app')}
+          >
             {t('landing:heritage.btnTitle')}
           </Button>
         </Box>

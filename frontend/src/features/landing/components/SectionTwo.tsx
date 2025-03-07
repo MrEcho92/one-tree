@@ -75,7 +75,7 @@ export function SectionTwo() {
             alignSelf: 'center',
             width: 'auto',
           }}
-          onClick={() => navigate('/auth/signup')}
+          onClick={() => navigate('/app')}
         >
           {t('landing:sectionTwo.btnCTA')}
         </Button>

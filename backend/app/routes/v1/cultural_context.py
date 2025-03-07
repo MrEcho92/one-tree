@@ -17,7 +17,7 @@ from app.common.firebase import verify_firebase_token
 from app.core.constants import CULTURAL_CONTEXT
 from app.core.database import get_db
 from app.models.models import ContextStatus, CulturalContext
-from app.schemas.cultural_schemas import CulturalContextResponse
+from app.schemas.cultural_schemas import CulturalContextResponse, CulturalContextsResponse
 
 router = APIRouter()
 
@@ -104,12 +104,12 @@ async def get_contexts(
 
 @router.get(
     "/contexts/{user_id}/user",
-    response_model=List[CulturalContext],
+    response_model=List[CulturalContextsResponse],
     status_code=status.HTTP_200_OK,
 )
 async def get_user_contexts(
     user_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
-) -> List[CulturalContext]:
+) -> List[CulturalContextsResponse]:
     """Get all cultural contexts by a user"""
     try:
         if current_user["uid"] != user_id:
@@ -122,7 +122,7 @@ async def get_user_contexts(
             db.collection(CULTURAL_CONTEXT).where("created_by", "==", user_id).stream()
         )
         user_contexts = [
-            CulturalContext.from_dict(context.to_dict()) for context in contexts
+            CulturalContextsResponse(**context.to_dict()) for context in contexts
         ]
         sorted_contexts = sorted(
             user_contexts, key=lambda x: x.created_at, reverse=True

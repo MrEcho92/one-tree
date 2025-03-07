@@ -37,8 +37,9 @@ export function PublicBase() {
 }
 
 export function ProtectedBase() {
-  const { currentUser } = useAuth();
-  if (!currentUser) {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
     return <Navigate to="/auth/login" replace />;
   }
 

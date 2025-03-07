@@ -21,6 +21,7 @@ from app.schemas.tree_schemas import (
     UpdatedFamilyStorySchema,
     UpdatePersonSchema,
     UpdateTreeSchema,
+    FamilyTreesResponse,
 )
 
 router = APIRouter()
@@ -38,12 +39,12 @@ def fetch_members(members_data: List[str], db: Any):
 
 @router.get(
     "/trees/{user_id}/user",
-    response_model=List[FamilyTrees],
+    response_model=List[FamilyTreesResponse],
     status_code=status.HTTP_200_OK,
 )
 async def get_user_trees(
     user_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
-) -> List[FamilyTrees]:
+) -> List[FamilyTreesResponse]:
     """Get all family trees created by a user"""
     if current_user["uid"] != user_id:
         raise HTTPException(
@@ -53,7 +54,7 @@ async def get_user_trees(
 
     try:
         trees = db.collection(FAMILY_TREE).where("created_by", "==", user_id).stream()
-        return [FamilyTrees(**tree.to_dict()) for tree in trees]
+        return [FamilyTreesResponse(**tree.to_dict()) for tree in trees]
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)

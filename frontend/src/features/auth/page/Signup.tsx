@@ -14,6 +14,7 @@ import { useAuth } from '../../../components/auth/AuthProvider';
 import FormHelperText from '@mui/material/FormHelperText';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AppConfig } from '../../../core';
+import { firebaseErrorMessages } from '../components';
 
 export default function SignUpPage() {
   const { signUp, loginWithGoogle, loading } = useAuth();
@@ -53,7 +54,12 @@ export default function SignUpPage() {
       await signUp(email, password, displayName);
       navigate('/auth/login');
     } catch (err: any) {
-      setError(err.message || 'Failed to create an account');
+      const errorCode = err.code;
+      if (firebaseErrorMessages[errorCode]) {
+        setError(firebaseErrorMessages[errorCode]);
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     }
   };
 

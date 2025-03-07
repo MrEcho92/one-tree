@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useSnackbar } from 'notistack';
+import { useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Stack from '@mui/material/Stack';
@@ -9,13 +11,10 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Typography from '@mui/material/Typography';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { Header } from '../../dashbord/components';
 import { CircularProgress, Drawer } from '@mui/material';
 import ReactFamilyTree from 'react-family-tree';
-import { useTheme } from '@mui/material';
-import { useSnackbar } from 'notistack';
+import { Header } from '../../dashbord/components';
 import type { Node, ExtNode } from 'relatives-tree/lib/types';
-import { FamilyNode } from '../components/FamilyNode';
 import {
   MAX_SCALE,
   MIN_SCALE,
@@ -39,6 +38,7 @@ import {
   UpdateTreePayload,
   AddCollaboratorsPayload,
 } from '../../../types/tree';
+import { FamilyNode } from '../components/FamilyNode';
 import { transformNodeData } from '../../../utils/transformTree';
 import queryClient from '../../../core/http/react-query';
 import FamilyTreeOverview from '../components/FamilyOverview';

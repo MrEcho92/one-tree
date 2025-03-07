@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Divider, { dividerClasses } from '@mui/material/Divider';
+import { useNavigate } from 'react-router-dom';
 import Menu from '@mui/material/Menu';
 import MuiMenuItem from '@mui/material/MenuItem';
 import { useTheme } from '@mui/material';
@@ -20,6 +21,7 @@ const MenuItem = styled(MuiMenuItem)({
 export default function OptionsMenu() {
   const { palette } = useTheme();
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -58,7 +60,14 @@ export default function OptionsMenu() {
           },
         }}
       >
-        <MenuItem onClick={handleClose}>Settings</MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate('/app/settings');
+            handleClose();
+          }}
+        >
+          Settings
+        </MenuItem>
         <Divider />
         <MenuItem
           onClick={() => logout()}
