@@ -36,6 +36,7 @@ import { useAuth } from '../../../components/auth/AuthProvider';
 import CreateMigrationRecord from '../../tracking/components/CreateMigrationRecord';
 import DeleteModal from '../../../components/common/DeleteModal';
 import { useGetMigrationRecordByUser } from '../../../hooks';
+import ErrorDisplay from '../../../components/common/ErrorDisplay';
 
 const data = [
   {
@@ -80,6 +81,8 @@ export function DashboardPage() {
     data: familyTrees,
     isLoading,
     isError,
+    error: treeError,
+    refetch: treeRefetch,
   } = useGetFamilyTreesByUser(userId ?? '');
   const treeData = familyTrees as any;
 
@@ -87,6 +90,8 @@ export function DashboardPage() {
     data: Posts,
     isLoading: isPostsLoading,
     isError: isPostsError,
+    error: postsError,
+    refetch: postsRefetch,
   } = useGetCulturalPostsByUser(userId ?? '');
   const postsData = Posts as any;
 
@@ -94,6 +99,8 @@ export function DashboardPage() {
     data: Records,
     isLoading: isRecordsLoading,
     isError: isRecordsError,
+    error: recordsError,
+    refetch: recordsRefetch,
   } = useGetMigrationRecordByUser(userId ?? '');
   const recordsData = Records as any;
 
@@ -115,7 +122,12 @@ export function DashboardPage() {
     );
   }
   if (isError || isPostsError || isRecordsError) {
-    return <Box mt={isSmallScreen ? '64px' : ''}>Error...</Box>;
+    return (
+      <ErrorDisplay
+        error={treeError || postsError || recordsError}
+        onRetry={treeRefetch || postsRefetch || recordsRefetch}
+      />
+    );
   }
 
   function handleDeletePost() {
