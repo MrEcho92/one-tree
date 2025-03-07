@@ -36,7 +36,7 @@ export default function About() {
       </Typography>
       <Container maxWidth="md">
         <Typography textAlign={'center'}>
-          Welcome to {`${AppConfig.appName}`} – where your family's unique
+          Welcome to {`${AppConfig.appName}`} – where your family&apos;s unique
           journey is honored, preserved, and celebrated.{' '}
           {`${AppConfig.appName}`} was born from a simple observation: as
           African diaspora families build lives all over the world, vital
@@ -66,7 +66,7 @@ export default function About() {
                 md: typography.h3.fontSize,
               },
               fontWeight: { xs: 'none', md: typography.h1.fontWeight },
-              pb: 2,
+              py: 2,
             }}
           >
             Our mission
@@ -86,7 +86,7 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="sm">
+        <Container maxWidth="md" sx={{ py: 6}}>
           <Typography
             textAlign="center"
             sx={{
@@ -117,7 +117,7 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="sm">
+        <Container maxWidth="md" sx={{ py: 6}}>
           <Typography
             textAlign="center"
             sx={{
@@ -151,7 +151,7 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="sm">
+        <Container maxWidth="md" sx={{ py: 6}}>
           <Typography
             textAlign="center"
             sx={{
@@ -169,7 +169,7 @@ export default function About() {
           <Typography textAlign="center">
             Our team is made up of passionate individuals who are dedicated to
             creating a platform that empowers African diaspora families to
-            preserve and celebrate their cultural heritage. We're a team of
+            preserve and celebrate their cultural heritage. We&apos;re a team of
             developers, designers, and cultural heritage experts who are
             committed to delivering a world-class platform.
           </Typography>
@@ -182,7 +182,7 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="sm">
+        <Container maxWidth="md" sx={{ py: 6}}>
           <Typography
             textAlign="center"
             sx={{
