@@ -1,5 +1,5 @@
 export interface MigrationEvent {
-  year: string;
+  year: number;
   event: string;
   location?: string;
   latitude?: number;

@@ -90,7 +90,7 @@ class CulturalContext(AbstractBaseModel):
     status: str = ContextStatus.PENDING.value
 
 
-class MigrationEvent(AbstractBaseModel):
+class MigrationEvent(BaseModel):
     year: int
     event: str
     location: Optional[str] = None

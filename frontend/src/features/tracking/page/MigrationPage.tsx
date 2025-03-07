@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import { Controller, useForm } from 'react-hook-form';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -31,13 +32,19 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import AddIcon from '@mui/icons-material/Add';
-import { useGetMigrationRecord } from '../../../hooks';
+import {
+  useGetMigrationRecord,
+  useUpdateMigrationRecord,
+} from '../../../hooks';
 import { MigrationEvent } from '../../../types/migration';
+import { useAuth } from '../../../components/auth/AuthProvider';
+import queryClient from '../../../core/http/react-query';
 
 export default function MigrationPage() {
   const { recordId } = useParams();
   const { palette } = useTheme();
-
+  const { currentUser } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
   const {
     control,
     handleSubmit,
@@ -45,7 +52,7 @@ export default function MigrationPage() {
     reset,
   } = useForm<MigrationEvent>({
     defaultValues: {
-      year: '',
+      year: 0,
       event: '',
       location: '',
       latitude: 0,
@@ -54,6 +61,8 @@ export default function MigrationPage() {
   });
 
   const { data, isLoading, isError } = useGetMigrationRecord(recordId ?? '');
+
+  const updateMutation = useUpdateMigrationRecord(recordId ?? '');
 
   const migrationRecord = useMemo(() => {
     if (data) {
@@ -90,12 +99,17 @@ export default function MigrationPage() {
   }
 
   const handleAddEvent = (data: any) => {
+    if (!currentUser) {
+      return;
+    }
+
     const updatedRecord = {
       ...migrationRecord,
+      updated_by: currentUser.uid,
       timeline: [
         ...migrationRecord.timeline,
         {
-          year: data.year,
+          year: parseInt(data.year),
           event: data.event,
           location: data.location,
           latitude: data.latitude ? parseFloat(data.latitude) : null,
@@ -104,23 +118,59 @@ export default function MigrationPage() {
       ].sort((a, b) => a.year - b.year),
     };
 
-    reset();
-
-    // In a real app, you would save this to the backend
-    // api.updateMigrationRecord(updatedRecord.id, updatedRecord);
+    updateMutation.mutate(updatedRecord, {
+      onSuccess: () => {
+        enqueueSnackbar('Migration record updated successfully!', {
+          variant: 'success',
+        });
+        setIsEditing(false);
+        reset();
+        queryClient.refetchQueries({
+          queryKey: ['migrationRecords', recordId],
+          exact: true,
+        });
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to update migration record', {
+          variant: 'error',
+        });
+        console.error('Error updating migration record:', error);
+      },
+    });
   };
 
-  const handleRemoveEvent = (index: any) => {
+  const handleRemoveEvent = (index: number) => {
+    if (!currentUser) {
+      return;
+    }
     const updatedTimeline = [...migrationRecord.timeline];
     updatedTimeline.splice(index, 1);
 
     const updatedRecord = {
       ...migrationRecord,
+      updated_by: currentUser.uid,
       timeline: updatedTimeline,
     };
 
-    // In a real app, you would save this to the backend
-    // api.updateMigrationRecord(updatedRecord.id, updatedRecord);
+    updateMutation.mutate(updatedRecord, {
+      onSuccess: () => {
+        enqueueSnackbar('Migration record updated successfully!', {
+          variant: 'success',
+        });
+        setIsEditing(false);
+        reset();
+        queryClient.refetchQueries({
+          queryKey: ['migrationRecords', recordId],
+          exact: true,
+        });
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to update migration record', {
+          variant: 'error',
+        });
+        console.error('Error updating migration record:', error);
+      },
+    });
   };
 
   const TimeLineView = () => (
@@ -139,7 +189,7 @@ export default function MigrationPage() {
         }}
       >
         {migrationRecord?.timeline.map((event: any, index: number) => (
-          <TimelineItem>
+          <TimelineItem key={`timeline_${index}`}>
             <TimelineSeparator>
               <TimelineDot />
               <TimelineConnector />
@@ -158,25 +208,27 @@ export default function MigrationPage() {
                       gutterBottom
                       sx={{ color: 'text.secondary', fontSize: 14 }}
                     >
-                      1980
+                      {event.year}
                     </Typography>
                     {isEditing && (
-                      <IconButton>
+                      <IconButton onClick={() => handleRemoveEvent(index)}>
                         <DeleteIcon />
                       </IconButton>
                     )}
                   </Box>
-                  <Typography variant="body2">james if heaven</Typography>
-                  <Box
-                    display="flex"
-                    justifyContent="flex-start"
-                    alignItems="center"
-                  >
-                    <PlaceIcon />
-                    <Typography variant="caption">
-                      well meaning and kindly.
-                    </Typography>
-                  </Box>
+                  <Typography variant="body2">{event.event}</Typography>
+                  {event.location && (
+                    <Box
+                      display="flex"
+                      justifyContent="flex-start"
+                      alignItems="center"
+                    >
+                      <PlaceIcon />
+                      <Typography variant="caption">
+                        {event.location}
+                      </Typography>
+                    </Box>
+                  )}
                 </CardContent>
               </Card>
             </TimelineContent>
@@ -213,7 +265,7 @@ export default function MigrationPage() {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {migrationRecord?.timeline.map((event: any, index: number) => (
             <Paper
-              key={index}
+              key={`mapview_${index}`}
               elevation={1}
               sx={{ p: 1, display: 'flex', alignItems: 'center' }}
             >
@@ -296,7 +348,10 @@ export default function MigrationPage() {
                 <Card sx={{ my: 2, borderRadius: 2 }}>
                   <CardHeader title="Add Migration Event" />
                   <CardContent>
-                    <Box component="form" onSubmit={() => {}}>
+                    <Box
+                      component="form"
+                      onSubmit={handleSubmit(handleAddEvent)}
+                    >
                       <Grid container spacing={3}>
                         <Grid size={{ xs: 12, sm: 6 }}>
                           <Controller
@@ -304,6 +359,10 @@ export default function MigrationPage() {
                             control={control}
                             rules={{
                               required: 'Year is required',
+                              pattern: {
+                                value: /^\d+$/,
+                                message: 'Year must be a number',
+                              },
                             }}
                             render={({ field }) => (
                               <TextField
@@ -341,6 +400,12 @@ export default function MigrationPage() {
                           <Controller
                             name="latitude"
                             control={control}
+                            rules={{
+                              pattern: {
+                                value: /^-?[0-9]\d*(\.\d+)?$/,
+                                message: 'Must be a valid latitude',
+                              },
+                            }}
                             render={({ field }) => (
                               <TextField
                                 {...field}
@@ -359,6 +424,12 @@ export default function MigrationPage() {
                           <Controller
                             name="longitude"
                             control={control}
+                            rules={{
+                              pattern: {
+                                value: /^-?[0-9]\d*(\.\d+)?$/,
+                                message: 'Must be a valid longitude',
+                              },
+                            }}
                             render={({ field }) => (
                               <TextField
                                 {...field}

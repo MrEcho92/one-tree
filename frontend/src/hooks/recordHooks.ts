@@ -2,6 +2,7 @@ import { useApiMutation, useApiQuery } from './base';
 import {
   MigrationRecord,
   CreateMigrationRecordPayload,
+  UpdateMigrationRecordPayload,
 } from '../types/migration';
 
 export const useCreateMigrationRecord = () => {
@@ -20,4 +21,15 @@ export const useGetMigrationRecord = (recordId: string) => {
       enabled: !!recordId,
     },
   );
+};
+
+export const useUpdateMigrationRecord = (recordId: string) => {
+  return useApiMutation<MigrationRecord, UpdateMigrationRecordPayload>(
+    `/migration-records/${recordId}`,
+    'PUT',
+  );
+};
+
+export const useDeleteMigrationRecord = (recordId: string) => {
+  return useApiMutation<void, void>(`/migration-records/${recordId}`, 'DELETE');
 };
