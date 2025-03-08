@@ -86,7 +86,7 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="md" sx={{ py: 6}}>
+        <Container maxWidth="md" sx={{ py: 6 }}>
           <Typography
             textAlign="center"
             sx={{
@@ -117,7 +117,7 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="md" sx={{ py: 6}}>
+        <Container maxWidth="md" sx={{ py: 6 }}>
           <Typography
             textAlign="center"
             sx={{
@@ -151,7 +151,7 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="md" sx={{ py: 6}}>
+        <Container maxWidth="md" sx={{ py: 6 }}>
           <Typography
             textAlign="center"
             sx={{
@@ -182,7 +182,7 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="md" sx={{ py: 6}}>
+        <Container maxWidth="md" sx={{ py: 6 }}>
           <Typography
             textAlign="center"
             sx={{

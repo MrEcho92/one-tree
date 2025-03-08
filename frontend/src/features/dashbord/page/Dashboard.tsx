@@ -83,7 +83,7 @@ export function DashboardPage() {
     isError,
     error: treeError,
     refetch: treeRefetch,
-  } = useGetFamilyTreesByUser(userId ?? '');
+  } = useGetFamilyTreesByUser(userId ?? '', currentUser?.email ?? '');
   const treeData = familyTrees as any;
 
   const {
@@ -268,14 +268,24 @@ export function DashboardPage() {
                               <Typography component="h2" variant="subtitle2">
                                 {tree.name}
                               </Typography>
-                              <Typography
-                                component="p"
-                                variant="caption"
-                                sx={{ color: theme.palette.text.secondary }}
-                              >
-                                {t('dashboard:update')}{' '}
-                                {transformDate(tree.updated_at)}
-                              </Typography>
+                              <Box display="flex" alignItems="center" gap={1}>
+                                <Typography
+                                  component="p"
+                                  variant="caption"
+                                  sx={{ color: theme.palette.text.secondary }}
+                                >
+                                  {t('dashboard:update')}{' '}
+                                  {transformDate(tree.updated_at)}
+                                </Typography>
+                                {userId && tree.created_by !== userId ? (
+                                  <Chip
+                                    label={'Collaborator on tree'}
+                                    size="small"
+                                    color="success"
+                                    variant="outlined"
+                                  />
+                                ) : null}
+                              </Box>
                             </Box>
                             <Box>
                               <ChevronRightOutlinedIcon />

@@ -137,23 +137,25 @@ export default function FamilyTreeOverview({
             }}
           >
             <Typography fontWeight="bold">Tree Details</Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <Tooltip title="Edit tree">
-                <IconButton onClick={() => setIsEditing(true)}>
-                  <EditIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Delete tree">
-                <IconButton onClick={openDeleteTreeModal}>
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Add a collaborator">
-                <IconButton onClick={openAddCollaboratorsModal}>
-                  <PersonAddIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Box>
+            {currentUser && initialData.created_by === currentUser?.uid ? (
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                <Tooltip title="Edit tree">
+                  <IconButton onClick={() => setIsEditing(true)}>
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete tree">
+                  <IconButton onClick={openDeleteTreeModal}>
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Add a collaborator">
+                  <IconButton onClick={openAddCollaboratorsModal}>
+                    <PersonAddIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            ) : null}
           </Box>
           <Box py={1}>
             <Typography>{initialData?.description}</Typography>
