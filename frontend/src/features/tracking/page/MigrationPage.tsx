@@ -72,6 +72,7 @@ export default function MigrationPage() {
 
   const migrationRecord = useMemo(() => {
     if (data) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return data as any;
     }
     return null;
