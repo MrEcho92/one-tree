@@ -193,6 +193,7 @@ async def add_collaborator(
                 detail="Family tree not found",
             )
         tree_data = tree.to_dict()
+ 
         if current_user["uid"] != tree_data.get("created_by"):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -204,9 +205,15 @@ async def add_collaborator(
                 "collaborators": firestore.ArrayUnion(data.collaborators),
             }
         )
-        # Fetch updated tree members
-        tree["members"] = fetch_members(tree.get("members", []), db)
-        return FamilyTree.from_dict(tree_ref)
+
+        # Fetch updated document after update
+        updated_tree_snapshot = tree_ref.get()
+        updated_tree_data = updated_tree_snapshot.to_dict()
+
+        # Fetch updated members
+        updated_tree_data["members"] = fetch_members(updated_tree_data.get("members", []), db)
+
+        return FamilyTree.from_dict(updated_tree_data)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
