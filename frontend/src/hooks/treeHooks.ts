@@ -11,10 +11,13 @@ import {
   UpdateStoryPayload,
 } from '../types/tree';
 
-export const useGetFamilyTreesByUser = (userId: string) => {
+export const useGetFamilyTreesByUser = (
+  userId: string,
+  collaborator?: string,
+) => {
   return useApiQuery<FamilyTree[]>(
     ['familyTrees', userId],
-    `/trees/${userId}/user`,
+    `/trees/${userId}/user${collaborator ? `?collaborator=${collaborator}` : null}`,
     {
       queryKey: ['familyTrees', userId],
       enabled: !!userId,

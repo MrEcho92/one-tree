@@ -65,22 +65,39 @@ export function SideMenu() {
           alignItems: 'center',
           borderTop: '1px solid',
           borderColor: 'divider',
+          overflow: 'hidden',
         }}
       >
         <Avatar
           sizes="small"
-          alt="Riley Carter"
+          alt={currentUser?.displayName || 'User Avatar'}
           src={currentUser?.photoURL ?? '/static/images/avatar/7.jpg'}
           sx={{ width: 36, height: 36 }}
         />
-        <Box sx={{ mr: 'auto' }}>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography
             variant="body2"
-            sx={{ fontWeight: 500, lineHeight: '16px' }}
+            sx={{
+              fontWeight: 500,
+              lineHeight: '16px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
           >
             {currentUser?.displayName}
           </Typography>
-          <Typography sx={{ color: palette.text.secondary, fontSize: '8px' }}>
+          <Typography
+            sx={{
+              color: palette.text.secondary,
+              fontSize: '8px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: 'block',
+              maxWidth: '100%',
+            }}
+          >
             {currentUser?.email}
           </Typography>
         </Box>

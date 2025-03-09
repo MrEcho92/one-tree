@@ -1,11 +1,11 @@
 import logging
-from typing import Any, List
+from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from google.cloud import firestore
 
 from app.common.firebase import verify_firebase_token
-from app.core.constants import FAMILY_STORY, FAMILY_TREE, PEOPLE
+from app.core.constants import FAMILY_STORY, FAMILY_TREE, MAX_FAMILY_TREE, PEOPLE
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
 from app.schemas.tree_schemas import (
@@ -15,13 +15,12 @@ from app.schemas.tree_schemas import (
     CreateFamilyTreeSchema,
     DeleteMemberSchema,
     FamilyStoriesSchema,
-    FamilyTrees,
+    FamilyTreesResponse,
     RelationToMemberSchema,
     RelationType,
     UpdatedFamilyStorySchema,
     UpdatePersonSchema,
     UpdateTreeSchema,
-    FamilyTreesResponse,
 )
 
 router = APIRouter()
@@ -43,7 +42,10 @@ def fetch_members(members_data: List[str], db: Any):
     status_code=status.HTTP_200_OK,
 )
 async def get_user_trees(
-    user_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+    user_id: str,
+    collaborator: Optional[str] = Query(None),
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> List[FamilyTreesResponse]:
     """Get all family trees created by a user"""
     if current_user["uid"] != user_id:
@@ -53,8 +55,23 @@ async def get_user_trees(
         )
 
     try:
-        trees = db.collection(FAMILY_TREE).where("created_by", "==", user_id).stream()
-        return [FamilyTreesResponse(**tree.to_dict()) for tree in trees]
+        trees = []
+        user_trees = (
+            db.collection(FAMILY_TREE).where("created_by", "==", user_id).stream()
+        )
+        trees.extend([FamilyTreesResponse(**tree.to_dict()) for tree in user_trees])
+
+        if collaborator:
+            collaborator_trees = (
+                db.collection(FAMILY_TREE)
+                .where("collaborators", "array_contains", collaborator)
+                .stream()
+            )
+            trees.extend(
+                [FamilyTreesResponse(**tree.to_dict()) for tree in collaborator_trees]
+            )
+
+        return trees
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
@@ -109,7 +126,21 @@ async def create_tree_with_members(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to access this resource",
         )
+
     try:
+        user_docs = (
+            db.collection(FAMILY_TREE)
+            .where("created_by", "==", family_tree.created_by)
+            .stream()
+        )
+        user_trees = [doc.to_dict() for doc in user_docs]
+
+        if len(user_trees) >= MAX_FAMILY_TREE:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Limit reached! You can only add up to {MAX_FAMILY_TREE} family tree.",
+            )
+
         tree = FamilyTree(
             name=family_tree.name,
             description=family_tree.description,
@@ -193,6 +224,7 @@ async def add_collaborator(
                 detail="Family tree not found",
             )
         tree_data = tree.to_dict()
+
         if current_user["uid"] != tree_data.get("created_by"):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -204,9 +236,17 @@ async def add_collaborator(
                 "collaborators": firestore.ArrayUnion(data.collaborators),
             }
         )
-        # Fetch updated tree members
-        tree["members"] = fetch_members(tree.get("members", []), db)
-        return FamilyTree.from_dict(tree_ref)
+
+        # Fetch updated document after update
+        updated_tree_snapshot = tree_ref.get()
+        updated_tree_data = updated_tree_snapshot.to_dict()
+
+        # Fetch updated members
+        updated_tree_data["members"] = fetch_members(
+            updated_tree_data.get("members", []), db
+        )
+
+        return FamilyTree.from_dict(updated_tree_data)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
