@@ -150,7 +150,11 @@ export default function AddMemberDialog({
                   format="dd/MM/yyyy"
                   value={field.value ? new Date(field.value as string) : null}
                   onChange={(date) =>
-                    field.onChange(date ? date.toISOString() : null)
+                    field.onChange(
+                      date instanceof Date && !isNaN(date.valueOf())
+                        ? date.toISOString()
+                        : null,
+                    )
                   }
                   slots={{ textField: TextField }}
                   slotProps={{ textField: { fullWidth: true } }}
