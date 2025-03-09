@@ -6,3 +6,4 @@ FAMILY_STORY = "familyStories"
 MIGRATION_RECORDS = "migrationRecords"
 
 MAX_FAMILY_TREE = 2
+MAX_FAMILY_MEMBER = 20

@@ -122,7 +122,7 @@ export default function AddMemberDialog({
     <Dialog
       open={isAddMemberOpen}
       onClose={() => setIsAddMemberOpen(false)}
-      maxWidth="sm"
+      maxWidth="md"
     >
       <DialogTitle>
         Add New Family Member - {capitalize(familyType!)}

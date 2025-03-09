@@ -5,7 +5,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from google.cloud import firestore
 
 from app.common.firebase import verify_firebase_token
-from app.core.constants import FAMILY_STORY, FAMILY_TREE, MAX_FAMILY_TREE, PEOPLE
+from app.core.constants import (
+    FAMILY_STORY,
+    FAMILY_TREE,
+    MAX_FAMILY_MEMBER,
+    MAX_FAMILY_TREE,
+    PEOPLE,
+)
 from app.core.database import get_db
 from app.models.models import FamilyStory, FamilyTree, Person
 from app.schemas.tree_schemas import (
@@ -286,6 +292,13 @@ async def add_member_tree(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Not authorized to access this resource",
             )
+
+        if len(tree_data.get("members")) >= MAX_FAMILY_MEMBER:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Limit reached! You can only add up to {MAX_FAMILY_MEMBER} family members.",
+            )
+
         # Create a new person entry
         person = Person(
             **member.model_dump(),
