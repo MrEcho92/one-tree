@@ -33,6 +33,7 @@ import queryClient from '../../../core/http/react-query';
 import { stringAvatar } from '../../../utils/transformTree';
 import { capitalize } from '../../../utils';
 import { useAuth } from '../../../components/auth/AuthProvider';
+import { MaxFamilyMembers } from '../../../core';
 
 type EditFamilyMemberProps = {
   defaultValues: Person;
@@ -126,6 +127,10 @@ export default function EditFamilyMember({
 
   const MemberName =
     `${updatedData.first_name} ${updatedData.last_name}` as const;
+
+  const isFamilyMemberLimitReached = treeMembers
+    ? treeMembers?.length >= MaxFamilyMembers
+    : false;
 
   return (
     <Box>
@@ -365,11 +370,22 @@ export default function EditFamilyMember({
                 alignItems: 'center',
               }}
             >
-              <Tooltip title="Add family members">
-                <IconButton onClick={handleClick} color="primary">
-                  <GroupAddIcon />
-                </IconButton>
-              </Tooltip>
+              {isFamilyMemberLimitReached ? (
+                <Tooltip title="You can only add up to 20 family members.">
+                  <span>
+                    <IconButton onClick={handleClick} color="primary" disabled>
+                      <GroupAddIcon />
+                    </IconButton>
+                  </span>
+                </Tooltip>
+              ) : (
+                <Tooltip title="Add family members">
+                  <IconButton onClick={handleClick} color="primary">
+                    <GroupAddIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+
               <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
