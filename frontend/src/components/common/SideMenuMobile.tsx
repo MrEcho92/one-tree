@@ -49,7 +49,7 @@ export default function SideMenuMobile({
           >
             <Avatar
               sizes="small"
-              alt="Riley Carter"
+              alt="user avatar"
               src={currentUser?.photoURL ?? '/static/images/avatar/7.jpg'}
               sx={{ width: 24, height: 24 }}
             />
@@ -73,7 +73,7 @@ export default function SideMenuMobile({
             startIcon={<LogoutRoundedIcon />}
             onClick={() => logout()}
           >
-            Logout
+            Log out
           </Button>
         </Stack>
       </Stack>

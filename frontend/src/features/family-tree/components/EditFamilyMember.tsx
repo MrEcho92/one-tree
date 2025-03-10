@@ -33,6 +33,7 @@ import queryClient from '../../../core/http/react-query';
 import { stringAvatar } from '../../../utils/transformTree';
 import { capitalize } from '../../../utils';
 import { useAuth } from '../../../components/auth/AuthProvider';
+import { MaxFamilyMembers } from '../../../core';
 
 type EditFamilyMemberProps = {
   defaultValues: Person;
@@ -127,6 +128,10 @@ export default function EditFamilyMember({
   const MemberName =
     `${updatedData.first_name} ${updatedData.last_name}` as const;
 
+  const isFamilyMemberLimitReached = treeMembers
+    ? treeMembers?.length >= MaxFamilyMembers
+    : false;
+
   return (
     <Box>
       {isEditing ? (
@@ -206,7 +211,11 @@ export default function EditFamilyMember({
                     format="dd/MM/yyyy"
                     value={field.value ? new Date(field.value) : null}
                     onChange={(date) =>
-                      field.onChange(date ? date.toISOString() : null)
+                      field.onChange(
+                        date instanceof Date && !isNaN(date.valueOf())
+                          ? date.toISOString()
+                          : null,
+                      )
                     }
                     slots={{ textField: TextField }}
                     slotProps={{ textField: { fullWidth: true } }}
@@ -258,7 +267,11 @@ export default function EditFamilyMember({
                       format="dd/MM/yyyy"
                       value={field.value ? new Date(field.value) : null}
                       onChange={(date) =>
-                        field.onChange(date ? date.toISOString() : null)
+                        field.onChange(
+                          date instanceof Date && !isNaN(date.valueOf())
+                            ? date.toISOString()
+                            : null,
+                        )
                       }
                       slots={{ textField: TextField }}
                       slotProps={{ textField: { fullWidth: true } }}
@@ -357,11 +370,24 @@ export default function EditFamilyMember({
                 alignItems: 'center',
               }}
             >
-              <Tooltip title="Add family members">
-                <IconButton onClick={handleClick} color="primary">
-                  <GroupAddIcon />
-                </IconButton>
-              </Tooltip>
+              {isFamilyMemberLimitReached ? (
+                <Tooltip
+                  title={`You can only add up to ${MaxFamilyMembers} family members.`}
+                >
+                  <span>
+                    <IconButton onClick={handleClick} color="primary" disabled>
+                      <GroupAddIcon />
+                    </IconButton>
+                  </span>
+                </Tooltip>
+              ) : (
+                <Tooltip title="Add family members">
+                  <IconButton onClick={handleClick} color="primary">
+                    <GroupAddIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+
               <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}

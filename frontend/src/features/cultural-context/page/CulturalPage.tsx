@@ -12,6 +12,7 @@ import Pagination from '@mui/material/Pagination';
 import Latest from '../components/Latest';
 import HubList from '../components/HubList';
 import { useGetCulturalPosts } from '../../../hooks/hubHooks';
+import ErrorDisplay from '../../../components/common/ErrorDisplay';
 
 type SearchProps = {
   value: string;
@@ -60,7 +61,7 @@ export function CulturalPage() {
     debouncedSearch(tempSearch);
   }, [tempSearch, debouncedSearch]);
 
-  const { data, isLoading, isError } = useGetCulturalPosts(
+  const { data, isLoading, isError, error, refetch } = useGetCulturalPosts(
     searchQuery,
     page,
     limit,
@@ -91,7 +92,7 @@ export function CulturalPage() {
   }
 
   if (isError) {
-    return <Box mt={'64px'}>Error...</Box>;
+    return <ErrorDisplay error={error} onRetry={refetch} />;
   }
 
   let Posts;

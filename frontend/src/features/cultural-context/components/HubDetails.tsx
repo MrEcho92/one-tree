@@ -33,6 +33,7 @@ import {
 } from '../../../hooks/hubHooks';
 import { formatDate } from '../../../utils';
 import { AppConfig } from '../../../core/constants';
+import ErrorDisplay from '../../../components/common/ErrorDisplay';
 
 export default function HubDetails() {
   const { contextId } = useParams();
@@ -45,7 +46,13 @@ export default function HubDetails() {
     setUrl(window.location.href);
   }, []);
 
-  const { data, isLoading, isError } = useGetCulturalPostsById(contextId ?? '');
+  const {
+    data,
+    isLoading,
+    isError,
+    error: postsError,
+    refetch: postsRefetch,
+  } = useGetCulturalPostsById(contextId ?? '');
 
   useEffect(() => {
     let postData = data as any;
@@ -58,6 +65,8 @@ export default function HubDetails() {
     data: relatedData,
     isLoading: isRelatedDataLoading,
     isError: isRelatedDataError,
+    error: errorQueryError,
+    refetch: queryErrorRefetch,
   } = useGetCulturalPosts(searchQuery || '', 1, 5);
 
   if (isLoading || isRelatedDataLoading) {
@@ -77,7 +86,12 @@ export default function HubDetails() {
   }
 
   if (isError || isRelatedDataError) {
-    return <Box mt="64px">Error...</Box>;
+    return (
+      <ErrorDisplay
+        error={postsError || errorQueryError}
+        onRetry={postsRefetch || queryErrorRefetch}
+      />
+    );
   }
 
   let postDetails: any;

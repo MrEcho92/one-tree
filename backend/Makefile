@@ -26,7 +26,7 @@ help:
 	@echo "  clean            Remove Python cache files"
 	@echo "  test             Run unit tests with pytest"
 	@echo "  help             Display this help message"
-	@echo "  activate         Activate virtual environment"
+	@echo "  venv             Activate virtual environment"
 	@echo "  run         	  Run FastAPI development server"
 
 .PHONY: venv

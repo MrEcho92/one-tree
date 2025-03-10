@@ -17,7 +17,10 @@ from app.common.firebase import verify_firebase_token
 from app.core.constants import CULTURAL_CONTEXT
 from app.core.database import get_db
 from app.models.models import ContextStatus, CulturalContext
-from app.schemas.cultural_schemas import CulturalContextResponse, CulturalContextsResponse
+from app.schemas.cultural_schemas import (
+    CulturalContextResponse,
+    CulturalContextsResponse,
+)
 
 router = APIRouter()
 
