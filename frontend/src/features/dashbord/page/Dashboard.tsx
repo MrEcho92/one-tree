@@ -199,7 +199,7 @@ export function DashboardPage() {
                       {data?.description}
                     </Typography>
                     {isTreeLimitReached && data.id === 'family-tree' ? (
-                      <Tooltip title="You can only add up to 2 family trees.">
+                      <Tooltip title={`You can only add up to ${MaxFamilyTrees} family trees.`}>
                         <span>
                           <Button disabled>{data?.btnTitle}</Button>
                         </span>
