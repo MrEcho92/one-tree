@@ -371,7 +371,9 @@ export default function EditFamilyMember({
               }}
             >
               {isFamilyMemberLimitReached ? (
-                <Tooltip title={`You can only add up to ${MaxFamilyMembers} family members.`}>
+                <Tooltip
+                  title={`You can only add up to ${MaxFamilyMembers} family members.`}
+                >
                   <span>
                     <IconButton onClick={handleClick} color="primary" disabled>
                       <GroupAddIcon />

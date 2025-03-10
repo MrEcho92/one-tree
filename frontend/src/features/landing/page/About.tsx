@@ -1,11 +1,14 @@
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { AppConfig } from '../../../core';
+import Button from '@mui/material/Button';
 
 export default function About() {
   const { palette, typography } = useTheme();
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -182,9 +185,17 @@ export default function About() {
           py: 6,
         }}
       >
-        <Container maxWidth="md" sx={{ py: 6 }}>
+        <Container
+          maxWidth="md"
+          sx={{
+            py: 6,
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
           <Typography
-            textAlign="center"
             sx={{
               color: palette.info.main,
               fontSize: {
@@ -197,10 +208,17 @@ export default function About() {
           >
             Join Us
           </Typography>
-          <Typography textAlign="center">
+          <Typography>
             Be part of a growing community dedicated to keeping family legacies
             alive. Start building your family&apos;s story today! 🚀
           </Typography>
+          <Button
+            sx={{ mt: 2 }}
+            variant="text"
+            onClick={() => navigate('/auth/signup')}
+          >
+            START YOUR JOURNEY
+          </Button>
         </Container>
       </Box>
     </Box>
