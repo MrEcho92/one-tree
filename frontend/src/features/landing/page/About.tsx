@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import { Helmet } from 'react-helmet-async';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -19,6 +20,10 @@ export default function About() {
         pb: { xs: 8, sm: 12 },
       }}
     >
+      <Helmet>
+        <title>About us | {AppConfig.appName}</title>
+        <meta name="description" content="Find out more about us" />
+      </Helmet>
       <Typography
         textAlign="center"
         color="text.primary"

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { debounce } from 'lodash';
+import { Helmet } from 'react-helmet-async';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
@@ -13,6 +14,7 @@ import Latest from '../components/Latest';
 import HubList from '../components/HubList';
 import { useGetCulturalPosts } from '../../../hooks/hubHooks';
 import ErrorDisplay from '../../../components/common/ErrorDisplay';
+import { AppConfig } from '../../../core';
 
 type SearchProps = {
   value: string;
@@ -106,6 +108,21 @@ export function CulturalPage() {
   }
   return (
     <Box mt="64px">
+      <Helmet>
+        <title>Cultural Hub | {AppConfig.appName}</title>
+        <meta
+          name="description"
+          content="View cultural posts about african heritage"
+        />
+        <meta
+          property="og:title"
+          content={`${AppConfig.appName} - Dashboard`}
+        />
+        <meta
+          property="og:description"
+          content="View cultural posts about african heritage"
+        />
+      </Helmet>
       <Container
         maxWidth="xl"
         component="main"

@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from '@mui/material';
 import { SnackbarProvider } from 'notistack';
+import { HelmetProvider } from 'react-helmet-async';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import queryClient from './core/http/react-query';
@@ -22,20 +23,22 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <ThemeProvider theme={theme}>
-            <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
-              <AuthProvider>
-                <ModalProvider>
-                  <App />
-                </ModalProvider>
-              </AuthProvider>
-            </SnackbarProvider>
-          </ThemeProvider>
-        </LocalizationProvider>
-      </BrowserRouter>
+      <HelmetProvider>
+        <BrowserRouter>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <ThemeProvider theme={theme}>
+              <SnackbarProvider maxSnack={3} autoHideDuration={3000}>
+                <AuthProvider>
+                  <ModalProvider>
+                    <App />
+                  </ModalProvider>
+                </AuthProvider>
+              </SnackbarProvider>
+            </ThemeProvider>
+          </LocalizationProvider>
+        </BrowserRouter>
+      </HelmetProvider>
     </QueryClientProvider>
   </React.StrictMode>,
 );

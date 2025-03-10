@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { CircularProgress, useTheme } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import Box from '@mui/material/Box';
@@ -12,6 +13,7 @@ import { Header } from '../../dashbord/components';
 import { useAuth } from '../../../components/auth/AuthProvider';
 import { useModal } from '../../../components/common';
 import DeleteModal from '../../../components/common/DeleteModal';
+import { AppConfig } from '../../../core/constants';
 
 interface ProfileFormData {
   displayName: string;
@@ -108,6 +110,10 @@ export default function ProfileSettings() {
 
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
+      <Helmet>
+        <title>Profile settings | {AppConfig.appName}</title>
+        <meta name="description" content="View your profile settings" />
+      </Helmet>
       <Stack
         spacing={2}
         sx={{

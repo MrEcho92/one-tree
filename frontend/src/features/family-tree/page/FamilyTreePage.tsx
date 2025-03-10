@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { useTheme } from '@mui/material';
@@ -48,6 +49,7 @@ import DeleteMember from '../components/DeleteMember';
 import DeleteTree from '../components/DeleteTree';
 import AddCollaborators from '../components/AddCollaborators';
 import { FamilyStory } from '../components';
+import { AppConfig } from '../../../core/constants';
 
 export default function FamilyTreePage() {
   const { treeId } = useParams();
@@ -272,6 +274,10 @@ export default function FamilyTreePage() {
       component="section"
       sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}
     >
+      <Helmet>
+        <title>Family tree | {AppConfig.appName}</title>
+        <meta name="description" content="View your family tree" />
+      </Helmet>
       <Stack
         spacing={2}
         sx={{

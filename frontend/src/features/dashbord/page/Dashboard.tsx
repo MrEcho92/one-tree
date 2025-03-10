@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -38,6 +39,7 @@ import DeleteModal from '../../../components/common/DeleteModal';
 import { useGetMigrationRecordByUser } from '../../../hooks';
 import ErrorDisplay from '../../../components/common/ErrorDisplay';
 import { MaxFamilyTrees } from '../../../core';
+import { AppConfig } from '../../../core';
 
 const data = [
   {
@@ -156,6 +158,18 @@ export function DashboardPage() {
 
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
+      <Helmet>
+        <title>Dashboard | {AppConfig.appName}</title>
+        <meta name="description" content="View your dashboard and analytics" />
+        <meta
+          property="og:title"
+          content={`${AppConfig.appName} - Dashboard`}
+        />
+        <meta
+          property="og:description"
+          content="View your personal dashboard and analytics"
+        />
+      </Helmet>
       <Stack
         spacing={2}
         sx={{

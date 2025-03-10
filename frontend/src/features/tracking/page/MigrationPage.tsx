@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { Helmet } from 'react-helmet-async';
 import { Controller, useForm } from 'react-hook-form';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -42,6 +43,7 @@ import { useAuth } from '../../../components/auth/AuthProvider';
 import queryClient from '../../../core/http/react-query';
 import { useModal } from '../../../components/common';
 import DeleteModal from '../../../components/common/DeleteModal';
+import { AppConfig } from '../../../core';
 
 export default function MigrationPage() {
   const { recordId } = useParams();
@@ -205,6 +207,10 @@ export default function MigrationPage() {
         py: 1,
       }}
     >
+      <Helmet>
+        <title>Migration tracker | {AppConfig.appName}</title>
+        <meta name="description" content="View your migration history" />
+      </Helmet>
       <Timeline
         sx={{
           [`& .${timelineItemClasses.root}:before`]: {

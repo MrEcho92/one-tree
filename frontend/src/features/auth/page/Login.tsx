@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useForm, Controller } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 import Button from '@mui/material/Button';
@@ -130,6 +131,10 @@ export default function LogInPage() {
 
   return (
     <Box>
+      <Helmet>
+        <title>Login | {AppConfig.appName}</title>
+        <meta name="description" content="Login to your account" />
+      </Helmet>
       <Box
         sx={{
           padding: '28px',
