@@ -38,7 +38,7 @@ import CreateMigrationRecord from '../../tracking/components/CreateMigrationReco
 import DeleteModal from '../../../components/common/DeleteModal';
 import { useGetMigrationRecordByUser } from '../../../hooks';
 import ErrorDisplay from '../../../components/common/ErrorDisplay';
-import { MaxFamilyTrees } from '../../../core';
+import { MaxFamilyTrees, MaxMigrationRecords } from '../../../core';
 import { AppConfig } from '../../../core';
 
 const data = [
@@ -153,8 +153,35 @@ export function DashboardPage() {
       },
     });
   }
+  function renderMaxFeature(dataType: string, dataTitle: string) {
+    switch (dataType) {
+      case 'family-tree':
+        return (
+          <Tooltip
+            title={`You can only add up to ${MaxFamilyTrees} family trees.`}
+          >
+            <span>
+              <Button disabled>{dataTitle}</Button>
+            </span>
+          </Tooltip>
+        );
+      case 'migration-tracker':
+        return (
+          <Tooltip
+            title={`You can only add up to ${MaxMigrationRecords} migration records.`}
+          >
+            <span>
+              <Button disabled>{dataTitle}</Button>
+            </span>
+          </Tooltip>
+        );
+      default:
+        break;
+    }
+  }
 
   const isTreeLimitReached = treeData?.length >= MaxFamilyTrees;
+  const isMigrationLimitReached = recordsData?.length >= MaxMigrationRecords;
 
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
@@ -212,14 +239,10 @@ export function DashboardPage() {
                     <Typography sx={{ color: 'text.secondary', mb: '8px' }}>
                       {data?.description}
                     </Typography>
-                    {isTreeLimitReached && data.id === 'family-tree' ? (
-                      <Tooltip
-                        title={`You can only add up to ${MaxFamilyTrees} family trees.`}
-                      >
-                        <span>
-                          <Button disabled>{data?.btnTitle}</Button>
-                        </span>
-                      </Tooltip>
+                    {(isTreeLimitReached && data.id === 'family-tree') ||
+                    (isMigrationLimitReached &&
+                      data.id === 'migration-tracker') ? (
+                      renderMaxFeature(data?.id, data?.btnTitle)
                     ) : (
                       <Button
                         variant="contained"

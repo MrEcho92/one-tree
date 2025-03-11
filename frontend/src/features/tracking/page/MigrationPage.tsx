@@ -23,7 +23,6 @@ import { Header } from '../../dashbord/components';
 import Typography from '@mui/material/Typography';
 import { Button, CircularProgress } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import PlaceIcon from '@mui/icons-material/Place';
 import Timeline from '@mui/lab/Timeline';
@@ -210,10 +209,6 @@ export default function MigrationPage() {
         py: 1,
       }}
     >
-      <Helmet>
-        <title>Migration tracker | {AppConfig.appName}</title>
-        <meta name="description" content="View your migration history" />
-      </Helmet>
       <Timeline
         sx={{
           [`& .${timelineItemClasses.root}:before`]: {
@@ -335,6 +330,10 @@ export default function MigrationPage() {
       component="section"
       sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}
     >
+      <Helmet>
+        <title>Migration tracker | {AppConfig.appName}</title>
+        <meta name="description" content="View your migration history" />
+      </Helmet>
       <Stack
         spacing={2}
         sx={{
@@ -366,10 +365,10 @@ export default function MigrationPage() {
                 variant="contained"
                 color="primary"
                 size="small"
-                startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
+                startIcon={isEditing ? <SaveIcon /> : <AddIcon />}
                 onClick={() => setIsEditing(!isEditing)}
               >
-                {isEditing ? 'Save' : 'Edit'}
+                {isEditing ? 'Save' : 'Add'}
               </Button>
               <Tooltip title="Delete migration record">
                 <IconButton

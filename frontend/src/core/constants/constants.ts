@@ -19,3 +19,4 @@ export const envVariables = {
 
 export const MaxFamilyTrees = 2;
 export const MaxFamilyMembers = 20;
+export const MaxMigrationRecords = 2;
