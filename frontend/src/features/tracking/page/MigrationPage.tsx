@@ -44,6 +44,7 @@ import queryClient from '../../../core/http/react-query';
 import { useModal } from '../../../components/common';
 import DeleteModal from '../../../components/common/DeleteModal';
 import { AppConfig } from '../../../core';
+import ErrorDisplay from '../../../components/common/ErrorDisplay';
 
 export default function MigrationPage() {
   const { recordId } = useParams();
@@ -66,7 +67,9 @@ export default function MigrationPage() {
     },
   });
 
-  const { data, isLoading, isError } = useGetMigrationRecord(recordId ?? '');
+  const { data, isLoading, isError, error, refetch } = useGetMigrationRecord(
+    recordId ?? '',
+  );
 
   const updateMutation = useUpdateMigrationRecord(recordId ?? '');
 
@@ -104,7 +107,7 @@ export default function MigrationPage() {
   }
 
   if (isError) {
-    return <Box mt="64px">Error occured</Box>;
+    return <ErrorDisplay error={error} onRetry={refetch} />;
   }
 
   const handleAddEvent = (data: any) => {
