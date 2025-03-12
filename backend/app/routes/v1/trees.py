@@ -561,7 +561,6 @@ async def delete_tree_member(
     Deletes a member from the family tree while updating relationships.
 
     - **tree_id**: ID of the family tree.
-    - **user_id**: ID of the user to delete.
     """
     try:
         tree_ref = db.collection(FAMILY_TREE).document(tree_id)
