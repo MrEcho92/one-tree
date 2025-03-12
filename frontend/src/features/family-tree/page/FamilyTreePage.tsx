@@ -176,7 +176,7 @@ export default function FamilyTreePage() {
           queryKey: ['familyTrees', treeId],
           exact: true,
         });
-        closeDrawer();
+        closeModal?.();
       },
       onError: (error) => {
         enqueueSnackbar('Failed to delete family member', {
@@ -329,7 +329,7 @@ export default function FamilyTreePage() {
                 {nodes.length > 0 ? (
                   <Box sx={{ width: '100%', height: '80vh' }}>
                     <TransformWrapper
-                      key={rootId}
+                      key={`${rootId}-${nodes.length}`}
                       velocityAnimation={{
                         disabled: true,
                       }}

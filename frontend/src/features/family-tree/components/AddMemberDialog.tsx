@@ -16,6 +16,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import {
   Divider,
   MenuItem,
+  OutlinedInput,
   Radio,
   Select,
   SelectChangeEvent,
@@ -122,7 +123,8 @@ export default function AddMemberDialog({
     <Dialog
       open={isAddMemberOpen}
       onClose={() => setIsAddMemberOpen(false)}
-      maxWidth="md"
+      maxWidth="xs"
+      fullWidth
     >
       <DialogTitle>
         Add New Family Member - {capitalize(familyType!)}
@@ -146,6 +148,7 @@ export default function AddMemberDialog({
               render={({ field }) => (
                 <DatePicker
                   minDate={dayjs('1850-01-01').toDate()}
+                  maxDate={dayjs().toDate()}
                   label="Date of Birth"
                   format="dd/MM/yyyy"
                   value={field.value ? new Date(field.value as string) : null}
@@ -185,7 +188,7 @@ export default function AddMemberDialog({
             {familyType === 'child' && (
               <>
                 <Divider />
-                <FormControl sx={{ my: 1, width: 300 }}>
+                <FormControl sx={{ my: 1 }}>
                   <FormLabel
                     sx={{ color: (theme) => theme.palette.text.primary }}
                   >
@@ -196,8 +199,9 @@ export default function AddMemberDialog({
                     one parent.
                   </Typography>
                   <Select
-                    labelId="demo-select-small-label"
-                    id="demo-select-small"
+                    input={<OutlinedInput label="" />}
+                    labelId="add-member-select-small-label"
+                    id="add-member-select-small"
                     value={selectedSpouse?.fullName}
                     label="Spouse"
                     onChange={(event: SelectChangeEvent) => {

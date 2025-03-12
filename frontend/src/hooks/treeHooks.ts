@@ -60,7 +60,7 @@ export const useDeleteFamilyTree = (treeId: string) => {
 
 export const useDeleteFamilyTreeMember = (treeId: string) => {
   return useApiMutation<void, DeleteMemberPayload>(
-    `/trees/${treeId}`,
+    `/trees/${treeId}/member`,
     'DELETE',
   );
 };

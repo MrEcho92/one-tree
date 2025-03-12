@@ -207,6 +207,7 @@ export default function EditFamilyMember({
                 render={({ field }) => (
                   <DatePicker
                     minDate={dayjs('1850-01-01').toDate()}
+                    maxDate={dayjs().toDate()}
                     label="Date of Birth"
                     format="dd/MM/yyyy"
                     value={field.value ? new Date(field.value) : null}
@@ -263,6 +264,7 @@ export default function EditFamilyMember({
                   render={({ field }) => (
                     <DatePicker
                       minDate={dayjs('1850-01-01').toDate()}
+                      maxDate={dayjs().toDate()}
                       label="Date of Death"
                       format="dd/MM/yyyy"
                       value={field.value ? new Date(field.value) : null}
