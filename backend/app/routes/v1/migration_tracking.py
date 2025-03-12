@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from google.cloud import firestore
 
 from app.common.firebase import verify_firebase_token
-from app.core.constants import MIGRATION_RECORDS
+from app.core.constants import MAX_MIGRATION_RECORDS, MIGRATION_RECORDS
 from app.core.database import get_db
 from app.models.models import MigrationRecord
 from app.schemas.tracking_schema import (
@@ -31,6 +31,18 @@ async def create_migration_record(
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Not authorized to access this resource",
+            )
+        user_docs = (
+            db.collection(MIGRATION_RECORDS)
+            .where("created_by", "==", record.created_by)
+            .stream()
+        )
+        user_records = [doc.to_dict() for doc in user_docs]
+
+        if len(user_records) >= MAX_MIGRATION_RECORDS:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Limit reached! You can only add up to {MAX_MIGRATION_RECORDS} migration records.",
             )
 
         record = MigrationRecord(**record.model_dump())

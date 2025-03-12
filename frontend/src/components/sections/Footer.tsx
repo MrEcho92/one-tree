@@ -1,6 +1,5 @@
 import { Box, Container, Link, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import FacebookIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/X';
 import { AppConfig } from '../../core/constants';
@@ -57,16 +56,7 @@ export function Footer() {
           <IconButton
             color="inherit"
             size="small"
-            href="https://github.com/mui"
-            aria-label="GitHub"
-            sx={{ alignSelf: 'center' }}
-          >
-            <FacebookIcon />
-          </IconButton>
-          <IconButton
-            color="inherit"
-            size="small"
-            href="https://x.com/MaterialUI"
+            href="/"
             aria-label="X"
             sx={{ alignSelf: 'center' }}
           >
@@ -75,7 +65,7 @@ export function Footer() {
           <IconButton
             color="inherit"
             size="small"
-            href="https://www.linkedin.com/company/mui/"
+            href="/"
             aria-label="LinkedIn"
             sx={{ alignSelf: 'center' }}
           >

@@ -22,6 +22,7 @@ import {
 import { capitalize } from '../../../utils';
 import StoryDetails from './StoryDetails';
 import queryClient from '../../../core/http/react-query';
+import ErrorDisplay from '../../../components/common/ErrorDisplay';
 
 type FamilyStoryProps = {
   treeId: string;
@@ -44,11 +45,15 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
   };
 
   const createMutation = useCreateStory();
-  const { data, isLoading, isError } = useGetFamilyStories(treeId ?? '');
+  const { data, isLoading, isError, error, refetch } = useGetFamilyStories(
+    treeId ?? '',
+  );
   const {
     data: storyData,
     isLoading: isStoryLoading,
     isError: isStoryError,
+    error: storyError,
+    refetch: storyReFetch,
   } = useGetFamilyStoriesById(selectedStoryId);
   const deleteStoryMutation = useDeleteFamilyStory(selectedStoryId ?? '');
   const updateStoryMutation = useUpdateStory(selectedStoryId ?? '');
@@ -86,7 +91,12 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
   }
 
   if (isError || isStoryError) {
-    return <Box>Error occured</Box>;
+    return (
+      <ErrorDisplay
+        error={error || storyError}
+        onRetry={refetch || storyReFetch}
+      />
+    );
   }
 
   function handleAddStory(payload: AddStoryPayload) {

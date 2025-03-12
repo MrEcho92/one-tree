@@ -12,6 +12,7 @@ class CulturalContextResponse(BaseModel):
     total_pages: Optional[int]
     current_page: Optional[int]
 
+
 class CulturalContextsResponse(BaseModel):
     id: str
     updated_at: datetime

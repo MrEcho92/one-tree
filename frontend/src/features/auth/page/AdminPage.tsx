@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import Box from '@mui/material/Box';
+import { Helmet } from 'react-helmet-async';
 import Stack from '@mui/material/Stack';
 import { useForm, Controller } from 'react-hook-form';
 import Typography from '@mui/material/Typography';
@@ -18,6 +19,7 @@ import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { useSetAdminRole } from '../../../hooks/userHooks';
+import { AppConfig } from '../../../core/constants';
 
 const AVAILABLE_ROLES = ['admin', 'user'];
 
@@ -100,6 +102,10 @@ export default function AdminPage() {
 
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
+      <Helmet>
+        <title>Admin | {AppConfig.appName}</title>
+        <meta name="description" content="View your admin page" />
+      </Helmet>
       <Stack
         spacing={2}
         sx={{

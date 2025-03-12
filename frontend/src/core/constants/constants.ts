@@ -16,3 +16,7 @@ export const envVariables = {
     appId: 'REACT_APP_FIREBASE_APP_ID',
   },
 };
+
+export const MaxFamilyTrees = 2;
+export const MaxFamilyMembers = 20;
+export const MaxMigrationRecords = 2;

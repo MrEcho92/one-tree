@@ -152,7 +152,7 @@ export default function CreateTree() {
           color: palette.text.secondary,
         }}
       >
-        {t('tree:createTree.sections.makeTreePublic')}
+        {t('tree:createTree.sections.root.title')}
       </Typography>
       <TextField
         label={t('tree:createTree.sections.common.firstName')}
@@ -170,14 +170,23 @@ export default function CreateTree() {
         render={({ field }) => (
           <DatePicker
             minDate={dayjs('1850-01-01').toDate()}
+            maxDate={dayjs().toDate()}
             label={t('tree:createTree.sections.common.dob')}
             format="dd/MM/yyyy"
             value={field.value ? new Date(field.value) : null}
             onChange={(date) =>
-              field.onChange(date ? date.toISOString() : null)
+              field.onChange(
+                date instanceof Date && !isNaN(date.valueOf())
+                  ? date.toISOString()
+                  : null,
+              )
             }
             slots={{ textField: TextField }}
-            slotProps={{ textField: { fullWidth: true } }}
+            slotProps={{
+              textField: {
+                fullWidth: true,
+              },
+            }}
           />
         )}
       />
@@ -220,11 +229,16 @@ export default function CreateTree() {
         render={({ field }) => (
           <DatePicker
             minDate={dayjs('1850-01-01').toDate()}
+            maxDate={dayjs().toDate()}
             label={t('tree:createTree.sections.common.dob')}
             format="dd/MM/yyyy"
             value={field.value ? new Date(field.value) : null}
             onChange={(date) =>
-              field.onChange(date ? date.toISOString() : null)
+              field.onChange(
+                date instanceof Date && !isNaN(date.valueOf())
+                  ? date.toISOString()
+                  : null,
+              )
             }
             slots={{ textField: TextField }}
             slotProps={{ textField: { fullWidth: true } }}
@@ -274,11 +288,16 @@ export default function CreateTree() {
         render={({ field }) => (
           <DatePicker
             minDate={dayjs('1850-01-01').toDate()}
+            maxDate={dayjs().toDate()}
             label={t('tree:createTree.sections.common.dob')}
             format="dd/MM/yyyy"
             value={field.value ? new Date(field.value) : null}
             onChange={(date) =>
-              field.onChange(date ? date.toISOString() : null)
+              field.onChange(
+                date instanceof Date && !isNaN(date.valueOf())
+                  ? date.toISOString()
+                  : null,
+              )
             }
             slots={{ textField: TextField }}
             slotProps={{ textField: { fullWidth: true } }}

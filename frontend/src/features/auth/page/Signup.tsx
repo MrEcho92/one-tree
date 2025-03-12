@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useForm, Controller } from 'react-hook-form';
+import { useSnackbar } from 'notistack';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -19,6 +21,7 @@ import { firebaseErrorMessages } from '../components';
 export default function SignUpPage() {
   const { signUp, loginWithGoogle, loading } = useAuth();
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   const { palette } = useTheme();
 
   const [error, setError] = React.useState('');
@@ -52,6 +55,9 @@ export default function SignUpPage() {
 
     try {
       await signUp(email, password, displayName);
+      enqueueSnackbar('Sign up and verification email sent successfully!', {
+        variant: 'success',
+      });
       navigate('/auth/login');
     } catch (err: any) {
       const errorCode = err.code;
@@ -76,6 +82,10 @@ export default function SignUpPage() {
 
   return (
     <Box>
+      <Helmet>
+        <title>Sign up | {AppConfig.appName}</title>
+        <meta name="description" content="Create a new account" />
+      </Helmet>
       <Box
         sx={{
           padding: '28px',

@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { useTheme } from '@mui/material';
@@ -48,6 +49,8 @@ import DeleteMember from '../components/DeleteMember';
 import DeleteTree from '../components/DeleteTree';
 import AddCollaborators from '../components/AddCollaborators';
 import { FamilyStory } from '../components';
+import { AppConfig } from '../../../core/constants';
+import ErrorDisplay from '../../../components/common/ErrorDisplay';
 
 export default function FamilyTreePage() {
   const { treeId } = useParams();
@@ -78,7 +81,9 @@ export default function FamilyTreePage() {
     setDrawerOpen(false);
   };
 
-  const { data, isLoading, isError } = useGetFamilyTree(treeId ?? '');
+  const { data, isLoading, isError, error, refetch } = useGetFamilyTree(
+    treeId ?? '',
+  );
   const mutation = useAddMemberFamilyTree(treeId ?? '');
   const deleteTreeMemberMutation = useDeleteFamilyTreeMember(treeId ?? '');
   const deleteFamilyTreeMutation = useDeleteFamilyTree(treeId ?? '');
@@ -128,7 +133,7 @@ export default function FamilyTreePage() {
   }
 
   if (isError) {
-    return <Box>Error occured</Box>;
+    return <ErrorDisplay error={error} onRetry={refetch} />;
   }
 
   function handleAddMember(payload: AddMemberPayload): void {
@@ -171,7 +176,7 @@ export default function FamilyTreePage() {
           queryKey: ['familyTrees', treeId],
           exact: true,
         });
-        closeDrawer();
+        closeModal?.();
       },
       onError: (error) => {
         enqueueSnackbar('Failed to delete family member', {
@@ -272,6 +277,10 @@ export default function FamilyTreePage() {
       component="section"
       sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}
     >
+      <Helmet>
+        <title>Family tree | {AppConfig.appName}</title>
+        <meta name="description" content="View your family tree" />
+      </Helmet>
       <Stack
         spacing={2}
         sx={{
@@ -320,7 +329,7 @@ export default function FamilyTreePage() {
                 {nodes.length > 0 ? (
                   <Box sx={{ width: '100%', height: '80vh' }}>
                     <TransformWrapper
-                      key={rootId}
+                      key={`${rootId}-${nodes.length}`}
                       velocityAnimation={{
                         disabled: true,
                       }}

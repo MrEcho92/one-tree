@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { CircularProgress, useTheme } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import Box from '@mui/material/Box';
@@ -11,7 +12,8 @@ import { updateProfile, deleteUser } from 'firebase/auth';
 import { Header } from '../../dashbord/components';
 import { useAuth } from '../../../components/auth/AuthProvider';
 import { useModal } from '../../../components/common';
-import DeleteAcc from '../components/DeleteAccount';
+import DeleteModal from '../../../components/common/DeleteModal';
+import { AppConfig } from '../../../core/constants';
 
 interface ProfileFormData {
   displayName: string;
@@ -97,12 +99,21 @@ export default function ProfileSettings() {
 
   function openAccDelete() {
     openModal(
-      <DeleteAcc closeModal={closeModal} onDelete={handleDeleteAccount} />,
+      <DeleteModal
+        closeModal={closeModal}
+        onDelete={handleDeleteAccount}
+        deleteMessage="Are you sure you want to delete your account? This action cannot be undone."
+        deleteTitle="Delete Account"
+      />,
     );
   }
 
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
+      <Helmet>
+        <title>Profile settings | {AppConfig.appName}</title>
+        <meta name="description" content="View your profile settings" />
+      </Helmet>
       <Stack
         spacing={2}
         sx={{

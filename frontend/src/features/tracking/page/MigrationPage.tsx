@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { Helmet } from 'react-helmet-async';
 import { Controller, useForm } from 'react-hook-form';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -22,7 +23,6 @@ import { Header } from '../../dashbord/components';
 import Typography from '@mui/material/Typography';
 import { Button, CircularProgress } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import PlaceIcon from '@mui/icons-material/Place';
 import Timeline from '@mui/lab/Timeline';
@@ -42,6 +42,8 @@ import { useAuth } from '../../../components/auth/AuthProvider';
 import queryClient from '../../../core/http/react-query';
 import { useModal } from '../../../components/common';
 import DeleteModal from '../../../components/common/DeleteModal';
+import { AppConfig } from '../../../core';
+import ErrorDisplay from '../../../components/common/ErrorDisplay';
 
 export default function MigrationPage() {
   const { recordId } = useParams();
@@ -64,7 +66,9 @@ export default function MigrationPage() {
     },
   });
 
-  const { data, isLoading, isError } = useGetMigrationRecord(recordId ?? '');
+  const { data, isLoading, isError, error, refetch } = useGetMigrationRecord(
+    recordId ?? '',
+  );
 
   const updateMutation = useUpdateMigrationRecord(recordId ?? '');
 
@@ -72,6 +76,7 @@ export default function MigrationPage() {
 
   const migrationRecord = useMemo(() => {
     if (data) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return data as any;
     }
     return null;
@@ -101,7 +106,7 @@ export default function MigrationPage() {
   }
 
   if (isError) {
-    return <Box mt="64px">Error occured</Box>;
+    return <ErrorDisplay error={error} onRetry={refetch} />;
   }
 
   const handleAddEvent = (data: any) => {
@@ -325,6 +330,10 @@ export default function MigrationPage() {
       component="section"
       sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}
     >
+      <Helmet>
+        <title>Migration tracker | {AppConfig.appName}</title>
+        <meta name="description" content="View your migration history" />
+      </Helmet>
       <Stack
         spacing={2}
         sx={{
@@ -356,10 +365,10 @@ export default function MigrationPage() {
                 variant="contained"
                 color="primary"
                 size="small"
-                startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
+                startIcon={isEditing ? <SaveIcon /> : <AddIcon />}
                 onClick={() => setIsEditing(!isEditing)}
               >
-                {isEditing ? 'Save' : 'Edit'}
+                {isEditing ? 'Save' : 'Add'}
               </Button>
               <Tooltip title="Delete migration record">
                 <IconButton
@@ -395,7 +404,7 @@ export default function MigrationPage() {
             <TabPanel value="1" sx={{ p: { xs: '0' } }}>
               {isEditing && (
                 <Card sx={{ my: 2, borderRadius: 2 }}>
-                  <CardHeader title="Add Migration Event" />
+                  <CardHeader title="Add migration event" />
                   <CardContent>
                     <Box
                       component="form"
@@ -522,8 +531,18 @@ export default function MigrationPage() {
                               display: 'flex',
                               justifyContent: 'flex-end',
                               mt: 2,
+                              gap: 2,
                             }}
                           >
+                            <Button
+                              type="submit"
+                              variant="text"
+                              color="primary"
+                              size="small"
+                              onClick={() => setIsEditing(false)}
+                            >
+                              Cancel
+                            </Button>
                             <Button
                               type="submit"
                               variant="contained"
@@ -531,7 +550,7 @@ export default function MigrationPage() {
                               size="small"
                               startIcon={<AddIcon />}
                             >
-                              Add Migration Event
+                              Add migration event
                             </Button>
                           </Box>
                         </Grid>
