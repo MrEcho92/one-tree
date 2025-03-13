@@ -43,7 +43,9 @@ async def lifespan(app: FastAPI):
     logger.info("Starting up event")
     try:
         cred = credentials.ApplicationDefault()
-        firebase_admin.initialize_app(cred)
+        firebase_admin.initialize_app(
+            cred, {"storageBucket": os.getenv("FIREBASE_STORAGE_BUCKET")}
+        )
 
         firestore_client = firestore.Client()
         set_db(firestore_client)

@@ -4,6 +4,7 @@ import {
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from 'material-react-table';
+import Box from '@mui/material/Box';
 
 type Person = {
   first_name: string;
@@ -56,5 +57,9 @@ export default function FamilyMemberTable({ data }: any) {
     }),
   });
 
-  return <MaterialReactTable table={table} />;
+  return (
+    <Box sx={{ overflowX: 'auto', width: '100%' }}>
+      <MaterialReactTable table={table} />
+    </Box>
+  );
 }

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from google.cloud import firestore
+from firebase_admin import firestore
 
 from app.common.firebase import verify_firebase_token
 from app.core.constants import MAX_MIGRATION_RECORDS, MIGRATION_RECORDS
