@@ -148,10 +148,10 @@ export default function HubDetails() {
             {postDetails?.image_url && (
               <CardMedia
                 component="img"
-                alt="green iguana"
+                alt="cultural details image"
                 image={postDetails?.image_url}
                 sx={{
-                  // aspectRatio: '16 / 9',
+                  aspectRatio: '16 / 9',
                   borderBottom: '1px solid',
                   borderColor: 'divider',
                   width: '100%',
