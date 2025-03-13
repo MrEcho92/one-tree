@@ -15,7 +15,7 @@ from fastapi import (
 from firebase_admin import firestore
 
 from app.common.firebase import verify_firebase_token
-from app.core.constants import CULTURAL_CONTEXT
+from app.core.constants import CULTURAL_CONTEXT, MAX_CULTURAL_CONTEXT
 from app.core.database import get_db
 from app.models.models import ContextStatus, CulturalContext
 from app.schemas.cultural_schemas import CulturalContextResponse
@@ -181,6 +181,19 @@ async def create_context(
                 detail="Not authorized to access this resource",
             )
 
+        cultural_docs = (
+            db.collection(CULTURAL_CONTEXT)
+            .where("created_by", "==", created_by)
+            .stream()
+        )
+        posts = [doc.to_dict() for doc in cultural_docs]
+
+        if len(posts) >= MAX_CULTURAL_CONTEXT:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Limit reached! You can only add up to {MAX_CULTURAL_CONTEXT} cultural posts.",
+            )
+
         image_url, video_url, audio_url = None, None, None
 
         context = CulturalContext(
@@ -258,7 +271,6 @@ async def update_context(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Cultural context not found",
             )
-
 
         context_data = context.to_dict()
 
