@@ -250,18 +250,16 @@ async def update_context(
                 detail="Not authorized to access this resource",
             )
 
-        # Get reference to the context document
         context_ref = db.collection(CULTURAL_CONTEXT).document(context_id)
         context = context_ref.get()
 
-        # Check if context exists
         if not context.exists:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Cultural context not found",
             )
 
-        # Prepare update data
+
         context_data = context.to_dict()
 
         # Update fields while preserving other existing data
@@ -276,7 +274,6 @@ async def update_context(
             }
         )
 
-        # Add optional fields if provided
         if link_url:
             updated_context_data["link_url"] = link_url
 
