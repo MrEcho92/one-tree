@@ -343,7 +343,12 @@ export default function EditFamilyMember({
               </IconButton>
             </Tooltip>
           </Box>
-          <Box display={'flex'} justifyContent={'center'} alignItems={'center'}>
+          <Box
+            display={'flex'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            mb={2}
+          >
             <Avatar
               {...stringAvatar(
                 updatedData,
