@@ -10,7 +10,7 @@ import { useAuth } from '../../../components/auth/AuthProvider';
 import { useCreateMigrationRecord } from '../../../hooks';
 import { ApiResponse } from '../../../types/api';
 
-interface CreateMigrationRecord {
+interface CreateMigrationRecordFormType {
   title: string;
   description: string;
 }
@@ -18,13 +18,14 @@ interface CreateMigrationRecord {
 export default function CreateMigrationRecord() {
   const { closeModal } = useModal();
   const { typography, palette } = useTheme();
-  const { control, handleSubmit, reset } = useForm<CreateMigrationRecord>();
+  const { control, handleSubmit, reset } =
+    useForm<CreateMigrationRecordFormType>();
   const { currentUser } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const mutation = useCreateMigrationRecord();
 
-  const onSubmit = async (data: CreateMigrationRecord) => {
+  const onSubmit = async (data: CreateMigrationRecordFormType) => {
     if (!currentUser) {
       return;
     }

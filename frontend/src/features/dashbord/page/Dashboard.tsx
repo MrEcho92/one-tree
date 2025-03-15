@@ -38,7 +38,11 @@ import CreateMigrationRecord from '../../tracking/components/CreateMigrationReco
 import DeleteModal from '../../../components/common/DeleteModal';
 import { useGetMigrationRecordByUser } from '../../../hooks';
 import ErrorDisplay from '../../../components/common/ErrorDisplay';
-import { MaxFamilyTrees, MaxMigrationRecords } from '../../../core';
+import {
+  MaxFamilyTrees,
+  MaxMigrationRecords,
+  MaxCulturalContexts,
+} from '../../../core';
 import { AppConfig } from '../../../core';
 
 const data = [
@@ -175,6 +179,16 @@ export function DashboardPage() {
             </span>
           </Tooltip>
         );
+      case 'hub':
+        return (
+          <Tooltip
+            title={`You can only add up to ${MaxCulturalContexts} cultural posts.`}
+          >
+            <span>
+              <Button disabled>{dataTitle}</Button>
+            </span>
+          </Tooltip>
+        );
       default:
         break;
     }
@@ -182,6 +196,7 @@ export function DashboardPage() {
 
   const isTreeLimitReached = treeData?.length >= MaxFamilyTrees;
   const isMigrationLimitReached = recordsData?.length >= MaxMigrationRecords;
+  const isCulturalLimitReached = postsData?.length >= MaxCulturalContexts;
 
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
@@ -241,7 +256,8 @@ export function DashboardPage() {
                     </Typography>
                     {(isTreeLimitReached && data.id === 'family-tree') ||
                     (isMigrationLimitReached &&
-                      data.id === 'migration-tracker') ? (
+                      data.id === 'migration-tracker') ||
+                    (isCulturalLimitReached && data.id === 'hub') ? (
                       renderMaxFeature(data?.id, data?.btnTitle)
                     ) : (
                       <Button

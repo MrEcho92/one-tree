@@ -1,6 +1,7 @@
 import type { Node, Gender, RelType } from 'relatives-tree/lib/types';
 import { brown, orange } from '@mui/material/colors';
 import { Person } from '../types/tree';
+import { BorderColor } from '@mui/icons-material';
 
 export function transformNodeData(data: Person[]): Node[] {
   return data.map((person: Person) => ({

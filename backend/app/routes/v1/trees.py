@@ -2,7 +2,7 @@ import logging
 from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from google.cloud import firestore
+from firebase_admin import firestore
 
 from app.common.firebase import verify_firebase_token
 from app.core.constants import (

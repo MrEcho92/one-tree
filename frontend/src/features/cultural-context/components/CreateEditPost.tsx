@@ -126,23 +126,23 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
       const { type } = data.media;
 
       if (['image/png', 'image/jpeg', 'image/jpg'].includes(type)) {
-        formData.append('image_url', data.media);
+        formData.append('image_file', data.media);
       } else if (
         ['video/mp4', 'video/mpeg', 'video/quicktime'].includes(type)
       ) {
-        formData.append('video_url', data.media);
+        formData.append('video_file', data.media);
       } else if (
         ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'].includes(type)
       ) {
-        formData.append('audio_url', data.media);
+        formData.append('audio_file', data.media);
       }
     }
 
-    if (editMode) {
-      if (post?.image_url) formData.append('image_url', post.image_url);
-      if (post?.video_url) formData.append('video_url', post.video_url);
-      if (post?.audio_url) formData.append('audio_url', post.audio_url);
-    }
+    // if (editMode) {
+    //   if (post?.image_url) formData.append('image_file', post.image_url);
+    //   if (post?.video_url) formData.append('video_file', post.video_url);
+    //   if (post?.audio_url) formData.append('audio_file', post.audio_url);
+    // }
 
     mutation.mutate(formData, {
       onSuccess: () => {

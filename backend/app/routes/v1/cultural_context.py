@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from typing import List, Optional
 
@@ -11,16 +12,14 @@ from fastapi import (
     UploadFile,
     status,
 )
-from google.cloud import firestore
+from firebase_admin import firestore
 
 from app.common.firebase import verify_firebase_token
-from app.core.constants import CULTURAL_CONTEXT
+from app.core.constants import CULTURAL_CONTEXT, MAX_CULTURAL_CONTEXT
 from app.core.database import get_db
 from app.models.models import ContextStatus, CulturalContext
-from app.schemas.cultural_schemas import (
-    CulturalContextResponse,
-    CulturalContextsResponse,
-)
+from app.schemas.cultural_schemas import CulturalContextResponse
+from app.utils.helper import delete_blob, upload_to_gcs
 
 router = APIRouter()
 
@@ -107,12 +106,12 @@ async def get_contexts(
 
 @router.get(
     "/contexts/{user_id}/user",
-    response_model=List[CulturalContextsResponse],
+    response_model=List[CulturalContext],
     status_code=status.HTTP_200_OK,
 )
 async def get_user_contexts(
     user_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
-) -> List[CulturalContextsResponse]:
+) -> List[CulturalContext]:
     """Get all cultural contexts by a user"""
     try:
         if current_user["uid"] != user_id:
@@ -124,9 +123,7 @@ async def get_user_contexts(
         contexts = (
             db.collection(CULTURAL_CONTEXT).where("created_by", "==", user_id).stream()
         )
-        user_contexts = [
-            CulturalContextsResponse(**context.to_dict()) for context in contexts
-        ]
+        user_contexts = [CulturalContext(**context.to_dict()) for context in contexts]
         sorted_contexts = sorted(
             user_contexts, key=lambda x: x.created_at, reverse=True
         )
@@ -172,9 +169,9 @@ async def create_context(
     content: str = Form(...),
     link_url: Optional[str] = Form(None),
     tags: List[str] = Form([]),
-    image_url: Optional[UploadFile] = File(None),
-    video_url: Optional[UploadFile] = File(None),
-    audio_url: Optional[UploadFile] = File(None),
+    image_file: Optional[UploadFile] = File(None),
+    video_file: Optional[UploadFile] = File(None),
+    audio_file: Optional[UploadFile] = File(None),
 ) -> CulturalContext:
     """Create a new cultural context"""
     try:
@@ -184,20 +181,20 @@ async def create_context(
                 detail="Not authorized to access this resource",
             )
 
-        if video_url:
-            # Handle video URL (e.g., validate, process, etc.)
-            # upload to Google cloud storage and generate url
-            video_url = "https://test_video_url"
+        cultural_docs = (
+            db.collection(CULTURAL_CONTEXT)
+            .where("created_by", "==", created_by)
+            .stream()
+        )
+        posts = [doc.to_dict() for doc in cultural_docs]
 
-        if image_url:
-            # Handle image URL (e.g., validate, process, etc.)
-            # upload to Google cloud storage and generate url
-            image_url = "https://test_image_url"
+        if len(posts) >= MAX_CULTURAL_CONTEXT:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Limit reached! You can only add up to {MAX_CULTURAL_CONTEXT} cultural posts.",
+            )
 
-        if audio_url:
-            # Handle image URL (e.g., validate, process, etc.)
-            # upload to Google cloud storage and generate url
-            video_url = "https://test_audio_url"
+        image_url, video_url, audio_url = None, None, None
 
         context = CulturalContext(
             name=name,
@@ -206,11 +203,32 @@ async def create_context(
             content=content,
             link_url=link_url,
             tags=tags,
-            # TODO: generate url from gcp
-            # video_url=video_url,
-            # audio_url=audio_url,
-            # image_url=image_url
+            video_url=video_url,
+            audio_url=audio_url,
+            image_url=image_url,
         )
+
+        if video_file:
+            video_url = upload_to_gcs(
+                video_file,
+                f"cultural_contexts/{context.id}/videos/{video_file.filename}",
+            )
+            context.video_url = video_url
+
+        if image_file:
+            image_url = upload_to_gcs(
+                image_file,
+                f"cultural_contexts/{context.id}/images/{image_file.filename}",
+            )
+            context.image_url = image_url
+
+        if audio_file:
+            audio_url = upload_to_gcs(
+                audio_file,
+                f"cultural_contexts/{context.id}/audio/{audio_file.filename}",
+            )
+            context.audio_url = audio_url
+
         db.collection(CULTURAL_CONTEXT).document(context.id).set(context.to_dict())
         return context
     except Exception as e:
@@ -233,9 +251,9 @@ async def update_context(
     content: str = Form(...),
     link_url: Optional[str] = Form(None),
     tags: List[str] = Form([]),
-    image_url: Optional[UploadFile] = File(None),
-    video_url: Optional[UploadFile] = File(None),
-    audio_url: Optional[UploadFile] = File(None),
+    image_file: Optional[UploadFile] = File(None),
+    video_file: Optional[UploadFile] = File(None),
+    audio_file: Optional[UploadFile] = File(None),
 ) -> CulturalContext:
     """Update a cultural context by ID"""
     try:
@@ -245,18 +263,15 @@ async def update_context(
                 detail="Not authorized to access this resource",
             )
 
-        # Get reference to the context document
         context_ref = db.collection(CULTURAL_CONTEXT).document(context_id)
         context = context_ref.get()
 
-        # Check if context exists
         if not context.exists:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Cultural context not found",
             )
 
-        # Prepare update data
         context_data = context.to_dict()
 
         # Update fields while preserving other existing data
@@ -271,20 +286,43 @@ async def update_context(
             }
         )
 
-        # Add optional fields if provided
         if link_url:
             updated_context_data["link_url"] = link_url
 
-        # TODO: generate url from gcp
-        # Add logic here to upload files to storage and get URLs
-        # Then add the URLs to updated_context_data
-        # Handle optional file uploads (you need GCS/S3 to store and return URLs)
-        # if image_url:
-        #     updated_context_data["image_url"] = f"uploaded/{image_url.filename}"
-        # if video_url:
-        #     updated_context_data["video_url"] = f"uploaded/{video_url.filename}"
-        # if audio_url:
-        #     updated_context_data["audio_url"] = f"uploaded/{audio_url.filename}"
+        bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
+
+        for file_key in ["image_url", "video_url", "audio_url"]:
+            old_url = context_data.get(file_key)
+            if old_url:
+                updated_context_data[file_key] = None
+                old_blob_name = (
+                    old_url.split(f"/{bucket_name}/")[1]
+                    if f"/{bucket_name}/" in old_url
+                    else None
+                )
+                if old_blob_name:
+                    delete_blob(old_blob_name)
+
+        if video_file:
+            video_url = upload_to_gcs(
+                video_file,
+                f"cultural_contexts/{context_id}/videos/{video_file.filename}",
+            )
+            updated_context_data["video_url"] = video_url
+
+        if image_file:
+            image_url = upload_to_gcs(
+                image_file,
+                f"cultural_contexts/{context_id}/images/{image_file.filename}",
+            )
+            updated_context_data["image_url"] = image_url
+
+        if audio_file:
+            audio_url = upload_to_gcs(
+                audio_file,
+                f"cultural_contexts/{context_id}/audio/{audio_file.filename}",
+            )
+            updated_context_data["audio_url"] = audio_url
 
         context_ref.update(updated_context_data)
 
@@ -319,6 +357,24 @@ async def delete_context(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Not authorized to access this resource",
             )
+
+        bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
+
+        urls = [
+            context_data.get("image_url"),
+            context_data.get("video_url"),
+            context_data.get("audio_url"),
+        ]
+
+        for url in urls:
+            if url:
+                old_blob_name = (
+                    url.split(f"/{bucket_name}/")[1]
+                    if f"/{bucket_name}/" in url
+                    else None
+                )
+                if old_blob_name:
+                    delete_blob(old_blob_name)
 
         context_ref.delete()
     except Exception as e:

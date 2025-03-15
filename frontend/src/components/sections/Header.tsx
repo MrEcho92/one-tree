@@ -16,11 +16,13 @@ import { useTranslation } from 'react-i18next';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { AppConfig } from '../../core/constants';
+import { useAuth } from '../auth';
 
 export function Header() {
   const theme = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation(['common', 'header']);
+  const { isAuthenticated } = useAuth();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
 
@@ -126,22 +128,35 @@ export function Header() {
               alignItems: 'center',
             }}
           >
-            <Button
-              variant="text"
-              color="secondary"
-              size="small"
-              onClick={() => navigate('/auth/login')}
-            >
-              {t('common:login')}
-            </Button>
-            <Button
-              variant="outlined"
-              color="secondary"
-              size="small"
-              onClick={() => navigate('/auth/signup')}
-            >
-              {t('common:signUp')}
-            </Button>
+            {!isAuthenticated ? (
+              <>
+                <Button
+                  variant="text"
+                  color="secondary"
+                  size="small"
+                  onClick={() => navigate('/auth/login')}
+                >
+                  {t('common:login')}
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="small"
+                  onClick={() => navigate('/auth/signup')}
+                >
+                  {t('common:signUp')}
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="text"
+                color="secondary"
+                size="small"
+                onClick={() => navigate('/app')}
+              >
+                {t('common:GoToDashboard')}
+              </Button>
+            )}
           </Box>
 
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -203,26 +218,41 @@ export function Header() {
                   {t('header:aboutUs')}
                 </MenuItem>
                 <Divider />
-                <MenuItem>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    sx={{ width: '100%' }}
-                    onClick={() => navigate('/auth/signup')}
-                  >
-                    {t('common:signUp')}
-                  </Button>
-                </MenuItem>
-                <MenuItem>
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    sx={{ width: '100%' }}
-                    onClick={() => navigate('/auth/login')}
-                  >
-                    {t('common:login')}
-                  </Button>
-                </MenuItem>
+                {!isAuthenticated ? (
+                  <>
+                    <MenuItem>
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        sx={{ width: '100%' }}
+                        onClick={() => navigate('/auth/signup')}
+                      >
+                        {t('common:signUp')}
+                      </Button>
+                    </MenuItem>
+                    <MenuItem>
+                      <Button
+                        color="primary"
+                        variant="outlined"
+                        sx={{ width: '100%' }}
+                        onClick={() => navigate('/auth/login')}
+                      >
+                        {t('common:login')}
+                      </Button>
+                    </MenuItem>
+                  </>
+                ) : (
+                  <MenuItem>
+                    <Button
+                      color="primary"
+                      variant="text"
+                      sx={{ width: '100%' }}
+                      onClick={() => navigate('/app')}
+                    >
+                      {t('common:GoToDashboard')}
+                    </Button>
+                  </MenuItem>
+                )}
               </Box>
             </Drawer>
           </Box>

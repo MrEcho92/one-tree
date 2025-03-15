@@ -3,5 +3,6 @@
     "login": "Log in",
     "logout": "Log out",
     "male": "Male",
-    "female": "Female"
+    "female": "Female",
+    "GoToDashboard": "Go to Dashboard"
 }

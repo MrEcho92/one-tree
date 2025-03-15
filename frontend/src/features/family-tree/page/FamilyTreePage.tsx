@@ -193,6 +193,7 @@ export default function FamilyTreePage() {
         enqueueSnackbar('Family tree deleted successfully!', {
           variant: 'success',
         });
+        closeModal?.();
         // Redirect to dashboard
         navigate('/app');
       },

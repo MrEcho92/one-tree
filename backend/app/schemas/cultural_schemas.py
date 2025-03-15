@@ -11,11 +11,3 @@ class CulturalContextResponse(BaseModel):
     total_items: Optional[int]
     total_pages: Optional[int]
     current_page: Optional[int]
-
-
-class CulturalContextsResponse(BaseModel):
-    id: str
-    updated_at: datetime
-    title: str
-    status: str
-    created_at: datetime

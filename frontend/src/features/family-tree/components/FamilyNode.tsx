@@ -87,8 +87,32 @@ export const FamilyNode = React.memo(function FamilyNode({
               fontWeight: typography.h1.fontWeight,
             }}
           >{`${nodeDetails?.first_name} ${nodeDetails?.last_name}`}</Typography>
-          <Typography>{`${nodeDetails?.date_of_birth ? transformDate(nodeDetails.date_of_birth) : ''}${!nodeDetails?.is_alive && nodeDetails?.death_date ? ` - ${transformDate(nodeDetails.death_date)}` : ''}`}</Typography>
+          <Typography>
+            {nodeDetails?.date_of_birth
+              ? `${transformDate(nodeDetails.date_of_birth)}${
+                  nodeDetails?.is_alive
+                    ? ' - Living'
+                    : nodeDetails?.death_date
+                      ? ` - ${transformDate(nodeDetails.death_date)}`
+                      : ''
+                }`
+              : ''}
+          </Typography>
         </Box>
+        {isRoot && (
+          <Box
+            sx={{
+              bgcolor: palette.info.main,
+              color: palette.primary.contrastText,
+              px: 1,
+              borderRadius: 1,
+            }}
+          >
+            <Typography variant="caption" textAlign="center">
+              Focus Person
+            </Typography>
+          </Box>
+        )}
       </Box>
       {node.hasSubTree && (
         <Box
