@@ -221,7 +221,7 @@ export default function HubDetails() {
               </Typography>
               <Grid container spacing={2} columns={12}>
                 {relatedPosts?.map((post, index) => (
-                  <Grid key={post.id} size={{ xs: 12, sm: 6 }}>
+                  <Grid key={`${post.id}_${index}`} size={{ xs: 12 }}>
                     <Box
                       sx={{
                         display: 'flex',
@@ -236,7 +236,21 @@ export default function HubDetails() {
                         navigate(`/hub/${post.id}`);
                       }}
                     >
-                      <Typography variant="subtitle2">{post.title}</Typography>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: 'block',
+                          maxWidth: '100%',
+                        }}
+                      >
+                        {post.title}
+                      </Typography>
+                      <Typography variant="caption">
+                        {formatDate(post?.updated_at)}
+                      </Typography>
                     </Box>
                   </Grid>
                 ))}
