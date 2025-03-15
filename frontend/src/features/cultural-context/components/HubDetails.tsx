@@ -231,6 +231,7 @@ export default function HubDetails() {
                         bgcolor: '#ffff',
                         p: 2,
                         borderRadius: '8px',
+                        cursor: 'pointer',
                       }}
                       onClick={() => {
                         navigate(`/hub/${post.id}`);

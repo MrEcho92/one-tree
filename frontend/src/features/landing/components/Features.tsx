@@ -22,7 +22,7 @@ export function Features() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: { xs: 2, sm: 4 },
+          gap: { xs: 4, sm: 7 },
         }}
       >
         <Box
@@ -35,21 +35,24 @@ export function Features() {
             sx={{
               textAlign: 'center',
               fontSize: {
-                xs: typography.h4.fontSize,
-                md: typography.h3.fontSize,
+                xs: typography.h3.fontSize,
+                md: typography.h2.fontSize,
               },
               fontWeight: {
                 xs: typography.h3.fontWeight,
-                md: typography.h3.fontWeight,
+                md: typography.h1.fontWeight,
               },
-              color: palette.text.primary,
+              color: palette.primary.main,
             }}
           >
             {t('landing:features.title')}
           </Typography>
           <Typography
-            variant="body1"
-            sx={{ color: palette.text.secondary, py: { xs: 1, md: 2 } }}
+            sx={{
+              color: palette.text.primary,
+              fontSize: typography.body1.fontSize,
+              py: { xs: 2, md: 3 },
+            }}
           >
             {t('landing:features.subTitle')}
           </Typography>

@@ -44,7 +44,7 @@ export function SectionTwo() {
         />
       </Box>
       <Stack
-        spacing={2}
+        spacing={3}
         useFlexGap
         sx={{
           flexBasis: { xs: '100%', md: '50%' },
@@ -55,13 +55,14 @@ export function SectionTwo() {
         <Typography
           sx={{
             textAlign: 'center',
+            lineHeight: 1.25,
             fontSize: {
               xs: typography.h4.fontSize,
               md: typography.h3.fontSize,
             },
             fontWeight: {
               xs: typography.h3.fontWeight,
-              md: typography.h3.fontWeight,
+              md: typography.h1.fontWeight,
             },
             color: palette.text.primary,
           }}
@@ -74,6 +75,7 @@ export function SectionTwo() {
           sx={{
             alignSelf: 'center',
             width: 'auto',
+            color: palette.primary.main,
           }}
           onClick={() => navigate('/app')}
         >
