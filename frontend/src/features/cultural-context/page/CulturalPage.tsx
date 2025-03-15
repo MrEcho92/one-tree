@@ -129,19 +129,26 @@ export function CulturalPage() {
         sx={{ display: 'flex', flexDirection: 'column', my: 14, gap: 4 }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <Box>
+          <Box display="flex" flexDirection={'column'} gap={2}>
             <Typography variant="h1" gutterBottom>
-              Cultural Hub
+              Cultural Hub - Preserving African Heritage
             </Typography>
-            <Typography sx={{ color: (theme) => theme.palette.text.secondary }}>
-              Explore and celebrate rich traditions! Read and share stories,
-              recipes, and customs that keep your heritage alive. Welcome to the
-              Culture section of our news, where we explore the latest trends
-              and topics in art, music, film, literature, and more. From
-              groundbreaking exhibitions and performances to up-and-coming
-              artists and cultural events, we aim to provide you with a diverse
-              range of stories that showcase the richness and diversity of our
-              world's creative landscape.
+            <Typography
+              sx={{
+                color: (theme) => theme.palette.text.secondary,
+                lineHeight: 1.5,
+              }}
+            >
+              Explore and celebrate the rich traditions of Africa! Read and
+              share stories, recipes, and customs that keep your heritage alive.
+              The Cultural Hub is a space dedicated to preserving and showcasing
+              the beauty of African traditions, from ancestral rituals and
+              folklore to culinary heritage and storytelling. Discover the depth
+              of African art, music, literature, and history, and contribute
+              your own experiences to keep these traditions alive for future
+              generations. Whether you&apos;re reconnecting with your roots or
+              learning something new, the Cultural Hub is your gateway to the
+              richness and diversity of African culture. 🌍✨
             </Typography>
           </Box>
         </Box>

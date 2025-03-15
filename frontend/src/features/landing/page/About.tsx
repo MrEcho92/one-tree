@@ -29,10 +29,10 @@ export default function About() {
         color="text.primary"
         sx={{
           alignSelf: 'center',
-          color: palette.secondary.contrastText,
+          color: palette.info.main,
           fontSize: {
-            xs: typography.body1.fontSize,
-            md: typography.h4.fontSize,
+            xs: typography.h4.fontSize,
+            md: typography.h1.fontSize,
           },
           fontWeight: { xs: 'none', md: typography.h1.fontWeight },
           width: { xs: '80%', md: '60%' },
@@ -43,7 +43,7 @@ export default function About() {
         Preserving Heritage, Connecting Generations
       </Typography>
       <Container maxWidth="md">
-        <Typography textAlign={'center'}>
+        <Typography textAlign="center" sx={{ lineHeight: { xs: 1.5, md: 2 } }}>
           Welcome to {`${AppConfig.appName}`} – where your family&apos;s unique
           journey is honored, preserved, and celebrated.{' '}
           {`${AppConfig.appName}`} was born from a simple observation: as
@@ -63,23 +63,26 @@ export default function About() {
       >
         <Container
           maxWidth="md"
-          sx={{ bgcolor: palette.secondary.main, p: 5, my: 2, borderRadius: 2 }}
+          sx={{ bgcolor: palette.secondary.main, p: 8, my: 2, borderRadius: 2 }}
         >
           <Typography
             textAlign="center"
             sx={{
-              color: palette.info.main,
+              color: palette.primary.dark,
               fontSize: {
-                xs: typography.body1.fontSize,
+                xs: typography.h4.fontSize,
                 md: typography.h3.fontSize,
               },
               fontWeight: { xs: 'none', md: typography.h1.fontWeight },
-              py: 2,
             }}
           >
-            Our mission
+            Our Mission
           </Typography>
-          <Typography textAlign="center" variant="body1">
+          <Typography
+            textAlign="center"
+            variant="body1"
+            sx={{ lineHeight: { xs: 1.5, md: 2 } }}
+          >
             We believe every family has a story worth preserving. Our platform
             helps African diaspora families reconnect with their heritage,
             document traditions, and celebrate their journey across generations.
@@ -100,7 +103,7 @@ export default function About() {
             sx={{
               color: palette.primary.main,
               fontSize: {
-                xs: typography.body1.fontSize,
+                xs: typography.h4.fontSize,
                 md: typography.h3.fontSize,
               },
               fontWeight: { xs: 'none', md: typography.h1.fontWeight },
@@ -109,11 +112,13 @@ export default function About() {
           >
             Who We Serve
           </Typography>
-          <Typography textAlign="center">
-            We are building this platform for African diaspora families all over
-            the world, especially first- and second-generation members who want
-            to explore their roots, share cultural knowledge, and stay connected
-            despite geographic distance.
+          <Typography
+            textAlign="center"
+            sx={{ lineHeight: { xs: 1.5, md: 2 } }}
+          >
+            We are building this platform for African diaspora families
+            worldwide who want to explore their roots, share cultural knowledge,
+            and stay connected across generations—no matter the distance.
           </Typography>
         </Container>
       </Box>
@@ -131,7 +136,7 @@ export default function About() {
             sx={{
               color: palette.secondary.main,
               fontSize: {
-                xs: typography.body1.fontSize,
+                xs: typography.h4.fontSize,
                 md: typography.h3.fontSize,
               },
               fontWeight: { xs: 'none', md: typography.h1.fontWeight },
@@ -142,12 +147,15 @@ export default function About() {
           </Typography>
           <Typography
             textAlign="center"
-            sx={{ color: palette.primary.contrastText }}
+            sx={{
+              color: palette.primary.contrastText,
+              lineHeight: { xs: 1.5, md: 2 },
+            }}
           >
-            For many in the African diaspora, staying connected to family and
-            culture can be challenging. We provide a space to preserve history,
-            strengthen family bonds, and celebrate cultural identity—all in one
-            place.
+            Staying connected to family and culture can be challenging for many
+            in the African diaspora. Our platform provides a space to preserve
+            history, strengthen family bonds, and celebrate cultural
+            identity—all in one place.
           </Typography>
         </Container>
       </Box>
@@ -165,7 +173,7 @@ export default function About() {
             sx={{
               color: palette.primary.main,
               fontSize: {
-                xs: typography.body1.fontSize,
+                xs: typography.h4.fontSize,
                 md: typography.h3.fontSize,
               },
               fontWeight: { xs: 'none', md: typography.h1.fontWeight },
@@ -174,7 +182,7 @@ export default function About() {
           >
             Our Team
           </Typography>
-          <Typography textAlign="center">
+          <Typography textAlign="center" sx={{lineHeight: { xs: 1.5, md: 2 }}}>
             Our team is made up of passionate individuals who are dedicated to
             creating a platform that empowers African diaspora families to
             preserve and celebrate their cultural heritage. We&apos;re a team of
@@ -204,7 +212,7 @@ export default function About() {
             sx={{
               color: palette.info.main,
               fontSize: {
-                xs: typography.body1.fontSize,
+                xs: typography.h4.fontSize,
                 md: typography.h3.fontSize,
               },
               fontWeight: { xs: 'none', md: typography.h1.fontWeight },
@@ -213,7 +221,7 @@ export default function About() {
           >
             Join Us
           </Typography>
-          <Typography>
+          <Typography textAlign="center" sx={{lineHeight: { xs: 1.5, md: 2 }}}>
             Be part of a growing community dedicated to keeping family legacies
             alive. Start building your family&apos;s story today! 🚀
           </Typography>

@@ -33,11 +33,11 @@ export function Heritage() {
               textAlign: 'center',
               fontSize: {
                 xs: typography.h4.fontSize,
-                md: typography.h3.fontSize,
+                md: typography.h2.fontSize,
               },
               fontWeight: {
                 xs: typography.h3.fontWeight,
-                md: typography.h3.fontWeight,
+                md: typography.h1.fontWeight,
               },
               color: palette.primary.contrastText,
             }}

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
 import Button from '@mui/material/Button';
 
@@ -36,11 +37,11 @@ export function Instructions() {
                   textAlign: 'center',
                   fontSize: {
                     xs: typography.h4.fontSize,
-                    md: typography.h3.fontSize,
+                    md: typography.h2.fontSize,
                   },
                   fontWeight: {
                     xs: typography.h3.fontWeight,
-                    md: typography.h3.fontWeight,
+                    md: typography.h1.fontWeight,
                   },
                   color: palette.text.primary,
                 }}
@@ -62,24 +63,33 @@ export function Instructions() {
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 3,
+                  gap: 4,
                   color: palette.text.secondary,
                   borderRadius: '8px',
-                  p: 2,
+                  p: 4,
                   backgroundColor: palette.background.paper,
                 }}
               >
-                <Typography component="text" variant="body1">
-                  {t('landing:instructions.steps.stepOne')}
-                </Typography>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <ChevronRightIcon color="primary" />
+                  <Typography component="text" variant="body1">
+                    {t('landing:instructions.steps.stepOne')}
+                  </Typography>
+                </Box>
 
-                <Typography component="text" variant="body1">
-                  {t('landing:instructions.steps.stepTwo')}
-                </Typography>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <ChevronRightIcon color="primary" />
+                  <Typography component="text" variant="body1">
+                    {t('landing:instructions.steps.stepTwo')}
+                  </Typography>
+                </Box>
 
-                <Typography component="text" variant="body1">
-                  {t('landing:instructions.steps.stepThree')}
-                </Typography>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <ChevronRightIcon color="primary" />
+                  <Typography component="text" variant="body1">
+                    {t('landing:instructions.steps.stepThree')}
+                  </Typography>
+                </Box>
               </Box>
               <Button
                 variant="contained"

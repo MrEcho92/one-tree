@@ -25,7 +25,7 @@ export function Hero() {
           pb: { xs: 8, sm: 12 },
         }}
       >
-        <Stack spacing={2} useFlexGap sx={{ width: { xs: '100%', sm: '70%' } }}>
+        <Stack spacing={3} useFlexGap sx={{ width: { xs: '100%', sm: '70%' } }}>
           <Typography
             variant="h2"
             sx={{
@@ -33,6 +33,7 @@ export function Hero() {
               flexDirection: { xs: 'column', md: 'row' },
               alignSelf: 'center',
               textAlign: 'center',
+              lineHeight: 1.25,
               fontSize: {
                 xs: typography.h3.fontSize,
                 md: typography.h1.fontSize,
@@ -53,9 +54,10 @@ export function Hero() {
               alignSelf: 'center',
               width: { sm: '100%', md: '80%' },
               color: palette.secondary.main,
+              lineHeight: 1.25,
               fontSize: {
-                xs: typography.fontSize,
-                md: typography.body1.fontSize,
+                xs: typography.body1.fontSize,
+                md: typography.h4.fontSize,
               },
               fontWeight: { xs: 'none', md: typography.h3.fontWeight },
             }}

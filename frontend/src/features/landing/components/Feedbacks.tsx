@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -7,6 +8,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
 export function Feedbacks() {
+  const { palette, typography } = useTheme();
   const { t } = useTranslation('landing');
   return (
     <Box id="feedbacks">
@@ -31,7 +33,16 @@ export function Feedbacks() {
             component="h2"
             variant="h4"
             gutterBottom
-            sx={{ color: 'text.primary' }}
+            sx={{
+              color: 'text.primary',
+              fontSize: {
+                xs: typography.h3.fontSize,
+                md: typography.h2.fontSize,
+              },
+              fontWeight: {
+                xs: typography.h3.fontWeight,
+              },
+            }}
           >
             {t('landing:feedbacks.title')}
           </Typography>

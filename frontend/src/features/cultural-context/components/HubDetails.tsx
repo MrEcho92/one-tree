@@ -148,10 +148,10 @@ export default function HubDetails() {
             {postDetails?.image_url && (
               <CardMedia
                 component="img"
-                alt="green iguana"
+                alt="cultural details image"
                 image={postDetails?.image_url}
                 sx={{
-                  // aspectRatio: '16 / 9',
+                  aspectRatio: '16 / 9',
                   borderBottom: '1px solid',
                   borderColor: 'divider',
                   width: '100%',
@@ -221,7 +221,7 @@ export default function HubDetails() {
               </Typography>
               <Grid container spacing={2} columns={12}>
                 {relatedPosts?.map((post, index) => (
-                  <Grid key={post.id} size={{ xs: 12, sm: 6 }}>
+                  <Grid key={`${post.id}_${index}`} size={{ xs: 12 }}>
                     <Box
                       sx={{
                         display: 'flex',
@@ -231,12 +231,27 @@ export default function HubDetails() {
                         bgcolor: '#ffff',
                         p: 2,
                         borderRadius: '8px',
+                        cursor: 'pointer',
                       }}
                       onClick={() => {
                         navigate(`/hub/${post.id}`);
                       }}
                     >
-                      <Typography variant="subtitle2">{post.title}</Typography>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: 'block',
+                          maxWidth: '100%',
+                        }}
+                      >
+                        {post.title}
+                      </Typography>
+                      <Typography variant="caption">
+                        {formatDate(post?.updated_at)}
+                      </Typography>
                     </Box>
                   </Grid>
                 ))}
