@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { debounce } from 'lodash';
 import { Helmet } from 'react-helmet-async';
 import Box from '@mui/material/Box';
@@ -51,12 +51,13 @@ export function CulturalPage() {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
 
-  const debouncedSearch = useCallback(
-    debounce((query) => {
-      setSearchQuery(query);
-      setPage(1); // Reset pagination on new search
-    }, 300),
-    [],
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((query) => {
+        setSearchQuery(query);
+        setPage(1); // Reset pagination on new search
+      }, 300),
+    [setSearchQuery, setPage],
   );
 
   useEffect(() => {

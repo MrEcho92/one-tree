@@ -580,7 +580,7 @@ export default function MigrationPage() {
                   p: 2,
                 }}
               >
-                {/* <MapView /> */}
+                {false && <MapView />}
                 <Typography>Map view feature coming soon!</Typography>
               </Box>
             </TabPanel>
