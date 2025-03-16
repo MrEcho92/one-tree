@@ -62,10 +62,14 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd frontend
+          npm ci
 
       - name: Build frontend
-        run: npm run build:dev
+        run: |
+          cd frontend
+          npm run build:dev
         env:
           REACT_APP_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
