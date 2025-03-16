@@ -182,7 +182,10 @@ export default function About() {
           >
             Our Team
           </Typography>
-          <Typography textAlign="center" sx={{lineHeight: { xs: 1.5, md: 2 }}}>
+          <Typography
+            textAlign="center"
+            sx={{ lineHeight: { xs: 1.5, md: 2 } }}
+          >
             Our team is made up of passionate individuals who are dedicated to
             creating a platform that empowers African diaspora families to
             preserve and celebrate their cultural heritage. We&apos;re a team of
@@ -221,7 +224,10 @@ export default function About() {
           >
             Join Us
           </Typography>
-          <Typography textAlign="center" sx={{lineHeight: { xs: 1.5, md: 2 }}}>
+          <Typography
+            textAlign="center"
+            sx={{ lineHeight: { xs: 1.5, md: 2 } }}
+          >
             Be part of a growing community dedicated to keeping family legacies
             alive. Start building your family&apos;s story today! 🚀
           </Typography>
