@@ -101,6 +101,7 @@ export default function MenuContent() {
                 data-canny-link
                 href="https://onetree.canny.io"
                 target="_blank"
+                rel="noreferrer"
               >
                 Feature requests
               </a>

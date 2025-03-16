@@ -62,6 +62,14 @@ export default function OptionsMenu() {
       >
         <MenuItem
           onClick={() => {
+            navigate('/');
+            handleClose();
+          }}
+        >
+          Onetree
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
             navigate('/app/settings');
             handleClose();
           }}
