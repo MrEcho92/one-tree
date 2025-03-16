@@ -8,7 +8,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
 export function Feedbacks() {
-  const { palette, typography } = useTheme();
+  const { typography } = useTheme();
   const { t } = useTranslation('landing');
   return (
     <Box id="feedbacks">
