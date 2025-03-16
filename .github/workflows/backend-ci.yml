@@ -78,11 +78,10 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
-      - name: Authorize Docker push
-        run: gcloud auth configure-docker
+      - name: Authenticate Docker to Google Container Registry
+        run: gcloud auth configure-docker gcr.io
       
       - name: Build and push Docker image
-        working-directory: ./backend
         run: |
           docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/backend-api:${{ github.sha }} .
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/backend-api:${{ github.sha }}
@@ -95,9 +94,8 @@ jobs:
           image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/backend-api:${{ github.sha }}
           region: ${{ secrets.GCP_REGION }}
           env_vars: |
-            GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
             GOOGLE_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
           
       - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
+        run: echo "Cloud Run URL - ${{ steps.deploy.outputs.url }}"
