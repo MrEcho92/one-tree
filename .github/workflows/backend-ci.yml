@@ -96,6 +96,7 @@ jobs:
           service: backend-api
           image: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REPOSITORY }}/backend-api:${{ github.sha }}
           region: ${{ secrets.GCP_REGION }}
+          flags: '--allow-unauthenticated'
           env_vars: |
             GOOGLE_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
