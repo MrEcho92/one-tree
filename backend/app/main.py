@@ -16,15 +16,15 @@ ENV = os.getenv("ENV", "dev")  # Default to 'development'
 
 if ENV == "prod":
     ALLOWED_ORIGINS = [
-        "https://one-tree-2025.web.app/",
-        "https://one-tree-2025.firebaseapp.com/",
+        "https://one-tree-2025.web.app",
+        "https://one-tree-2025.firebaseapp.com",
     ]
 else:  # Development mode
     ALLOWED_ORIGINS = [
         "http://localhost:3000",
     ]
 
-print(f"Allow Origins: {ALLOWED_ORIGINS}") #add this line to check allow_origins at runtime.
+print(f"Allow Origins: {ALLOWED_ORIGINS}")
 
 # Configure CORS
 app.add_middleware(
