@@ -99,10 +99,12 @@ jobs:
           service: backend-api
           image: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REPOSITORY }}/backend-api:${{ github.sha }}
           region: ${{ secrets.GCP_REGION }}
+          flags: '--no-allow-unauthenticated'
           env_vars: |
             GOOGLE_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
             GOOGLE_APPLICATION_CREDENTIALS=/tmp/service-account.json
+            ENV=prod
 
       - name: Show Output
         run: echo "Cloud Run URL - ${{ steps.deploy.outputs.url }}"
