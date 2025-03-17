@@ -90,7 +90,7 @@ jobs:
           docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REPOSITORY }}/backend-api:${{ github.sha }}
 
       - name: Decode Service Account Key
-        run: echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_B64 }} | base64 --decode > /tmp/service-account.json
+        run: echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_B64 }} | base64 --decode > ./service-account.json
 
       - name: Deploy to Cloud Run
         id: deploy
