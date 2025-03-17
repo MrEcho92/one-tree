@@ -4,12 +4,9 @@ on:
   push:
     branches:
       - main
-      - '*'
     paths:
       - 'backend/**'
   pull_request:
-    branches:
-      - main
     paths:
       - 'backend/**'
 
@@ -61,7 +58,7 @@ jobs:
       #     pytest tests
 
   deploy:
-    # if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: build_and_test
     defaults:
