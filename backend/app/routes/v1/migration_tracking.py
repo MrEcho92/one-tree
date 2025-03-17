@@ -56,13 +56,12 @@ async def create_migration_record(
 
 
 @router.get(
-    "/migration-records",
+    "/migration-records/{user_id}/user",
     response_model=list[MigrationRecordsGetResponse],
     status_code=status.HTTP_200_OK,
 )
 async def get_migration_records(
-    user_id: str = Query(None),
-    tree_id: Optional[str] = Query(None),
+    user_id: str,
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
 ) -> list[MigrationRecordsGetResponse]:
@@ -73,19 +72,14 @@ async def get_migration_records(
                 detail="Not authorized to access this resource",
             )
 
-        records_ref = db.collection(MIGRATION_RECORDS)
+        records = (
+            db.collection(MIGRATION_RECORDS).where("created_by", "==", user_id).stream()
+        )
 
-        # Apply filters if provided
-        if user_id:
-            records_ref = records_ref.where("created_by", "==", user_id)
-        if tree_id:
-            records_ref = records_ref.where("tree_id", "==", tree_id)
+        records = [MigrationRecordsGetResponse(**doc.to_dict()) for doc in records]
+        sorted_records = sorted(records, key=lambda x: x.updated_at, reverse=True)
 
-        records = [
-            MigrationRecordsGetResponse(**doc.to_dict()) for doc in records_ref.stream()
-        ]
-
-        return records
+        return sorted_records
 
     except Exception as e:
         raise HTTPException(
