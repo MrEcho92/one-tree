@@ -100,7 +100,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v1
         with:
           service: backend-api
-          image: ${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/${REPOSITORY}/backend-api:${{ github.sha }}
+          image: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/backend-api:${{ github.sha }}
           region: ${{ secrets.GCP_REGION }}
           env_vars: |
             GOOGLE_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
@@ -109,6 +109,6 @@ jobs:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           GCP_REGION: ${{ secrets.GCP_REGION }}
           REPOSITORY: ${{ secrets.ARTIFACT_REPOSITORY }}
-              
+
       - name: Show Output
         run: echo "Cloud Run URL - ${{ steps.deploy.outputs.url }}"
