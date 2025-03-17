@@ -34,6 +34,7 @@ const secondaryListItems = [
   { text: 'Settings', icon: <SettingsRoundedIcon />, path: '/app/settings' },
   { text: 'About', icon: <InfoRoundedIcon />, path: '/about' },
   {
+    id: 'feedback',
     text: 'Share feedback',
     icon: <HelpRoundedIcon />,
     path: 'https://forms.gle/26QZ5CdX8s7Crb5z6',
@@ -80,7 +81,7 @@ export default function MenuContent() {
             <ListItem key={index} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={() => {
-                  if (item.text === 'Feedback') {
+                  if (item.id === 'feedback') {
                     return navigateToNewTab(item.path);
                   }
                   return navigate(item.path);
