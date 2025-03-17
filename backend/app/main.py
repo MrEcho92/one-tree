@@ -24,6 +24,8 @@ else:  # Development mode
         "http://localhost:3000",
     ]
 
+print(f"Allow Origins: {ALLOWED_ORIGINS}") #add this line to check allow_origins at runtime.
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
