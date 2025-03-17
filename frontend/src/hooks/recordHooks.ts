@@ -26,7 +26,7 @@ export const useGetMigrationRecord = (recordId: string) => {
 export const useGetMigrationRecordByUser = (userId: string) => {
   return useApiQuery<MigrationRecord[]>(
     ['migrationRecords', userId],
-    `/migration-records/?user_id=${userId}`,
+    `/migration-records/${userId}/user`,
     {
       queryKey: ['migrationRecords', userId],
       enabled: !!userId,
