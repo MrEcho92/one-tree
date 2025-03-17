@@ -6,14 +6,14 @@ export interface CreateTreeFormValues {
   root_last_name: string;
   root_date_of_birth?: string;
   root_gender: string;
-  father_first_name?: string;
-  father_last_name?: string;
-  father_date_of_birth?: string;
+  father_first_name: string;
+  father_last_name: string;
+  father_date_of_birth: string | null;
   father_gender?: string;
   father_is_alive?: boolean;
-  mother_first_name?: string;
-  mother_last_name?: string;
-  mother_date_of_birth?: string;
+  mother_first_name: string;
+  mother_last_name: string;
+  mother_date_of_birth: string | null;
   mother_gender?: string;
   mother_is_alive?: boolean;
 }
@@ -32,14 +32,14 @@ export interface CreateFamilyTreePayload {
   father?: {
     first_name?: string;
     last_name?: string;
-    date_of_birth?: string;
+    date_of_birth: string | null;
     gender?: string;
     is_alive?: boolean;
   };
   mother?: {
     first_name?: string;
     last_name?: string;
-    date_of_birth?: string;
+    date_of_birth: string | null;
     gender?: string;
     is_alive?: boolean;
   };

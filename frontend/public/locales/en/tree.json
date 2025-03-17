@@ -1,6 +1,6 @@
 {
     "createTree": {
-        "title": "Create family tree",
+        "title": "Create a family tree",
         "sections": {
             "treeName": "Tree Name",
             "description": "Description",

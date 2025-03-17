@@ -2,6 +2,9 @@ export function transformDate(
   dateStr: string,
   locale: string = 'en-GB',
 ): string {
+  if (!dateStr) {
+    return '--';
+  }
   const newDate = new Date(dateStr);
   return newDate.toLocaleDateString(locale).split('/').join('-');
 }
