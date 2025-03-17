@@ -15,7 +15,10 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 ENV = os.getenv("ENV", "dev")  # Default to 'development'
 
 if ENV == "prod":
-    ALLOWED_ORIGINS = ["https://one-tree-2025.web.app/"]
+    ALLOWED_ORIGINS = [
+        "https://one-tree-2025.web.app/",
+        "https://one-tree-2025.firebaseapp.com/",
+    ]
 else:  # Development mode
     ALLOWED_ORIGINS = [
         "http://localhost:3000",
