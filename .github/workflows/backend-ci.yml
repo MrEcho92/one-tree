@@ -89,6 +89,9 @@ jobs:
           docker build -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REPOSITORY }}/backend-api:${{ github.sha }} .
           docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REPOSITORY }}/backend-api:${{ github.sha }}
 
+      - name: Decode Service Account Key
+        run: echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_B64 }} | base64 --decode > /tmp/service-account.json
+
       - name: Deploy to Cloud Run
         id: deploy
         uses: google-github-actions/deploy-cloudrun@v1
@@ -101,9 +104,6 @@ jobs:
             GOOGLE_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
             GOOGLE_APPLICATION_CREDENTIALS=/tmp/service-account.json
-        steps:
-          - name: Decode Service Account Key
-            run: echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_B64 }} | base64 --decode > /tmp/service-account.json
-      
+
       - name: Show Output
         run: echo "Cloud Run URL - ${{ steps.deploy.outputs.url }}"
