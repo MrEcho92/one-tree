@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - '*'
     paths:
       - 'frontend/**'
   pull_request:
@@ -52,7 +53,7 @@ jobs:
       #     npm test
 
   deploy:
-    if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: build_and_test
     defaults:
