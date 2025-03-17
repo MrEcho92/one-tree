@@ -24,8 +24,6 @@ else:  # Development mode
         "http://localhost:3000",
     ]
 
-print(f"Allow Origins: {ALLOWED_ORIGINS}")
-
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
