@@ -100,6 +100,7 @@ jobs:
           env_vars: |
             GOOGLE_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
             FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
+            GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       - name: Show Output
         run: echo "Cloud Run URL - ${{ steps.deploy.outputs.url }}"
