@@ -34,7 +34,7 @@ const secondaryListItems = [
   { text: 'Settings', icon: <SettingsRoundedIcon />, path: '/app/settings' },
   { text: 'About', icon: <InfoRoundedIcon />, path: '/about' },
   {
-    text: 'Feedback',
+    text: 'Share feedback',
     icon: <HelpRoundedIcon />,
     path: 'https://forms.gle/26QZ5CdX8s7Crb5z6',
   },
