@@ -39,7 +39,7 @@ export default function TermsAndConditions() {
                 xs: typography.body1.fontSize,
                 md: typography.h2.fontSize,
               },
-              fontWeight: { xs: 'none', md: typography.h3.fontWeight },
+              fontWeight: { xs: 'none', md: typography.h1.fontWeight },
             }}
           >
             Terms and Conditions
