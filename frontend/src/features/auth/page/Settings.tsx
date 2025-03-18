@@ -88,6 +88,7 @@ export default function ProfileSettings() {
       enqueueSnackbar('Account deleted successfully', {
         variant: 'success',
       });
+      closeModal?.()
       navigate('/');
     } catch (error) {
       console.error('Delete failed', error);
