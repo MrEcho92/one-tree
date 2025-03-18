@@ -234,13 +234,11 @@ export default function CreateTree() {
       </Typography>
       <TextField
         label={t('tree:createTree.sections.common.firstName')}
-        {...register('father_first_name', { required: true })}
-        required
+        {...register('father_first_name')}
       />
       <TextField
         label={t('tree:createTree.sections.common.lastName')}
-        {...register('father_last_name', { required: true })}
-        required
+        {...register('father_last_name')}
       />
       <Controller
         name="father_date_of_birth"
@@ -304,13 +302,11 @@ export default function CreateTree() {
       </Typography>
       <TextField
         label={t('tree:createTree.sections.common.firstName')}
-        {...register('mother_first_name', { required: true })}
-        required
+        {...register('mother_first_name')}
       />
       <TextField
         label={t('tree:createTree.sections.common.lastName')}
-        {...register('mother_last_name', { required: true })}
-        required
+        {...register('mother_last_name')}
       />
       <Controller
         name="mother_date_of_birth"

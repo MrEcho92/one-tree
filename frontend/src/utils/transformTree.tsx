@@ -32,13 +32,18 @@ export function transformNodeData(data: Person[]): Node[] {
   }));
 }
 
-export function stringAvatar(data: any, name: string) {
+export function stringAvatar(data: any) {
+  let children: string = '';
+  if (data.first_name && data.last_name) {
+    const newName = `${data.first_name} ${data.last_name}`;
+    children = `${newName.split(' ')[0][0]}${newName.split(' ')[1][0]}`;
+  }
   return {
     sx: {
       bgcolor: data?.gender === 'male' ? brown[500] : orange[500],
       width: 100,
       height: 100,
     },
-    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    children: children,
   };
 }

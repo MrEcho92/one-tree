@@ -59,8 +59,10 @@ export default function FamilyTreeOverview({
   };
 
   const data = initialData?.members?.map((member: any) => ({
-    first_name: capitalize(member.first_name),
-    last_name: capitalize(member.last_name),
+    first_name: capitalize(
+      member.first_name ? member.first_name : 'No first name',
+    ),
+    last_name: capitalize(member.last_name ? member.last_name : 'No last name'),
     gender: capitalize(member.gender),
     date_of_birth: transformDate(member.date_of_birth),
   }));
