@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Box, Container, Link, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
@@ -8,7 +9,7 @@ function Copyright() {
   return (
     <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
       {'Copyright © '}
-      <Link color="text.secondary" href="#">
+      <Link color="text.secondary" href="/">
         {AppConfig.appName}
       </Link>
       &nbsp;
@@ -18,6 +19,7 @@ function Copyright() {
 }
 
 export function Footer() {
+  const navigate = useNavigate();
   return (
     <Container
       sx={{
@@ -36,13 +38,21 @@ export function Footer() {
         }}
       >
         <div>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link
+            color="text.secondary"
+            variant="body2"
+            onClick={() => navigate('/privacy')}
+          >
             Privacy Policy
           </Link>
           <Typography sx={{ display: 'inline', mx: 0.5, opacity: 0.5 }}>
             &nbsp;•&nbsp;
           </Typography>
-          <Link color="text.secondary" variant="body2" href="#">
+          <Link
+            color="text.secondary"
+            variant="body2"
+            onClick={() => navigate('/terms')}
+          >
             Terms of Service
           </Link>
           <Copyright />

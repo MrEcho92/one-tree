@@ -13,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MenuIcon from '@mui/icons-material/Menu';
+import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import MenuItem from '@mui/material/MenuItem';
 import { AppConfig } from '../../core/constants';
 import { useAuth } from '../auth';
@@ -152,6 +153,7 @@ export function Header() {
                 color="secondary"
                 size="small"
                 onClick={() => navigate('/app')}
+                startIcon={<DashboardCustomizeIcon />}
               >
                 {t('common:GoToDashboard')}
               </Button>
@@ -247,6 +249,7 @@ export function Header() {
                       variant="text"
                       sx={{ width: '100%' }}
                       onClick={() => navigate('/app')}
+                      startIcon={<DashboardCustomizeIcon />}
                     >
                       {t('common:GoToDashboard')}
                     </Button>
