@@ -350,10 +350,7 @@ export default function EditFamilyMember({
             mb={2}
           >
             <Avatar
-              {...stringAvatar(
-                updatedData,
-                `${updatedData?.first_name} ${updatedData?.last_name}`,
-              )}
+              {...stringAvatar(updatedData)}
               src={updatedData?.photo_url}
             ></Avatar>
           </Box>

@@ -5,6 +5,9 @@ import { AuthRoutes } from '../features/auth';
 import { CulturalRoutes } from '../features/cultural-context/routes';
 import { NotFoundPage } from '../components/common/NotFoundPage';
 import About from '../features/landing/page/About';
+import Privacy from '../features/landing/page/Privacy';
+import TermsAndConditions from '../features/landing/page/Terms';
+import CookiesPolicy from '../features/landing/page/Cookies';
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -22,6 +25,18 @@ export const publicRoutes: RouteObject[] = [
       {
         path: '/about',
         element: <About />,
+      },
+      {
+        path: '/privacy',
+        element: <Privacy />,
+      },
+      {
+        path: '/terms',
+        element: <TermsAndConditions />,
+      },
+      {
+        path: '/cookies-policy',
+        element: <CookiesPolicy />,
       },
     ],
   },

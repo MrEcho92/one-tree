@@ -10,14 +10,14 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
-  MenuItem,
-  Select,
   TextField,
   Typography,
   Divider,
   FormLabel,
   IconButton,
   useTheme,
+  RadioGroup,
+  Radio,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -65,14 +65,18 @@ export default function CreateTree() {
       father: {
         first_name: data.father_first_name,
         last_name: data.father_last_name,
-        date_of_birth: data.father_date_of_birth,
+        date_of_birth: data.father_date_of_birth
+          ? data.father_date_of_birth
+          : null,
         gender: data.father_gender,
         is_alive: !data.father_is_alive,
       },
       mother: {
         first_name: data.mother_first_name,
         last_name: data.mother_last_name,
-        date_of_birth: data.mother_date_of_birth,
+        date_of_birth: data.mother_date_of_birth
+          ? data.mother_date_of_birth
+          : null,
         gender: data.mother_gender,
         is_alive: !data.mother_is_alive,
       },
@@ -109,7 +113,7 @@ export default function CreateTree() {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
-        p: 4,
+        p: 6,
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -137,6 +141,8 @@ export default function CreateTree() {
       <TextField
         label={t('tree:createTree.sections.description')}
         {...register('description')}
+        multiline
+        rows={3}
       />
       <FormControlLabel
         control={<Checkbox {...register('is_public')} />}
@@ -167,7 +173,8 @@ export default function CreateTree() {
       <Controller
         name="root_date_of_birth"
         control={control}
-        render={({ field }) => (
+        rules={{ required: 'Date of birth is required' }}
+        render={({ field, fieldState: { error } }) => (
           <DatePicker
             minDate={dayjs('1850-01-01').toDate()}
             maxDate={dayjs().toDate()}
@@ -185,6 +192,8 @@ export default function CreateTree() {
             slotProps={{
               textField: {
                 fullWidth: true,
+                error: !!error, // Show error state
+                helperText: error ? error.message : '', // Show error message
               },
             }}
           />
@@ -196,10 +205,18 @@ export default function CreateTree() {
           name="root_gender"
           control={control}
           render={({ field }) => (
-            <Select {...field}>
-              <MenuItem value="male">{t('common:male')}</MenuItem>
-              <MenuItem value="female">{t('common:female')}</MenuItem>
-            </Select>
+            <RadioGroup row {...field}>
+              <FormControlLabel
+                value="male"
+                control={<Radio />}
+                label={t('common:male')}
+              />
+              <FormControlLabel
+                value="female"
+                control={<Radio />}
+                label={t('common:female')}
+              />
+            </RadioGroup>
           )}
         />
       </FormControl>
@@ -245,16 +262,25 @@ export default function CreateTree() {
           />
         )}
       />
-      <FormControl component="fieldset" required>
+      <FormControl component="fieldset">
         <FormLabel>{t('tree:createTree.sections.common.gender')}</FormLabel>
         <Controller
           name="father_gender"
+          defaultValue="male"
           control={control}
           render={({ field }) => (
-            <Select {...field}>
-              <MenuItem value="male">{t('common:male')}</MenuItem>
-              <MenuItem value="female">{t('common:female')}</MenuItem>
-            </Select>
+            <RadioGroup row {...field}>
+              <FormControlLabel
+                value="male"
+                control={<Radio />}
+                label={t('common:male')}
+              />
+              <FormControlLabel
+                value="female"
+                control={<Radio />}
+                label={t('common:female')}
+              />
+            </RadioGroup>
           )}
         />
       </FormControl>
@@ -304,16 +330,25 @@ export default function CreateTree() {
           />
         )}
       />
-      <FormControl component="fieldset" required>
+      <FormControl component="fieldset">
         <FormLabel>{t('tree:createTree.sections.common.gender')}</FormLabel>
         <Controller
           name="mother_gender"
           control={control}
+          defaultValue="female"
           render={({ field }) => (
-            <Select {...field}>
-              <MenuItem value="male">{t('common:male')}</MenuItem>
-              <MenuItem value="female">{t('common:female')}</MenuItem>
-            </Select>
+            <RadioGroup row {...field}>
+              <FormControlLabel
+                value="male"
+                control={<Radio />}
+                label={t('common:male')}
+              />
+              <FormControlLabel
+                value="female"
+                control={<Radio />}
+                label={t('common:female')}
+              />
+            </RadioGroup>
           )}
         />
       </FormControl>

@@ -62,13 +62,7 @@ export const FamilyNode = React.memo(function FamilyNode({
         }}
         onClick={clickHandler}
       >
-        <Avatar
-          alt="Remy Sharp"
-          {...stringAvatar(
-            nodeDetails,
-            `${nodeDetails?.first_name} ${nodeDetails?.last_name}`,
-          )}
-        />
+        <Avatar alt="Remy Sharp" {...stringAvatar(nodeDetails)} />
         <Box
           p={1}
           sx={{
