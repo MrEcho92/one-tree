@@ -55,6 +55,16 @@ export function Footer() {
           >
             Terms of Service
           </Link>
+          <Typography sx={{ display: 'inline', mx: 0.5, opacity: 0.5 }}>
+            &nbsp;•&nbsp;
+          </Typography>
+          <Link
+            color="text.secondary"
+            variant="body2"
+            onClick={() => navigate('/cookies-policy')}
+          >
+            Cookies
+          </Link>
           <Copyright />
         </div>
         <Stack

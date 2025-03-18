@@ -1,6 +1,7 @@
 export const AppConfig = {
   appName: 'Onetree',
   SITE_NAME: 'OneTree',
+  appContactEmail: 'onetree@mail.com',
 };
 
 export const envVariables = {
