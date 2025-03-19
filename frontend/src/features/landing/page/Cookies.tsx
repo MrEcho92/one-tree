@@ -155,8 +155,7 @@ export default function CookiesPolicy() {
           <Typography variant="subtitle1">
             - Block or delete cookies in your browser preferences.
             <br />- Adjust settings to disable non-essential cookies.
-            <br />
-            - Opt out of analytics tracking (if applicable).
+            <br />- Opt out of analytics tracking (if applicable).
           </Typography>
           <Typography variant="subtitle1" gutterBottom>
             Please note: Disabling essential cookies may affect platform
