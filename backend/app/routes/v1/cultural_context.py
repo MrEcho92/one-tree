@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from typing import List, Optional
+from urllib.parse import urlparse
 
 from fastapi import (
     APIRouter,
@@ -15,7 +16,11 @@ from fastapi import (
 from firebase_admin import firestore
 
 from app.common.firebase import verify_firebase_token
-from app.core.constants import CULTURAL_CONTEXT, MAX_CULTURAL_CONTEXT
+from app.core.constants import (
+    CULTURAL_CONTEXT,
+    CULTURAL_CONTEXT_GCP_PATH,
+    MAX_CULTURAL_CONTEXT,
+)
 from app.core.database import get_db
 from app.models.models import ContextStatus, CulturalContext
 from app.schemas.cultural_schemas import CulturalContextResponse
@@ -211,21 +216,21 @@ async def create_context(
         if video_file:
             video_url = upload_to_gcs(
                 video_file,
-                f"cultural_contexts/{context.id}/videos/{video_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context.id}/videos/{video_file.filename}",
             )
             context.video_url = video_url
 
         if image_file:
             image_url = upload_to_gcs(
                 image_file,
-                f"cultural_contexts/{context.id}/images/{image_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context.id}/images/{image_file.filename}",
             )
             context.image_url = image_url
 
         if audio_file:
             audio_url = upload_to_gcs(
                 audio_file,
-                f"cultural_contexts/{context.id}/audio/{audio_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context.id}/audio/{audio_file.filename}",
             )
             context.audio_url = audio_url
 
@@ -295,32 +300,34 @@ async def update_context(
             old_url = context_data.get(file_key)
             if old_url:
                 updated_context_data[file_key] = None
-                old_blob_name = (
-                    old_url.split(f"/{bucket_name}/")[1]
-                    if f"/{bucket_name}/" in old_url
-                    else None
-                )
-                if old_blob_name:
-                    delete_blob(old_blob_name)
+                parsed_url = urlparse(old_url)
+                path_parts = parsed_url.path.lstrip("/").split("/")
+
+                if bucket_name in path_parts:
+                    index = path_parts.index(bucket_name) + 1
+                    blob_name = "/".join(path_parts[index:])
+                    delete_blob(blob_name)
+                else:
+                    raise Exception(f"Invalid Storage URL format: {old_url}")
 
         if video_file:
             video_url = upload_to_gcs(
                 video_file,
-                f"cultural_contexts/{context_id}/videos/{video_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/videos/{video_file.filename}",
             )
             updated_context_data["video_url"] = video_url
 
         if image_file:
             image_url = upload_to_gcs(
                 image_file,
-                f"cultural_contexts/{context_id}/images/{image_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/images/{image_file.filename}",
             )
             updated_context_data["image_url"] = image_url
 
         if audio_file:
             audio_url = upload_to_gcs(
                 audio_file,
-                f"cultural_contexts/{context_id}/audio/{audio_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/audio/{audio_file.filename}",
             )
             updated_context_data["audio_url"] = audio_url
 
@@ -368,13 +375,15 @@ async def delete_context(
 
         for url in urls:
             if url:
-                old_blob_name = (
-                    url.split(f"/{bucket_name}/")[1]
-                    if f"/{bucket_name}/" in url
-                    else None
-                )
-                if old_blob_name:
-                    delete_blob(old_blob_name)
+                parsed_url = urlparse(url)
+                path_parts = parsed_url.path.lstrip("/").split("/")
+
+                if bucket_name in path_parts:
+                    index = path_parts.index(bucket_name) + 1
+                    blob_name = "/".join(path_parts[index:])
+                    delete_blob(blob_name)
+                else:
+                    raise Exception(f"Invalid Storage URL format: {url}")
 
         context_ref.delete()
     except Exception as e:

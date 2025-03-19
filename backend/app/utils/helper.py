@@ -21,6 +21,9 @@ def upload_to_gcs(
 
 def delete_blob(blob_name) -> None:
     """Deletes a blob from Google Cloud Storage."""
-    bucket = storage.bucket()
-    blob = bucket.blob(blob_name)
-    blob.delete()
+    try:
+        bucket = storage.bucket()
+        blob = bucket.blob(blob_name)
+        blob.delete()
+    except Exception as e:
+        raise f"Error from deleting gcp blob: {e}"
