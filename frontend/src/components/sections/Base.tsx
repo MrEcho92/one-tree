@@ -20,7 +20,7 @@ export function Base({ children }: BaseProps) {
     if (preferences.analytics) {
       // Initialize analytics
     }
-    
+
     // Set up marketing cookies
     if (preferences.marketing) {
       // Initialize marketing tools

@@ -57,7 +57,7 @@ const data = [
     id: 'hub',
     title: 'Cultural story',
     description:
-      'Upload and share stories, traditions, and recipes unique to your heritage',
+      'Upload and share stories, traditions, and recipes unique to your heritage to the cultural hub',
     btnTitle: 'Create a cultural story',
     icon: <AutoStoriesIcon />,
   },

@@ -61,6 +61,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
   const [valueTab, setValueTab] = useState<string>('1');
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (editMode && post) {
@@ -143,7 +144,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
     //   if (post?.video_url) formData.append('video_file', post.video_url);
     //   if (post?.audio_url) formData.append('audio_file', post.audio_url);
     // }
-
+    setLoading(true);
     mutation.mutate(formData, {
       onSuccess: () => {
         enqueueSnackbar(
@@ -152,6 +153,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
             variant: 'success',
           },
         );
+        setLoading(false);
         queryClient.refetchQueries({
           queryKey: ['culturalPosts', editMode ? post.created_by : userId],
           exact: true,
@@ -159,6 +161,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
         closeModal?.();
       },
       onError: (error) => {
+        setLoading(false);
         enqueueSnackbar(
           `Failed to ${editMode ? 'update' : 'add'} cultural post`,
           {
@@ -444,6 +447,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
         variant="contained"
         color="primary"
         fullWidth
+        loading={loading}
         onClick={handleSubmit(onSubmit)}
       >
         {editMode ? 'Update' : 'Post'}
