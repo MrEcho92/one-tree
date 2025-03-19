@@ -35,7 +35,7 @@ export const publicRoutes: RouteObject[] = [
         element: <TermsAndConditions />,
       },
       {
-        path: '/cookies-policy',
+        path: '/cookie-policy',
         element: <CookiesPolicy />,
       },
     ],

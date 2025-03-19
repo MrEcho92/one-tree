@@ -8,16 +8,32 @@ import { Footer } from './Footer';
 import { SideMenu } from './SideBar';
 import { AppNavBar } from './AppMenu';
 import { useAuth } from '../auth/AuthProvider';
+import CookieConsent from '../../features/auth/components/CookieContent';
 
 type BaseProps = {
   children: React.ReactNode;
 };
 
 export function Base({ children }: BaseProps) {
+  const handleCookieConsent = (preferences: { [key: string]: boolean }) => {
+    // Set up analytics based on preferences
+    if (preferences.analytics) {
+      // Initialize analytics
+    }
+    
+    // Set up marketing cookies
+    if (preferences.marketing) {
+      // Initialize marketing tools
+    }
+  };
   return (
     <Box>
       <CssBaseline />
       {children}
+      <CookieConsent
+        cookiePolicyUrl="/cookie-policy"
+        onAccept={handleCookieConsent}
+      />
     </Box>
   );
 }
