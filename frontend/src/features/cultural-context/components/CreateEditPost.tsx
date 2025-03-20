@@ -25,7 +25,7 @@ import {
   useCreateCulturalPost,
   useUpdateCulturalPost,
 } from '../../../hooks/hubHooks';
-import { CreateCulturalFormValues } from '../../../types';
+import { ContextStatus, CreateCulturalFormValues } from '../../../types';
 import queryClient from '../../../core/http/react-query';
 import { useAuth } from '../../../components/auth/AuthProvider';
 
@@ -56,6 +56,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
       tags: [],
       media: '',
       link_url: '',
+      status: ContextStatus.PENDING,
     },
   });
   const [valueTab, setValueTab] = useState<string>('1');
@@ -70,6 +71,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
         content: post.content || '',
         tags: post.tags || [],
         link_url: post.link_url || '',
+        status: post.status,
       });
 
       // Determine which tab to show based on post content
@@ -117,6 +119,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
     const userId = currentUser.uid;
     if (editMode) {
       formData.append('updated_by', userId);
+      formData.append('status', post.status);
     } else {
       formData.append('created_by', userId);
     }

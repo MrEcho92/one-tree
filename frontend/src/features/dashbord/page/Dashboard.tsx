@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import PageviewIcon from '@mui/icons-material/Pageview';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TimelineIcon from '@mui/icons-material/Timeline';
@@ -44,6 +45,7 @@ import {
   MaxCulturalContexts,
 } from '../../../core';
 import { AppConfig } from '../../../core';
+import { ContextStatus } from '../../../types';
 
 const data = [
   {
@@ -438,42 +440,61 @@ export function DashboardPage() {
                                       label={post.status}
                                       size="small"
                                       color={
-                                        post.status === 'approved'
+                                        post.status === ContextStatus.APPROVED
                                           ? 'success'
-                                          : 'default'
+                                          : post.status ===
+                                              ContextStatus.REJECTED
+                                            ? 'error'
+                                            : 'info'
                                       }
                                     />
                                   </Box>
                                 </Box>
                                 <Box>
-                                  <Tooltip title="Edit">
-                                    <IconButton
-                                      onClick={() =>
-                                        openModal(
-                                          <CreateCulturalPost post={post} />,
-                                        )
-                                      }
-                                    >
-                                      <EditIcon />
-                                    </IconButton>
-                                  </Tooltip>
-                                  <Tooltip title="Delete">
-                                    <IconButton
-                                      onClick={() => {
-                                        setItemToDelete(post.id);
-                                        openModal(
-                                          <DeleteModal
-                                            closeModal={closeModal}
-                                            onDelete={handleDeletePost}
-                                            deleteMessage={`Are you sure you want to delete post: ${post.title}?`}
-                                            deleteTitle="Delete cultural post"
-                                          />,
-                                        );
-                                      }}
-                                    >
-                                      <DeleteIcon />
-                                    </IconButton>
-                                  </Tooltip>
+                                  {post.status !== ContextStatus.APPROVED ? (
+                                    <>
+                                      <Tooltip title="Edit">
+                                        <IconButton
+                                          onClick={() =>
+                                            openModal(
+                                              <CreateCulturalPost
+                                                post={post}
+                                              />,
+                                            )
+                                          }
+                                        >
+                                          <EditIcon />
+                                        </IconButton>
+                                      </Tooltip>
+                                      <Tooltip title="Delete">
+                                        <IconButton
+                                          onClick={() => {
+                                            setItemToDelete(post.id);
+                                            openModal(
+                                              <DeleteModal
+                                                closeModal={closeModal}
+                                                onDelete={handleDeletePost}
+                                                deleteMessage={`Are you sure you want to delete post: ${post.title}?`}
+                                                deleteTitle="Delete cultural post"
+                                              />,
+                                            );
+                                          }}
+                                        >
+                                          <DeleteIcon />
+                                        </IconButton>
+                                      </Tooltip>
+                                    </>
+                                  ) : (
+                                    <Tooltip title="View cultural post">
+                                      <IconButton
+                                        onClick={() =>
+                                          navigate(`/hub/${post.id}`)
+                                        }
+                                      >
+                                        <PageviewIcon />
+                                      </IconButton>
+                                    </Tooltip>
+                                  )}
                                 </Box>
                               </Stack>
                             );
