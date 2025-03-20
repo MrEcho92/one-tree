@@ -24,10 +24,15 @@ from app.core.constants import (
 )
 from app.core.database import get_db
 from app.models.models import ContextStatus, CulturalContext
-from app.schemas.cultural_schemas import CulturalContextResponse
+from app.schemas.cultural_schemas import (
+    CulturalContextAdminResponse,
+    CulturalContextResponse,
+)
 from app.utils.helper import delete_blob, upload_to_gcs
 
 router = APIRouter()
+
+bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
 
 
 @router.get(
@@ -103,6 +108,28 @@ async def get_contexts(
             total_pages=total_pages,
             current_page=page,
         )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.get(
+    "/contexts/admin",
+    response_model=list[CulturalContextAdminResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def get_cultural_posts_admin(
+    current_user=Depends(check_roles(["admin"])),
+    db=Depends(get_db),
+) -> list[CulturalContextAdminResponse]:
+    try:
+        contexts = db.collection(CULTURAL_CONTEXT).stream()
+        contexts = [CulturalContext(**doc.to_dict()) for doc in contexts]
+        sorted_contexts = sorted(contexts, key=lambda x: x.created_at, reverse=True)
+
+        return sorted_contexts
 
     except Exception as e:
         raise HTTPException(
@@ -302,16 +329,14 @@ async def update_context(
                 "updated_by": updated_by,
                 "updated_at": firestore.SERVER_TIMESTAMP,
                 "tags": tags,
-                "status": ContextStatus.PENDING
-                if status == ContextStatus.REJECTED
+                "status": ContextStatus.PENDING.value
+                if status == ContextStatus.REJECTED.value
                 else status,
             }
         )
 
         if link_url:
             updated_context_data["link_url"] = link_url
-
-        bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
 
         for file_key in ["image_url", "video_url", "audio_url"]:
             old_url = context_data.get(file_key)
@@ -358,6 +383,49 @@ async def update_context(
         )
 
 
+@router.put(
+    "/contexts/admin",
+    response_model=CulturalContext,
+    status_code=status.HTTP_200_OK,
+)
+async def update_context_admin(
+    current_user=Depends(check_roles(["admin"])),
+    db=Depends(get_db),
+    updated_by: str = Form(...),
+    status: str = Form(...),
+    context_id: str = Form(...),
+) -> CulturalContext:
+    """Update a cultural context by Admin user"""
+    try:
+        context_ref = db.collection(CULTURAL_CONTEXT).document(context_id)
+        context = context_ref.get()
+
+        if not context.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Cultural context not found",
+            )
+
+        context_data = context.to_dict()
+
+        updated_context_data = context_data.copy()
+        updated_context_data.update(
+            {
+                "updated_by": updated_by,
+                "updated_at": firestore.SERVER_TIMESTAMP,
+                "status": status,
+            }
+        )
+
+        context_ref.update(updated_context_data)
+        updated_context = context_ref.get().to_dict()
+        return CulturalContext.from_dict(updated_context)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
 @router.delete(
     "/contexts/{context_id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -381,8 +449,6 @@ async def delete_context(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Not authorized to access this resource",
             )
-
-        bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
 
         urls = [
             context_data.get("image_url"),
