@@ -15,6 +15,7 @@ from fastapi import (
 )
 from firebase_admin import firestore
 
+from app.common.auth_helpers import check_roles
 from app.common.firebase import verify_firebase_token
 from app.core.constants import (
     CULTURAL_CONTEXT,
@@ -144,7 +145,11 @@ async def get_user_contexts(
     response_model=CulturalContext,
     status_code=status.HTTP_200_OK,
 )
-async def get_context_by_id(context_id: str, db=Depends(get_db)) -> CulturalContext:
+async def get_context_by_id(
+    context_id: str,
+    db=Depends(get_db),
+    current_user: Optional[dict] = Depends(verify_firebase_token),
+) -> CulturalContext:
     """Get a cultural context by ID"""
     try:
         context = db.collection(CULTURAL_CONTEXT).document(context_id).get()
@@ -153,7 +158,15 @@ async def get_context_by_id(context_id: str, db=Depends(get_db)) -> CulturalCont
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Cultural context not found",
             )
-        return CulturalContext.from_dict(context.to_dict())
+        context_data = context.to_dict()
+        if context_data.get("status") != ContextStatus.APPROVED.value:
+            if not current_user or "admin" not in current_user["roles"]:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Access denied - only approved cultural posts allowed",
+                )
+
+        return CulturalContext.from_dict(context_data)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
@@ -254,6 +267,7 @@ async def update_context(
     updated_by: str = Form(...),
     title: str = Form(...),
     content: str = Form(...),
+    status: str = Form(...),
     link_url: Optional[str] = Form(None),
     tags: List[str] = Form([]),
     image_file: Optional[UploadFile] = File(None),
@@ -288,6 +302,9 @@ async def update_context(
                 "updated_by": updated_by,
                 "updated_at": firestore.SERVER_TIMESTAMP,
                 "tags": tags,
+                "status": ContextStatus.PENDING
+                if status == ContextStatus.REJECTED
+                else status,
             }
         )
 

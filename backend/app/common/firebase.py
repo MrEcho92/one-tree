@@ -6,10 +6,8 @@ async def verify_firebase_token(request: Request):
     """Middleware to verify Firebase token in Authorization header."""
     token = request.headers.get("Authorization")
     if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing Authorization Token",
-        )
+        # Allow unauthenticated users
+        return None
 
     token = token.replace("Bearer ", "")
     try:
