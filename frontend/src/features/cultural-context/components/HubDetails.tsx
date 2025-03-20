@@ -256,7 +256,7 @@ export default function HubDetails() {
                   </Grid>
                 ))}
                 {relatedPosts?.length === 0 && (
-                  <Typography variant='body1'>No related posts</Typography>
+                  <Typography variant="body1">No related posts</Typography>
                 )}
               </Grid>
               <Divider />

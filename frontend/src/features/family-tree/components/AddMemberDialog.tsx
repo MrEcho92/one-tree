@@ -202,7 +202,7 @@ export default function AddMemberDialog({
                     input={<OutlinedInput label="" />}
                     labelId="add-member-select-small-label"
                     id="add-member-select-small"
-                    value={selectedSpouse?.fullName}
+                    value={selectedSpouse?.fullName ?? ''}
                     label="Spouse"
                     onChange={(event: SelectChangeEvent) => {
                       const value = event.target.value;
