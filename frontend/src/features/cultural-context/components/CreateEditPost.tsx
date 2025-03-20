@@ -25,7 +25,7 @@ import {
   useCreateCulturalPost,
   useUpdateCulturalPost,
 } from '../../../hooks/hubHooks';
-import { CreateCulturalFormValues } from '../../../types';
+import { ContextStatus, CreateCulturalFormValues } from '../../../types';
 import queryClient from '../../../core/http/react-query';
 import { useAuth } from '../../../components/auth/AuthProvider';
 
@@ -56,11 +56,13 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
       tags: [],
       media: '',
       link_url: '',
+      status: ContextStatus.PENDING,
     },
   });
   const [valueTab, setValueTab] = useState<string>('1');
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (editMode && post) {
@@ -69,6 +71,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
         content: post.content || '',
         tags: post.tags || [],
         link_url: post.link_url || '',
+        status: post.status,
       });
 
       // Determine which tab to show based on post content
@@ -116,6 +119,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
     const userId = currentUser.uid;
     if (editMode) {
       formData.append('updated_by', userId);
+      formData.append('status', post.status);
     } else {
       formData.append('created_by', userId);
     }
@@ -143,7 +147,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
     //   if (post?.video_url) formData.append('video_file', post.video_url);
     //   if (post?.audio_url) formData.append('audio_file', post.audio_url);
     // }
-
+    setLoading(true);
     mutation.mutate(formData, {
       onSuccess: () => {
         enqueueSnackbar(
@@ -152,6 +156,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
             variant: 'success',
           },
         );
+        setLoading(false);
         queryClient.refetchQueries({
           queryKey: ['culturalPosts', editMode ? post.created_by : userId],
           exact: true,
@@ -159,6 +164,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
         closeModal?.();
       },
       onError: (error) => {
+        setLoading(false);
         enqueueSnackbar(
           `Failed to ${editMode ? 'update' : 'add'} cultural post`,
           {
@@ -444,6 +450,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
         variant="contained"
         color="primary"
         fullWidth
+        loading={loading}
         onClick={handleSubmit(onSubmit)}
       >
         {editMode ? 'Update' : 'Post'}

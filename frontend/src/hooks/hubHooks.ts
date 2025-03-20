@@ -36,6 +36,10 @@ export const useGetCulturalPostsByUser = (userId: string) => {
   );
 };
 
+export const useAllGetCulturalPosts = () => {
+  return useApiQuery<CulturalPost[]>(['culturalPosts'], `/contexts/admin`);
+};
+
 export const useGetCulturalPostsById = (contextId: string) => {
   return useApiQuery<CulturalPost[]>(
     ['culturalPosts', contextId],
@@ -56,6 +60,10 @@ export const useUpdateCulturalPost = (contextId: string) => {
     `/contexts/${contextId}/update`,
     'PUT',
   );
+};
+
+export const useUpdateCulturalPostByAdmin = () => {
+  return useApiMutation<CulturalPost, FormData>('/contexts/admin/', 'PUT');
 };
 
 export const useDeleteCulturalPost = (contextId: string) => {

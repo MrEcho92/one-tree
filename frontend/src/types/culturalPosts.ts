@@ -1,4 +1,4 @@
-enum ContextStatus {
+export enum ContextStatus {
   PENDING = 'pending',
   APPROVED = 'approved',
   REJECTED = 'rejected',
@@ -49,6 +49,7 @@ export interface CreateCulturalFormValues {
   tags: string[];
   media: FormData & string;
   link_url: string;
+  status: ContextStatus;
 }
 
 export interface CulturalContextResponse {

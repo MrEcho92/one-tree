@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from typing import List, Optional
+from urllib.parse import urlparse
 
 from fastapi import (
     APIRouter,
@@ -14,14 +15,24 @@ from fastapi import (
 )
 from firebase_admin import firestore
 
+from app.common.auth_helpers import check_roles
 from app.common.firebase import verify_firebase_token
-from app.core.constants import CULTURAL_CONTEXT, MAX_CULTURAL_CONTEXT
+from app.core.constants import (
+    CULTURAL_CONTEXT,
+    CULTURAL_CONTEXT_GCP_PATH,
+    MAX_CULTURAL_CONTEXT,
+)
 from app.core.database import get_db
 from app.models.models import ContextStatus, CulturalContext
-from app.schemas.cultural_schemas import CulturalContextResponse
+from app.schemas.cultural_schemas import (
+    CulturalContextAdminResponse,
+    CulturalContextResponse,
+)
 from app.utils.helper import delete_blob, upload_to_gcs
 
 router = APIRouter()
+
+bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
 
 
 @router.get(
@@ -105,6 +116,28 @@ async def get_contexts(
 
 
 @router.get(
+    "/contexts/admin",
+    response_model=list[CulturalContextAdminResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def get_cultural_posts_admin(
+    current_user=Depends(check_roles(["admin"])),
+    db=Depends(get_db),
+) -> list[CulturalContextAdminResponse]:
+    try:
+        contexts = db.collection(CULTURAL_CONTEXT).stream()
+        contexts = [CulturalContext(**doc.to_dict()) for doc in contexts]
+        sorted_contexts = sorted(contexts, key=lambda x: x.created_at, reverse=True)
+
+        return sorted_contexts
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.get(
     "/contexts/{user_id}/user",
     response_model=List[CulturalContext],
     status_code=status.HTTP_200_OK,
@@ -139,7 +172,11 @@ async def get_user_contexts(
     response_model=CulturalContext,
     status_code=status.HTTP_200_OK,
 )
-async def get_context_by_id(context_id: str, db=Depends(get_db)) -> CulturalContext:
+async def get_context_by_id(
+    context_id: str,
+    db=Depends(get_db),
+    current_user: Optional[dict] = Depends(verify_firebase_token),
+) -> CulturalContext:
     """Get a cultural context by ID"""
     try:
         context = db.collection(CULTURAL_CONTEXT).document(context_id).get()
@@ -148,7 +185,15 @@ async def get_context_by_id(context_id: str, db=Depends(get_db)) -> CulturalCont
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Cultural context not found",
             )
-        return CulturalContext.from_dict(context.to_dict())
+        context_data = context.to_dict()
+        if context_data.get("status") != ContextStatus.APPROVED.value:
+            if not current_user or "admin" not in current_user["roles"]:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Access denied - only approved cultural posts allowed",
+                )
+
+        return CulturalContext.from_dict(context_data)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
@@ -211,21 +256,21 @@ async def create_context(
         if video_file:
             video_url = upload_to_gcs(
                 video_file,
-                f"cultural_contexts/{context.id}/videos/{video_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context.id}/videos/{video_file.filename}",
             )
             context.video_url = video_url
 
         if image_file:
             image_url = upload_to_gcs(
                 image_file,
-                f"cultural_contexts/{context.id}/images/{image_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context.id}/images/{image_file.filename}",
             )
             context.image_url = image_url
 
         if audio_file:
             audio_url = upload_to_gcs(
                 audio_file,
-                f"cultural_contexts/{context.id}/audio/{audio_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context.id}/audio/{audio_file.filename}",
             )
             context.audio_url = audio_url
 
@@ -249,6 +294,7 @@ async def update_context(
     updated_by: str = Form(...),
     title: str = Form(...),
     content: str = Form(...),
+    status: str = Form(...),
     link_url: Optional[str] = Form(None),
     tags: List[str] = Form([]),
     image_file: Optional[UploadFile] = File(None),
@@ -283,49 +329,95 @@ async def update_context(
                 "updated_by": updated_by,
                 "updated_at": firestore.SERVER_TIMESTAMP,
                 "tags": tags,
+                "status": ContextStatus.PENDING.value
+                if status == ContextStatus.REJECTED.value
+                else status,
             }
         )
 
         if link_url:
             updated_context_data["link_url"] = link_url
 
-        bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
-
         for file_key in ["image_url", "video_url", "audio_url"]:
             old_url = context_data.get(file_key)
             if old_url:
                 updated_context_data[file_key] = None
-                old_blob_name = (
-                    old_url.split(f"/{bucket_name}/")[1]
-                    if f"/{bucket_name}/" in old_url
-                    else None
-                )
-                if old_blob_name:
-                    delete_blob(old_blob_name)
+                parsed_url = urlparse(old_url)
+                path_parts = parsed_url.path.lstrip("/").split("/")
+
+                if bucket_name in path_parts:
+                    index = path_parts.index(bucket_name) + 1
+                    blob_name = "/".join(path_parts[index:])
+                    delete_blob(blob_name)
+                else:
+                    raise Exception(f"Invalid Storage URL format: {old_url}")
 
         if video_file:
             video_url = upload_to_gcs(
                 video_file,
-                f"cultural_contexts/{context_id}/videos/{video_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/videos/{video_file.filename}",
             )
             updated_context_data["video_url"] = video_url
 
         if image_file:
             image_url = upload_to_gcs(
                 image_file,
-                f"cultural_contexts/{context_id}/images/{image_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/images/{image_file.filename}",
             )
             updated_context_data["image_url"] = image_url
 
         if audio_file:
             audio_url = upload_to_gcs(
                 audio_file,
-                f"cultural_contexts/{context_id}/audio/{audio_file.filename}",
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/audio/{audio_file.filename}",
             )
             updated_context_data["audio_url"] = audio_url
 
         context_ref.update(updated_context_data)
 
+        updated_context = context_ref.get().to_dict()
+        return CulturalContext.from_dict(updated_context)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.put(
+    "/contexts/admin",
+    response_model=CulturalContext,
+    status_code=status.HTTP_200_OK,
+)
+async def update_context_admin(
+    current_user=Depends(check_roles(["admin"])),
+    db=Depends(get_db),
+    updated_by: str = Form(...),
+    status: str = Form(...),
+    context_id: str = Form(...),
+) -> CulturalContext:
+    """Update a cultural context by Admin user"""
+    try:
+        context_ref = db.collection(CULTURAL_CONTEXT).document(context_id)
+        context = context_ref.get()
+
+        if not context.exists:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Cultural context not found",
+            )
+
+        context_data = context.to_dict()
+
+        updated_context_data = context_data.copy()
+        updated_context_data.update(
+            {
+                "updated_by": updated_by,
+                "updated_at": firestore.SERVER_TIMESTAMP,
+                "status": status,
+            }
+        )
+
+        context_ref.update(updated_context_data)
         updated_context = context_ref.get().to_dict()
         return CulturalContext.from_dict(updated_context)
     except Exception as e:
@@ -358,8 +450,6 @@ async def delete_context(
                 detail="Not authorized to access this resource",
             )
 
-        bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
-
         urls = [
             context_data.get("image_url"),
             context_data.get("video_url"),
@@ -368,13 +458,15 @@ async def delete_context(
 
         for url in urls:
             if url:
-                old_blob_name = (
-                    url.split(f"/{bucket_name}/")[1]
-                    if f"/{bucket_name}/" in url
-                    else None
-                )
-                if old_blob_name:
-                    delete_blob(old_blob_name)
+                parsed_url = urlparse(url)
+                path_parts = parsed_url.path.lstrip("/").split("/")
+
+                if bucket_name in path_parts:
+                    index = path_parts.index(bucket_name) + 1
+                    blob_name = "/".join(path_parts[index:])
+                    delete_blob(blob_name)
+                else:
+                    raise Exception(f"Invalid Storage URL format: {url}")
 
         context_ref.delete()
     except Exception as e:
