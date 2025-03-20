@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
@@ -41,7 +42,7 @@ export default function CreateTree() {
       mother_is_alive: true,
     },
   });
-
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const { t } = useTranslation(['tree', 'common']);
 
@@ -81,9 +82,10 @@ export default function CreateTree() {
         is_alive: !data.mother_is_alive,
       },
     };
-
+    setLoading(true);
     mutation.mutate(payload, {
       onSuccess: (response: ApiResponse<{ id: string }>) => {
+        setLoading(false);
         enqueueSnackbar('Family tree added successfully', {
           variant: 'success',
         });
@@ -95,6 +97,7 @@ export default function CreateTree() {
         closeModal?.();
       },
       onError: (error) => {
+        setLoading(false);
         console.error('Error creating family tree:', error);
         enqueueSnackbar(`Error creating family tree: ${error.message}`, {
           variant: 'error',
@@ -357,7 +360,12 @@ export default function CreateTree() {
         label={t('tree:createTree.sections.common.deceased')}
       />
 
-      <Button type="submit" variant="contained" color="primary">
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        loading={loading}
+      >
         {t('tree:createTree.actionBtn')}
       </Button>
     </Box>

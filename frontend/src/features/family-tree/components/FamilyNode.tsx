@@ -70,6 +70,7 @@ export const FamilyNode = React.memo(function FamilyNode({
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
+            width: '100%',
           }}
         >
           <Typography
@@ -79,7 +80,13 @@ export const FamilyNode = React.memo(function FamilyNode({
                 md: typography.body1.fontSize,
               },
               fontWeight: typography.h1.fontWeight,
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
             }}
+            title={`${nodeDetails?.first_name} ${nodeDetails?.last_name}`} // Shows full text on hover
           >{`${nodeDetails?.first_name} ${nodeDetails?.last_name}`}</Typography>
           <Typography>
             {nodeDetails?.date_of_birth

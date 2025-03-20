@@ -100,7 +100,6 @@ export default function EditFamilyMember({
         });
         setIsEditing(false);
         setUpdatedData(updatedPerson);
-
         queryClient.refetchQueries({
           queryKey: ['familyTrees', treeId],
           exact: true,
@@ -452,8 +451,18 @@ export default function EditFamilyMember({
             <Typography variant="h5" py={1} fontWeight="500">
               Information
             </Typography>
+            <Divider />
+            <Box py={1}>
+              <Typography
+                variant="subtitle1"
+                sx={{ color: (theme) => theme.palette.text.secondary }}
+              >
+                Name
+              </Typography>
+              <Typography>{MemberName}</Typography>
+            </Box>
             {updatedData?.middle_name && (
-              <Box display={'flex'} gap={2} alignItems={'center'}>
+              <Box py={1}>
                 <Typography
                   variant="subtitle1"
                   sx={{ color: (theme) => theme.palette.text.secondary }}
@@ -471,11 +480,23 @@ export default function EditFamilyMember({
                 >
                   Last Name at Birth
                 </Typography>
-                <Typography>{updatedData?.middle_name}</Typography>
+                <Typography>{updatedData?.last_name_at_birth}</Typography>
               </Box>
             )}
+            {updatedData?.gender && (
+              <Box py={1}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Gender
+                </Typography>
+                <Typography>{capitalize(updatedData?.gender)}</Typography>
+              </Box>
+            )}
+            <Divider />
             {updatedData?.date_of_birth && (
-              <Box display={'flex'} gap={2} alignItems={'center'}>
+              <Box py={1}>
                 <Typography
                   variant="subtitle1"
                   sx={{ color: (theme) => theme.palette.text.secondary }}
@@ -487,32 +508,8 @@ export default function EditFamilyMember({
                 </Typography>
               </Box>
             )}
-            {!updatedData?.is_alive && (
-              <Box display={'flex'} gap={2} alignItems={'center'}>
-                <Typography
-                  variant="subtitle1"
-                  sx={{ color: (theme) => theme.palette.text.secondary }}
-                >
-                  Death date
-                </Typography>
-                <Typography>
-                  {transformDate(updatedData?.death_date)}
-                </Typography>
-              </Box>
-            )}
-            {updatedData?.gender && (
-              <Box display={'flex'} gap={2} alignItems={'center'}>
-                <Typography
-                  variant="subtitle1"
-                  sx={{ color: (theme) => theme.palette.text.secondary }}
-                >
-                  Gender
-                </Typography>
-                <Typography>{capitalize(updatedData?.gender)}</Typography>
-              </Box>
-            )}
-            {updatedData?.gender && (
-              <Box display={'flex'} gap={2} alignItems={'center'}>
+            {updatedData?.birth_place && (
+              <Box py={1}>
                 <Typography
                   variant="subtitle1"
                   sx={{ color: (theme) => theme.palette.text.secondary }}
@@ -522,6 +519,31 @@ export default function EditFamilyMember({
                 <Typography>{updatedData.birth_place}</Typography>
               </Box>
             )}
+            {!updatedData?.is_alive ? (
+              <Box py={1}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Living status
+                </Typography>
+                <Typography>Death date</Typography>
+                <Typography>
+                  {transformDate(updatedData?.death_date)}
+                </Typography>
+              </Box>
+            ) : (
+              <Box py={1}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ color: (theme) => theme.palette.text.secondary }}
+                >
+                  Living status
+                </Typography>
+                <Typography>Living</Typography>
+              </Box>
+            )}
+            <Divider />
             {updatedData?.bio && (
               <Box display={'flex'} flexDirection={'column'} gap={1}>
                 <Typography
