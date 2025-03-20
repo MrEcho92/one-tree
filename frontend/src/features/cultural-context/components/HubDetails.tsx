@@ -255,6 +255,9 @@ export default function HubDetails() {
                     </Box>
                   </Grid>
                 ))}
+                {relatedPosts?.length === 0 && (
+                  <Typography variant='body1'>No related posts</Typography>
+                )}
               </Grid>
               <Divider />
               <Box>
