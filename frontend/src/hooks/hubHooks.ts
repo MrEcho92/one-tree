@@ -62,6 +62,10 @@ export const useUpdateCulturalPost = (contextId: string) => {
   );
 };
 
+export const useUpdateCulturalPostByAdmin = () => {
+  return useApiMutation<CulturalPost, FormData>('/contexts/admin/', 'PUT');
+};
+
 export const useDeleteCulturalPost = (contextId: string) => {
   return useApiMutation<void, void>(`/contexts/${contextId}`, 'DELETE');
 };

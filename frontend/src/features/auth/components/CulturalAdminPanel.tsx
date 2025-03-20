@@ -30,21 +30,25 @@ import {
 import ErrorDisplay from '../../../components/common/ErrorDisplay';
 import { formatDate } from '../../../utils/date';
 import { ContextStatus } from '../../../types/culturalPosts';
+import { useAuth } from '../../../components/auth';
 
 type CulturalAdminPanelProps = {
-  posts_: any[];
+  postsData: any[];
   isError?: boolean;
   refetch?: any;
   error?: any;
+  onUpdatePost: (payload: FormData) => void;
 };
 
 const CulturalAdminPanel = ({
-  posts_,
+  postsData,
   isError,
   refetch,
   error,
+  onUpdatePost,
 }: CulturalAdminPanelProps) => {
-  const [posts, setPosts] = useState(posts_);
+  const { currentUser } = useAuth();
+  const [posts, setPosts] = useState(postsData);
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredPosts, setFilteredPosts] = useState(posts);
@@ -68,12 +72,24 @@ const CulturalAdminPanel = ({
     setFilteredPosts(result);
   }, [statusFilter, searchTerm, posts]);
 
-  const handleStatusChange = (postId: any, newStatus: any) => {
-    setPosts(
-      posts.map((post) =>
-        post.id === postId ? { ...post, status: newStatus } : post,
-      ),
-    );
+  useEffect(() => {
+    if (postsData) {
+      setPosts(postsData);
+    }
+  }, [postsData]);
+
+  const handleStatusChange = (postId: string, newStatus: string) => {
+    if (!currentUser) {
+      return;
+    }
+    const userId = currentUser.uid;
+
+    const formData = new FormData();
+    formData.append('status', newStatus);
+    formData.append('context_id', postId);
+    formData.append('updated_by', userId);
+
+    onUpdatePost(formData);
   };
 
   const getStatusColor = (status: any) => {
@@ -242,7 +258,7 @@ const CulturalAdminPanel = ({
                           size="small"
                           startIcon={<ApproveIcon />}
                           onClick={() =>
-                            handleStatusChange(post.id, 'approved')
+                            handleStatusChange(post.id, ContextStatus.APPROVED)
                           }
                           sx={{
                             borderRadius: 1.5,
@@ -258,7 +274,7 @@ const CulturalAdminPanel = ({
                           size="small"
                           startIcon={<RejectIcon />}
                           onClick={() =>
-                            handleStatusChange(post.id, 'rejected')
+                            handleStatusChange(post.id, ContextStatus.REJECTED)
                           }
                           sx={{
                             borderRadius: 1.5,
@@ -284,7 +300,10 @@ const CulturalAdminPanel = ({
                             size="small"
                             startIcon={<ApproveIcon />}
                             onClick={() =>
-                              handleStatusChange(post.id, 'approved')
+                              handleStatusChange(
+                                post.id,
+                                ContextStatus.APPROVED,
+                              )
                             }
                             sx={{
                               borderRadius: 1.5,
@@ -302,7 +321,10 @@ const CulturalAdminPanel = ({
                             size="small"
                             startIcon={<RejectIcon />}
                             onClick={() =>
-                              handleStatusChange(post.id, 'rejected')
+                              handleStatusChange(
+                                post.id,
+                                ContextStatus.REJECTED,
+                              )
                             }
                             sx={{
                               borderRadius: 1.5,

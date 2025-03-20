@@ -24,8 +24,12 @@ import { AppConfig } from '../../../core/constants';
 import TabList from '@mui/lab/TabList';
 import TabContext from '@mui/lab/TabContext';
 import { TabPanel } from '@mui/lab';
-import { useAllGetCulturalPosts } from '../../../hooks';
+import {
+  useAllGetCulturalPosts,
+  useUpdateCulturalPostByAdmin,
+} from '../../../hooks';
 import CulturalAdminPanel from '../components/CulturalAdminPanel';
+import queryClient from '../../../core/http/react-query';
 
 const AVAILABLE_ROLES = ['admin', 'user'];
 
@@ -56,6 +60,8 @@ export default function AdminPage() {
     error,
   } = useAllGetCulturalPosts();
   const postsData = Posts as any;
+
+  const updateMutation = useUpdateCulturalPostByAdmin();
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -118,6 +124,26 @@ export default function AdminPage() {
       },
     });
   };
+
+  function handleUpdatePost(payload: FormData): void {
+    updateMutation.mutate(payload, {
+      onSuccess: () => {
+        enqueueSnackbar('Cultural post updated successfully!', {
+          variant: 'success',
+        });
+        queryClient.refetchQueries({
+          queryKey: ['culturalPosts'],
+          exact: true,
+        });
+      },
+      onError: (error) => {
+        enqueueSnackbar('Failed to update cultural post', {
+          variant: 'error',
+        });
+        console.error('Error updating cultural post:', error);
+      },
+    });
+  }
 
   return (
     <Box component="main" sx={{ flexGrow: 1, overflow: 'auto', width: '100%' }}>
@@ -215,10 +241,11 @@ export default function AdminPage() {
             </TabPanel>
             <TabPanel value="2">
               <CulturalAdminPanel
-                posts_={postsData}
+                postsData={postsData}
                 isError={isError}
                 error={error}
                 refetch={refetch}
+                onUpdatePost={handleUpdatePost}
               />
             </TabPanel>
           </TabContext>
