@@ -36,6 +36,10 @@ export const useGetCulturalPostsByUser = (userId: string) => {
   );
 };
 
+export const useAllGetCulturalPosts = () => {
+  return useApiQuery<CulturalPost[]>(['culturalPosts'], `/contexts/admin`);
+};
+
 export const useGetCulturalPostsById = (contextId: string) => {
   return useApiQuery<CulturalPost[]>(
     ['culturalPosts', contextId],

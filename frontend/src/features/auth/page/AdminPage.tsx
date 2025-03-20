@@ -17,9 +17,15 @@ import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
 import InputLabel from '@mui/material/InputLabel';
 import TextField from '@mui/material/TextField';
+import Tab from '@mui/material/Tab';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import { useSetAdminRole } from '../../../hooks/userHooks';
 import { AppConfig } from '../../../core/constants';
+import TabList from '@mui/lab/TabList';
+import TabContext from '@mui/lab/TabContext';
+import { TabPanel } from '@mui/lab';
+import { useAllGetCulturalPosts } from '../../../hooks';
+import CulturalAdminPanel from '../components/CulturalAdminPanel';
 
 const AVAILABLE_ROLES = ['admin', 'user'];
 
@@ -28,6 +34,11 @@ export default function AdminPage() {
   const { enqueueSnackbar } = useSnackbar();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [value, setValue] = useState('1');
+
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
 
   const { handleSubmit, control } = useForm({
     defaultValues: {
@@ -37,6 +48,14 @@ export default function AdminPage() {
   });
 
   const mutation = useSetAdminRole();
+  const {
+    data: Posts,
+    isLoading,
+    isError,
+    refetch,
+    error,
+  } = useAllGetCulturalPosts();
+  const postsData = Posts as any;
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -54,7 +73,7 @@ export default function AdminPage() {
     fetchUserRole();
   }, [currentUser]);
 
-  if (loading) {
+  if (loading || isLoading) {
     return (
       <Box
         sx={{
@@ -117,75 +136,92 @@ export default function AdminPage() {
       >
         <Header title="Home" headerName="Admin" />
         <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-          <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-            Admin Panel
-          </Typography>
-          <Container maxWidth="sm">
-            <Typography variant="h4" gutterBottom>
-              Assign User Roles
-            </Typography>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Box mb={2} mt={2}>
-                <Controller
-                  name="uid"
-                  control={control}
-                  rules={{ required: 'User UID is required' }}
-                  render={({ field, fieldState }) => (
-                    <TextField
-                      {...field}
-                      label="User UID"
-                      variant="outlined"
-                      fullWidth
-                      error={!!fieldState.error}
-                      helperText={fieldState.error?.message}
+          <TabContext value={value}>
+            <TabList onChange={handleChange} aria-label="admin page">
+              <Tab label="Assign Roles" value="1" />
+              <Tab label="Review Posts" value="2" />
+            </TabList>
+            <TabPanel value="1">
+              <Container maxWidth="sm">
+                <Typography variant="h4" gutterBottom>
+                  Assign User Roles
+                </Typography>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <Box mb={2} mt={2}>
+                    <Controller
+                      name="uid"
+                      control={control}
+                      rules={{ required: 'User UID is required' }}
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          {...field}
+                          label="User UID"
+                          variant="outlined"
+                          fullWidth
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
+                        />
+                      )}
                     />
-                  )}
-                />
-              </Box>
+                  </Box>
 
-              <Box mb={2} mt={2}>
-                <FormControl fullWidth>
-                  <InputLabel>Select Roles</InputLabel>
-                  <Controller
-                    name="roles"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        input={<OutlinedInput label="Select Roles" />}
-                        multiple
-                        renderValue={(selected) => (
-                          <Box
-                            sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}
+                  <Box mb={2} mt={2}>
+                    <FormControl fullWidth>
+                      <InputLabel>Select Roles</InputLabel>
+                      <Controller
+                        name="roles"
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            {...field}
+                            input={<OutlinedInput label="Select Roles" />}
+                            multiple
+                            renderValue={(selected) => (
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  flexWrap: 'wrap',
+                                  gap: 0.5,
+                                }}
+                              >
+                                {selected.map((value) => (
+                                  <Chip key={value} label={value} />
+                                ))}
+                              </Box>
+                            )}
                           >
-                            {selected.map((value) => (
-                              <Chip key={value} label={value} />
+                            {AVAILABLE_ROLES.map((role) => (
+                              <MenuItem key={role} value={role}>
+                                {role}
+                              </MenuItem>
                             ))}
-                          </Box>
+                          </Select>
                         )}
-                      >
-                        {AVAILABLE_ROLES.map((role) => (
-                          <MenuItem key={role} value={role}>
-                            {role}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    )}
-                  />
-                </FormControl>
-              </Box>
+                      />
+                    </FormControl>
+                  </Box>
 
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                disabled={loading}
-              >
-                {loading ? 'Assigning...' : 'Assign Roles'}
-              </Button>
-            </form>
-          </Container>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    disabled={loading}
+                  >
+                    {loading ? 'Assigning...' : 'Assign Roles'}
+                  </Button>
+                </form>
+              </Container>
+            </TabPanel>
+            <TabPanel value="2">
+              <CulturalAdminPanel
+                posts_={postsData}
+                isError={isError}
+                error={error}
+                refetch={refetch}
+              />
+            </TabPanel>
+          </TabContext>
         </Box>
       </Stack>
     </Box>
