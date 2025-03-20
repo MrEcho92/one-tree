@@ -1,4 +1,5 @@
 import { styled, useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -25,6 +26,7 @@ const Drawer = styled(MuiDrawer)({
 
 export function SideMenu() {
   const { palette, typography } = useTheme();
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
   return (
     <Drawer
@@ -42,7 +44,9 @@ export function SideMenu() {
           p: 1.5,
           color: palette.primary.main,
           fontWeight: typography.h1.fontWeight,
+          cursor: 'pointer'
         }}
+        onClick={() => navigate("/")}
       >
         {AppConfig.appName}
       </Box>

@@ -10,6 +10,7 @@ import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import SideMenuMobile from '../common/SideMenuMobile';
 import MenuButton from '../common/MenuButton';
+import { AppConfig } from '../../core';
 
 const Toolbar = styled(MuiToolbar)({
   width: '100%',
@@ -67,10 +68,10 @@ export function AppNavBar() {
             <CustomIcon />
             <Typography
               variant="h4"
-              component="h1"
+              component="h3"
               sx={{ color: palette.primary.contrastText }}
             >
-              Dashboard
+              {AppConfig.appName}
             </Typography>
           </Stack>
           <MenuButton
@@ -107,7 +108,7 @@ export function CustomIcon() {
         boxShadow: 'inset 0 2px 5px rgba(255, 255, 255, 0.3)',
       }}
     >
-      <DashboardRoundedIcon color="inherit" sx={{ fontSize: '1rem' }} />
+      <DashboardRoundedIcon color="inherit" sx={{ fontSize: '1.5rem' }} />
     </Box>
   );
 }
