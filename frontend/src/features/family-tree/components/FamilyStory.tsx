@@ -23,6 +23,8 @@ import { capitalize } from '../../../utils';
 import StoryDetails from './StoryDetails';
 import queryClient from '../../../core/http/react-query';
 import ErrorDisplay from '../../../components/common/ErrorDisplay';
+import { MaxFamilyStories } from '../../../core';
+import Tooltip from '@mui/material/Tooltip';
 
 type FamilyStoryProps = {
   treeId: string;
@@ -73,6 +75,8 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
   }, [storyData]);
 
   const storyDetails = getStoryDetails();
+
+  const isStoryLimitReached = familyStories?.length >= MaxFamilyStories;
 
   if (isLoading || isStoryLoading) {
     return (
@@ -188,15 +192,27 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
           them private or share them with the community to celebrate your
           heritage.
         </Typography>
-        <Button
-          variant="contained"
-          color="info"
-          endIcon={<AddIcon />}
-          sx={{ alignSelf: 'flex-start', pt: 1 }}
-          onClick={openAddStory}
-        >
-          Add a story
-        </Button>
+        {isStoryLimitReached ? (
+          <Box sx={{ textAlign: 'left' }}>
+            <Tooltip
+              title={`You can only add up to ${MaxFamilyStories} family stories.`}
+            >
+              <span>
+                <Button disabled>Add a story</Button>
+              </span>
+            </Tooltip>
+          </Box>
+        ) : (
+          <Button
+            variant="contained"
+            color="info"
+            endIcon={<AddIcon />}
+            sx={{ alignSelf: 'flex-start', pt: 1 }}
+            onClick={openAddStory}
+          >
+            Add a story
+          </Button>
+        )}
       </Box>
       <Divider />
       <Box sx={{ display: 'flex', height: '100%' }}>

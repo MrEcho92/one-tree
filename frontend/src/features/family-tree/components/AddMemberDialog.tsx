@@ -14,6 +14,7 @@ import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import {
+  CircularProgress,
   Divider,
   MenuItem,
   OutlinedInput,
@@ -36,6 +37,7 @@ type AddMemberDialogProps = {
   handleAddMember: (data: any) => void;
   selectedPerson: Person;
   spouseMembers: any;
+  loading: boolean;
 };
 
 export default function AddMemberDialog({
@@ -45,6 +47,7 @@ export default function AddMemberDialog({
   handleAddMember,
   spouseMembers,
   selectedPerson,
+  loading,
 }: AddMemberDialogProps) {
   const { currentUser } = useAuth();
   const { control, handleSubmit, register, reset } = useForm<AddMemberTreeForm>(
@@ -118,6 +121,22 @@ export default function AddMemberDialog({
       setSpouseNames(spouse);
     }
   }, [spouseMembers, isAddMemberOpen, selectedPerson?.spouse_id]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          mt: '64px',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Dialog
@@ -202,7 +221,7 @@ export default function AddMemberDialog({
                     input={<OutlinedInput label="" />}
                     labelId="add-member-select-small-label"
                     id="add-member-select-small"
-                    value={selectedSpouse?.fullName ?? ''}
+                    value={selectedSpouse?.id ?? ''}
                     label="Spouse"
                     onChange={(event: SelectChangeEvent) => {
                       const value = event.target.value;

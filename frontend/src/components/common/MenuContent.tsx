@@ -5,7 +5,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import HomeIcon from '@mui/icons-material/Home';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
@@ -16,7 +17,7 @@ import { decodeToken } from '../../utils';
 import { useEffect, useState } from 'react';
 
 const mainListItems = [
-  { text: 'Home', icon: <HomeRoundedIcon />, path: '/app' },
+  { text: 'Dashboard', icon: <SpaceDashboardIcon />, path: '/app' },
 ];
 
 const navigateToNewTab = (path: any) => {
@@ -25,6 +26,12 @@ const navigateToNewTab = (path: any) => {
 };
 
 const secondaryListItems = [
+  {
+    text: 'Homepage',
+    icon: <HomeIcon />,
+    path: '/',
+    nextPage: true,
+  },
   {
     text: 'Admin',
     icon: <AdminPanelSettingsIcon />,
@@ -38,6 +45,7 @@ const secondaryListItems = [
     text: 'Share feedback',
     icon: <HelpRoundedIcon />,
     path: 'https://forms.gle/26QZ5CdX8s7Crb5z6',
+    nextPage: true,
   },
 ];
 
@@ -81,7 +89,7 @@ export default function MenuContent() {
             <ListItem key={index} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={() => {
-                  if (item.id === 'feedback') {
+                  if (item.nextPage) {
                     return navigateToNewTab(item.path);
                   }
                   return navigate(item.path);

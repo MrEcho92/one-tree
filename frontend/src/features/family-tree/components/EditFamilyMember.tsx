@@ -44,6 +44,8 @@ type EditFamilyMemberProps = {
   openDeleteMemberModal: (name: string, nodeId: string) => void;
   firstRootId: string;
   treeId: string;
+  resetRootHandler: () => void;
+  rootId: string;
 };
 
 export default function EditFamilyMember({
@@ -55,6 +57,8 @@ export default function EditFamilyMember({
   openDeleteMemberModal,
   firstRootId,
   treeId,
+  resetRootHandler,
+  rootId,
 }: EditFamilyMemberProps) {
   const { enqueueSnackbar } = useSnackbar();
   const { control, handleSubmit, reset, watch } = useForm<Person>({
@@ -64,6 +68,7 @@ export default function EditFamilyMember({
   const [isAddMemberOpen, setIsAddMemberOpen] = useState<boolean>(false);
   const [familyType, setFamilyType] = useState<string>('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [loading, setLoading] = useState(false);
 
   const isAlive = watch('is_alive', true);
 
@@ -115,8 +120,10 @@ export default function EditFamilyMember({
   };
 
   const handleAddMember = (data: any) => {
+    setLoading(true);
     onAddMember(data);
     setIsAddMemberOpen(false);
+    setLoading(false);
   };
 
   const handleOpenAddMember = (type: string) => {
@@ -435,18 +442,42 @@ export default function EditFamilyMember({
             )}
           </Box>
           <Divider />
-          <Button
-            color="warning"
-            variant="outlined"
-            size="small"
-            sx={{ mt: 2 }}
-            onClick={() => {
-              if (setRootId) setRootId(defaultValues.id);
-              closeDrawer();
+          <Box
+            sx={{
+              mt: 2,
+              display: 'flex',
+              gap: 1,
+              flexDirection: { xs: 'column', md: 'row' },
             }}
           >
-            Show tree from here
-          </Button>
+            {rootId !== firstRootId ? (
+              <Button
+                color="warning"
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  if (resetRootHandler) resetRootHandler();
+                  closeDrawer();
+                }}
+              >
+                Reset to root user
+              </Button>
+            ) : null}
+            {rootId !== defaultValues.id ? (
+              <Button
+                color="warning"
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  if (setRootId) setRootId(defaultValues.id);
+                  closeDrawer();
+                }}
+              >
+                Show tree from here
+              </Button>
+            ) : null}
+          </Box>
+
           <Box sx={{ overflowY: 'scroll', maxHeight: 650 }}>
             <Typography variant="h5" py={1} fontWeight="500">
               Information
@@ -567,6 +598,7 @@ export default function EditFamilyMember({
         handleAddMember={handleAddMember}
         selectedPerson={defaultValues}
         spouseMembers={treeMembers}
+        loading={loading}
       />
     </Box>
   );

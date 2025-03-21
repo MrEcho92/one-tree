@@ -9,6 +9,7 @@ from app.core.constants import (
     FAMILY_STORY,
     FAMILY_TREE,
     MAX_FAMILY_MEMBER,
+    MAX_FAMILY_STORIES,
     MAX_FAMILY_TREE,
     PEOPLE,
 )
@@ -282,7 +283,9 @@ async def add_member_tree(
         tree_ref = db.collection(FAMILY_TREE).document(tree_id)
         tree = tree_ref.get()
         if not tree.exists:
-            raise HTTPException(status_code=404, detail="Family tree not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Family tree not found"
+            )
 
         tree_data = tree.to_dict()
         if current_user["uid"] != tree_data.get("created_by") and current_user[
@@ -761,6 +764,19 @@ async def add_family_story(
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Not authorized to access this resource",
+            )
+
+        user_stories_docs = (
+            db.collection(FAMILY_STORY)
+            .where("created_by", "==", story.created_by)
+            .stream()
+        )
+        user_stories = [doc.to_dict() for doc in user_stories_docs]
+
+        if len(user_stories) >= MAX_FAMILY_STORIES:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Limit reached! You can only add up to {MAX_FAMILY_STORIES} family stories.",
             )
 
         new_story = FamilyStory(

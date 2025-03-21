@@ -42,6 +42,11 @@ export function SideMenu() {
           p: 1.5,
           color: palette.primary.main,
           fontWeight: typography.h1.fontWeight,
+          cursor: 'pointer',
+        }}
+        onClick={() => {
+          const newTab = window.open('/', '_blank');
+          newTab?.focus();
         }}
       >
         {AppConfig.appName}

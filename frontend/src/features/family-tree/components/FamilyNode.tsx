@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import type { ExtNode } from 'relatives-tree/lib/types';
-import { grey } from '@mui/material/colors';
+import { green, grey } from '@mui/material/colors';
 import { useTheme } from '@mui/material';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import { transformDate } from '../../../utils/date';
+import { getYearFromDate } from '../../../utils/date';
 import { Person } from '../../../types/tree';
 import { stringAvatar } from '../../../utils/transformTree';
 
@@ -22,7 +22,6 @@ interface FamilyNodeProps {
 export const FamilyNode = React.memo(function FamilyNode({
   node,
   isRoot,
-  isHover,
   onClick,
   onSubClick,
   style,
@@ -56,7 +55,8 @@ export const FamilyNode = React.memo(function FamilyNode({
           gap: 2,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: grey[100],
+          bgcolor: isRoot ? green[500] : grey[200],
+          color: isRoot ? 'white' : null,
           overflow: 'hidden',
           cursor: 'pointer',
         }}
@@ -90,11 +90,11 @@ export const FamilyNode = React.memo(function FamilyNode({
           >{`${nodeDetails?.first_name} ${nodeDetails?.last_name}`}</Typography>
           <Typography>
             {nodeDetails?.date_of_birth
-              ? `${transformDate(nodeDetails.date_of_birth)}${
+              ? `${getYearFromDate(nodeDetails.date_of_birth)}${
                   nodeDetails?.is_alive
                     ? ' - Living'
                     : nodeDetails?.death_date
-                      ? ` - ${transformDate(nodeDetails.death_date)}`
+                      ? ` - ${getYearFromDate(nodeDetails.death_date)}`
                       : ''
                 }`
               : ''}

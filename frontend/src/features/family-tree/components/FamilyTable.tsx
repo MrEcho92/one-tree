@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from 'material-react-table';
-import Box from '@mui/material/Box';
 
 type Person = {
   first_name: string;
@@ -14,11 +14,13 @@ type Person = {
 };
 
 export default function FamilyMemberTable({ data }: any) {
-  //should be memoized or stable
-  const columns = useMemo<MRT_ColumnDef<Person>[]>(
-    () => [
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // screen < 600px
+
+  const columns = useMemo<MRT_ColumnDef<Person>[]>(() => {
+    const baseColumns = [
       {
-        accessorKey: 'first_name', //access nested data with dot notation
+        accessorKey: 'first_name',
         header: 'First Name',
         size: 150,
       },
@@ -28,7 +30,7 @@ export default function FamilyMemberTable({ data }: any) {
         size: 150,
       },
       {
-        accessorKey: 'gender', //normal accessorKey
+        accessorKey: 'gender',
         header: 'Gender',
         size: 150,
       },
@@ -37,18 +39,30 @@ export default function FamilyMemberTable({ data }: any) {
         header: 'Date of Birth',
         size: 150,
       },
-    ],
-    [],
-  );
+    ];
+
+    return isMobile
+      ? baseColumns.filter((col) =>
+          ['first_name', 'last_name'].includes(col.accessorKey as string),
+        )
+      : baseColumns;
+  }, [isMobile]);
 
   const table = useMaterialReactTable({
     columns,
-    data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
-    muiTablePaperProps: {
-      elevation: 0, //change the mui box shadow
-      //customize paper styles
+    data,
+    enableColumnResizing: true,
+    enableGlobalFilter: true,
+    layoutMode: 'grid', // optional for better responsiveness
+    muiTableContainerProps: {
       sx: {
-        borderRadius: '0',
+        overflowX: 'auto',
+      },
+    },
+    muiTablePaperProps: {
+      elevation: 0,
+      sx: {
+        borderRadius: 0,
       },
     },
     mrtTheme: (theme) => ({
@@ -58,7 +72,7 @@ export default function FamilyMemberTable({ data }: any) {
   });
 
   return (
-    <Box sx={{ overflowX: 'auto', width: '100%' }}>
+    <Box sx={{ width: '100%', overflowX: 'auto' }}>
       <MaterialReactTable table={table} />
     </Box>
   );
