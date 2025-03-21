@@ -442,7 +442,14 @@ export default function EditFamilyMember({
             )}
           </Box>
           <Divider />
-          <Box sx={{ mt: 2, display: 'flex', gap: 1, flexDirection: {xs: 'column', md: 'row'}}}>
+          <Box
+            sx={{
+              mt: 2,
+              display: 'flex',
+              gap: 1,
+              flexDirection: { xs: 'column', md: 'row' },
+            }}
+          >
             {rootId !== firstRootId ? (
               <Button
                 color="warning"

@@ -22,3 +22,4 @@ export const MaxFamilyTrees = 2 as const;
 export const MaxFamilyMembers = 20 as const;
 export const MaxMigrationRecords = 2 as const;
 export const MaxCulturalContexts = 5 as const;
+export const MaxFamilyStories = 5 as const;
