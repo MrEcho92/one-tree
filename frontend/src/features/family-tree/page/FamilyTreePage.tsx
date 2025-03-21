@@ -429,10 +429,12 @@ export default function FamilyTreePage() {
             closeDrawer={closeDrawer}
             onAddMember={handleAddMember}
             treeMembers={familyTree?.members}
+            rootId={rootId ?? ''}
             setRootId={setRootId}
             openDeleteMemberModal={openDeleteMemberModal}
             firstRootId={firstRootId ?? ''}
             treeId={treeId ?? ''}
+            resetRootHandler={resetRootHandler}
           />
         </Drawer>
       </Stack>

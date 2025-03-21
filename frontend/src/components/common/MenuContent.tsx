@@ -30,6 +30,7 @@ const secondaryListItems = [
     text: 'Homepage',
     icon: <HomeIcon />,
     path: '/',
+    nextPage: true,
   },
   {
     text: 'Admin',
@@ -44,6 +45,7 @@ const secondaryListItems = [
     text: 'Share feedback',
     icon: <HelpRoundedIcon />,
     path: 'https://forms.gle/26QZ5CdX8s7Crb5z6',
+    nextPage: true,
   },
 ];
 
@@ -87,7 +89,7 @@ export default function MenuContent() {
             <ListItem key={index} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={() => {
-                  if (item.id === 'feedback') {
+                  if (item.nextPage) {
                     return navigateToNewTab(item.path);
                   }
                   return navigate(item.path);
