@@ -26,7 +26,7 @@ import { firebaseErrorMessages } from '../components';
 
 export default function LogInPage() {
   const navigate = useNavigate();
-  const { palette } = useTheme();
+  const { palette, typography } = useTheme();
   const { openModal, closeModal } = useModal();
   const {
     login,
@@ -142,7 +142,11 @@ export default function LogInPage() {
           marginRight: 'auto',
           top: '0px',
           display: 'flex',
+          cursor: 'pointer',
+          color: palette.primary.main,
+          fontWeight: typography.h1.fontWeight,
         }}
+        onClick={() => navigate('/')}
       >
         <Typography variant="h2" gutterBottom>
           {AppConfig.appName}
@@ -181,6 +185,7 @@ export default function LogInPage() {
                   render={({ field }) => (
                     <TextField
                       {...field}
+                      autoComplete="email"
                       label="Email"
                       variant="outlined"
                       fullWidth

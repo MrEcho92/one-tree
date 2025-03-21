@@ -72,21 +72,21 @@ export function Instructions() {
               >
                 <Box display="flex" alignItems="center" gap={2}>
                   <ChevronRightIcon color="primary" />
-                  <Typography component="text" variant="body1">
+                  <Typography variant="body1">
                     {t('landing:instructions.steps.stepOne')}
                   </Typography>
                 </Box>
 
                 <Box display="flex" alignItems="center" gap={2}>
                   <ChevronRightIcon color="primary" />
-                  <Typography component="text" variant="body1">
+                  <Typography variant="body1">
                     {t('landing:instructions.steps.stepTwo')}
                   </Typography>
                 </Box>
 
                 <Box display="flex" alignItems="center" gap={2}>
                   <ChevronRightIcon color="primary" />
-                  <Typography component="text" variant="body1">
+                  <Typography variant="body1">
                     {t('landing:instructions.steps.stepThree')}
                   </Typography>
                 </Box>

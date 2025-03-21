@@ -102,7 +102,6 @@ export function Features() {
                     }}
                   />
                   <Typography
-                    component="text"
                     variant="subtitle2"
                     sx={{
                       color: palette.primary.contrastText,
@@ -126,7 +125,6 @@ export function Features() {
                     }}
                   />
                   <Typography
-                    component="text"
                     variant="subtitle2"
                     sx={{
                       color: palette.primary.contrastText,
@@ -182,7 +180,6 @@ export function Features() {
                     }}
                   />
                   <Typography
-                    component="text"
                     variant="subtitle2"
                     sx={{
                       color: palette.primary.contrastText,
@@ -206,7 +203,6 @@ export function Features() {
                     }}
                   />
                   <Typography
-                    component="text"
                     variant="subtitle2"
                     sx={{
                       color: palette.primary.contrastText,
@@ -262,7 +258,6 @@ export function Features() {
                     }}
                   />
                   <Typography
-                    component="text"
                     variant="subtitle2"
                     sx={{
                       color: palette.primary.contrastText,
@@ -286,7 +281,6 @@ export function Features() {
                     }}
                   />
                   <Typography
-                    component="text"
                     variant="subtitle2"
                     sx={{
                       color: palette.primary.contrastText,

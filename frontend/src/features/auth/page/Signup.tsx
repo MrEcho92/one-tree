@@ -22,7 +22,7 @@ export default function SignUpPage() {
   const { signUp, loginWithGoogle, loading } = useAuth();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const { palette } = useTheme();
+  const { palette, typography } = useTheme();
 
   const [error, setError] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
@@ -93,7 +93,11 @@ export default function SignUpPage() {
           marginRight: 'auto',
           top: '0px',
           display: 'flex',
+          cursor: 'pointer',
+          color: palette.primary.main,
+          fontWeight: typography.h1.fontWeight,
         }}
+        onClick={() => navigate('/')}
       >
         <Typography variant="h2" gutterBottom>
           {AppConfig.appName}
