@@ -5,7 +5,7 @@ import HubDetails from '../components/HubDetails';
 export function CulturalRoutes() {
   return (
     <Routes>
-      <Route path="" element={<CulturalPage />} />
+      <Route path="/*" element={<CulturalPage />} />
       <Route path=":contextId" element={<HubDetails />} />
     </Routes>
   );
