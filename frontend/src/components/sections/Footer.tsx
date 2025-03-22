@@ -61,7 +61,7 @@ export function Footer() {
           <Link
             color="text.secondary"
             variant="body2"
-            onClick={() => navigate('/cookies-policy')}
+            onClick={() => navigate('/cookie-policy')}
           >
             Cookies
           </Link>
