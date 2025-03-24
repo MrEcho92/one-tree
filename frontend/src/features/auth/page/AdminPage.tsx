@@ -183,7 +183,7 @@ export default function AdminPage() {
                           {...field}
                           label="User UID"
                           variant="outlined"
-                          InputLabelProps={{ shrink: true }} 
+                          InputLabelProps={{ shrink: true }}
                           fullWidth
                           error={!!fieldState.error}
                           helperText={fieldState.error?.message}

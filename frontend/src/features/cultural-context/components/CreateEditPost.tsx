@@ -278,7 +278,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                 <TextField
                   {...field}
                   label="Title"
-                  InputLabelProps={{ shrink: true }} 
+                  InputLabelProps={{ shrink: true }}
                   fullWidth
                   margin="dense"
                   error={!!errors.title}
@@ -309,7 +309,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                     <TextField
                       {...params}
                       label="Tags"
-                      InputLabelProps={{ shrink: true }} 
+                      InputLabelProps={{ shrink: true }}
                       placeholder="Add tags"
                       fullWidth
                       margin="dense"
@@ -432,7 +432,7 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                       <TextField
                         {...field}
                         label="Link URL"
-                        InputLabelProps={{ shrink: true }} 
+                        InputLabelProps={{ shrink: true }}
                         fullWidth
                         margin="dense"
                         error={!!errors.link_url}

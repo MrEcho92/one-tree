@@ -58,7 +58,7 @@ export default function AddCollaborators({
                   {...field}
                   label="Email"
                   variant="outlined"
-                  InputLabelProps={{ shrink: true }} 
+                  InputLabelProps={{ shrink: true }}
                   fullWidth
                   error={!!errors.email}
                   helperText={errors.email ? errors.email.message : ''}
