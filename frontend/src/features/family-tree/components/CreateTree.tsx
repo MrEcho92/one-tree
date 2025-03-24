@@ -116,7 +116,7 @@ export default function CreateTree() {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
-        p: 6,
+        p: { xs: 3, md: 6 },
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -136,16 +136,39 @@ export default function CreateTree() {
           <ClearIcon />
         </IconButton>
       </Box>
-      <TextField
-        label={t('tree:createTree.sections.treeName')}
-        {...register('name', { required: true })}
-        required
+      <Controller
+        name="name"
+        control={control}
+        rules={{
+          required: 'Name is required',
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label={t('tree:createTree.sections.treeName')}
+            variant="outlined"
+            fullWidth
+            required
+          />
+        )}
       />
-      <TextField
-        label={t('tree:createTree.sections.description')}
-        {...register('description')}
-        multiline
-        rows={3}
+      <Controller
+        name="description"
+        control={control}
+        rules={{
+          required: 'Description is required',
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label={t('tree:createTree.sections.description')}
+            variant="outlined"
+            multiline
+            rows={3}
+            fullWidth
+            required
+          />
+        )}
       />
       <FormControlLabel
         control={<Checkbox {...register('is_public')} />}
@@ -163,15 +186,37 @@ export default function CreateTree() {
       >
         {t('tree:createTree.sections.root.title')}
       </Typography>
-      <TextField
-        label={t('tree:createTree.sections.common.firstName')}
-        {...register('root_first_name', { required: true })}
-        required
+      <Controller
+        name="root_first_name"
+        control={control}
+        rules={{
+          required: 'First Name is required',
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label={t('tree:createTree.sections.common.firstName')}
+            variant="outlined"
+            fullWidth
+            required
+          />
+        )}
       />
-      <TextField
-        label={t('tree:createTree.sections.common.lastName')}
-        {...register('root_last_name', { required: true })}
-        required
+      <Controller
+        name="root_last_name"
+        control={control}
+        rules={{
+          required: 'Last Name is required',
+        }}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label={t('tree:createTree.sections.common.lastName')}
+            variant="outlined"
+            fullWidth
+            required
+          />
+        )}
       />
       <Controller
         name="root_date_of_birth"
@@ -235,13 +280,29 @@ export default function CreateTree() {
       >
         {t('tree:createTree.sections.father.title')}
       </Typography>
-      <TextField
-        label={t('tree:createTree.sections.common.firstName')}
-        {...register('father_first_name')}
+      <Controller
+        name="father_first_name"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label={t('tree:createTree.sections.common.firstName')}
+            variant="outlined"
+            fullWidth
+          />
+        )}
       />
-      <TextField
-        label={t('tree:createTree.sections.common.lastName')}
-        {...register('father_last_name')}
+      <Controller
+        name="father_last_name"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label={t('tree:createTree.sections.common.lastName')}
+            variant="outlined"
+            fullWidth
+          />
+        )}
       />
       <Controller
         name="father_date_of_birth"
@@ -303,13 +364,29 @@ export default function CreateTree() {
       >
         {t('tree:createTree.sections.mother.title')}
       </Typography>
-      <TextField
-        label={t('tree:createTree.sections.common.firstName')}
-        {...register('mother_first_name')}
+      <Controller
+        name="mother_first_name"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label={t('tree:createTree.sections.common.firstName')}
+            variant="outlined"
+            fullWidth
+          />
+        )}
       />
-      <TextField
-        label={t('tree:createTree.sections.common.lastName')}
-        {...register('mother_last_name')}
+      <Controller
+        name="mother_last_name"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            {...field}
+            label={t('tree:createTree.sections.common.lastName')}
+            variant="outlined"
+            fullWidth
+          />
+        )}
       />
       <Controller
         name="mother_date_of_birth"

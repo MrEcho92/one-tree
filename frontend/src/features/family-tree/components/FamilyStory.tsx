@@ -187,7 +187,7 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
           variant="body1"
           sx={{ color: (theme) => theme.palette.text.secondary }}
         >
-          Your family’s history is more than just names and dates - it’s the
+          Your family&apos;s history is more than just names and dates - it&apos;s the
           stories, traditions, and experiences that shape your identity. Keep
           them private or share them with the community to celebrate your
           heritage.
@@ -215,8 +215,14 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
         )}
       </Box>
       <Divider />
-      <Box sx={{ display: 'flex', height: '100%' }}>
-        <Box sx={{ width: { xs: '40%', md: '30%' } }}>
+      <Box
+        sx={{
+          display: 'flex',
+          height: '100%',
+          flexDirection: { xs: 'column', md: 'row' },
+        }}
+      >
+        <Box sx={{ width: { xs: '100%', md: '30%' } }}>
           <Typography variant="body1" fontWeight="bold" py={1}>
             Family Stories
           </Typography>
@@ -246,7 +252,7 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
         </Box>
         <Divider orientation="vertical" flexItem />
         <Box
-          sx={{ width: { xs: '60%', md: '70%' }, bgcolor: 'background.paper' }}
+          sx={{ width: { xs: '100%', md: '70%' }, bgcolor: 'background.paper' }}
         >
           <StoryDetails
             story={storyDetails}
