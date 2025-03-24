@@ -187,10 +187,10 @@ export function FamilyStory({ treeId }: FamilyStoryProps) {
           variant="body1"
           sx={{ color: (theme) => theme.palette.text.secondary }}
         >
-          Your family&apos;s history is more than just names and dates - it&apos;s the
-          stories, traditions, and experiences that shape your identity. Keep
-          them private or share them with the community to celebrate your
-          heritage.
+          Your family&apos;s history is more than just names and dates -
+          it&apos;s the stories, traditions, and experiences that shape your
+          identity. Keep them private or share them with the community to
+          celebrate your heritage.
         </Typography>
         {isStoryLimitReached ? (
           <Box sx={{ textAlign: 'left' }}>

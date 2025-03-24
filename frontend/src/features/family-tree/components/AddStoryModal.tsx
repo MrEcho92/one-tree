@@ -73,7 +73,13 @@ export default function AddStoryToTree({
             control={control}
             rules={{ required: 'Title is required' }}
             render={({ field }) => (
-              <TextField {...field} label="Title" fullWidth margin="dense" />
+              <TextField
+                {...field}
+                label="Title"
+                fullWidth
+                margin="dense"
+                InputLabelProps={{ shrink: true }}
+              />
             )}
           />
 
@@ -85,6 +91,7 @@ export default function AddStoryToTree({
               <TextField
                 {...field}
                 label="Content"
+                InputLabelProps={{ shrink: true }}
                 fullWidth
                 margin="dense"
                 multiline
@@ -115,6 +122,7 @@ export default function AddStoryToTree({
                   <TextField
                     {...params}
                     label="Tags"
+                    InputLabelProps={{ shrink: true }}
                     placeholder="Add tags"
                     fullWidth
                     margin="dense"

@@ -426,7 +426,7 @@ export default function MigrationPage() {
                               <TextField
                                 {...field}
                                 label="Year"
-                                InputLabelProps={{ shrink: true }} 
+                                InputLabelProps={{ shrink: true }}
                                 fullWidth
                                 variant="outlined"
                                 error={!!errors.year}
@@ -445,7 +445,7 @@ export default function MigrationPage() {
                               <TextField
                                 {...field}
                                 label="Location"
-                                InputLabelProps={{ shrink: true }} 
+                                InputLabelProps={{ shrink: true }}
                                 fullWidth
                                 variant="outlined"
                                 error={!!errors.location}
@@ -470,7 +470,7 @@ export default function MigrationPage() {
                               <TextField
                                 {...field}
                                 label="Latitude"
-                                InputLabelProps={{ shrink: true }} 
+                                InputLabelProps={{ shrink: true }}
                                 fullWidth
                                 variant="outlined"
                                 error={!!errors.latitude}
@@ -495,7 +495,7 @@ export default function MigrationPage() {
                               <TextField
                                 {...field}
                                 label="Longitude"
-                                InputLabelProps={{ shrink: true }} 
+                                InputLabelProps={{ shrink: true }}
                                 fullWidth
                                 variant="outlined"
                                 error={!!errors.longitude}
@@ -517,7 +517,7 @@ export default function MigrationPage() {
                               <TextField
                                 {...field}
                                 label="Event Description"
-                                InputLabelProps={{ shrink: true }} 
+                                InputLabelProps={{ shrink: true }}
                                 fullWidth
                                 multiline
                                 rows={3}

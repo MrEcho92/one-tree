@@ -155,7 +155,7 @@ export default function ProfileSettings() {
                   <TextField
                     {...field}
                     label="Full Name"
-                    InputLabelProps={{ shrink: true }} 
+                    InputLabelProps={{ shrink: true }}
                     fullWidth
                     margin="normal"
                   />
@@ -168,7 +168,7 @@ export default function ProfileSettings() {
                   <TextField
                     {...field}
                     label="Email"
-                    InputLabelProps={{ shrink: true }} 
+                    InputLabelProps={{ shrink: true }}
                     fullWidth
                     margin="normal"
                     disabled
@@ -182,7 +182,7 @@ export default function ProfileSettings() {
                   <TextField
                     {...field}
                     label="Phone Number"
-                    InputLabelProps={{ shrink: true }} 
+                    InputLabelProps={{ shrink: true }}
                     fullWidth
                     margin="normal"
                   />

@@ -152,12 +152,13 @@ export default function AddMemberDialog({
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
             <TextField
-              InputLabelProps={{ shrink: true }} 
+              InputLabelProps={{ shrink: true }}
               label="First Name"
               {...register('first_name', { required: true })}
               required
             />
             <TextField
+              InputLabelProps={{ shrink: true }}
               label="Last Name"
               {...register('last_name', { required: true })}
               required
