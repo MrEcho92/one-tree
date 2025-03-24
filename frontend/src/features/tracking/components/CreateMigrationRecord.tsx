@@ -95,6 +95,7 @@ export default function CreateMigrationRecord() {
           <TextField
             {...field}
             label="Title"
+            InputLabelProps={{ shrink: true }} 
             fullWidth
             margin="normal"
             required
@@ -109,6 +110,7 @@ export default function CreateMigrationRecord() {
           <TextField
             {...field}
             label="Description"
+            InputLabelProps={{ shrink: true }} 
             multiline
             rows={4}
             fullWidth
