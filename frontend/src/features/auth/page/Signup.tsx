@@ -201,7 +201,7 @@ export default function SignUpPage() {
                     },
                     pattern: {
                       value:
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-])[A-Za-z\d@$!%*?&\-]{8,}$/,
                       message:
                         'Password must include uppercase, lowercase, number, and special character',
                     },
@@ -246,7 +246,7 @@ export default function SignUpPage() {
                       <li>One uppercase letter (A-Z)</li>
                       <li>One lowercase letter (a-z)</li>
                       <li>One number (0-9)</li>
-                      <li>One special character (@, $, !, %, *, ?, &)</li>
+                      <li>One special character (@, $, !, %, *, ?, &, -)</li>
                     </ul>
                   </FormHelperText>
                 )}

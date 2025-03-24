@@ -103,7 +103,9 @@ export default function ProfileSettings() {
       <DeleteModal
         closeModal={closeModal}
         onDelete={handleDeleteAccount}
-        deleteMessage="Are you sure you want to delete your account? This action cannot be undone."
+        deleteMessage="Are you sure you want to delete your account? 
+        This action cannot be undone. 
+        Please ensure you have deleted your family trees, cultural stories and migration tracking info."
         deleteTitle="Delete Account"
       />,
     );
