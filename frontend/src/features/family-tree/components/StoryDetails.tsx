@@ -96,6 +96,7 @@ export default function StoryDetails({
                 <TextField
                   {...field}
                   label="Title"
+                  InputLabelProps={{ shrink: true }} 
                   variant="outlined"
                   fullWidth
                   margin="normal"
@@ -109,6 +110,7 @@ export default function StoryDetails({
                 <TextField
                   {...field}
                   label="Content"
+                  InputLabelProps={{ shrink: true }} 
                   variant="outlined"
                   fullWidth
                   multiline
@@ -140,6 +142,7 @@ export default function StoryDetails({
                     <TextField
                       {...params}
                       label="Tags"
+                      InputLabelProps={{ shrink: true }} 
                       placeholder="Add tags"
                       fullWidth
                       margin="dense"

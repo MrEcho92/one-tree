@@ -147,6 +147,7 @@ export default function CreateTree() {
             {...field}
             label={t('tree:createTree.sections.treeName')}
             variant="outlined"
+            InputLabelProps={{ shrink: true }} 
             fullWidth
             required
           />
@@ -163,6 +164,7 @@ export default function CreateTree() {
             {...field}
             label={t('tree:createTree.sections.description')}
             variant="outlined"
+            InputLabelProps={{ shrink: true }} 
             multiline
             rows={3}
             fullWidth
@@ -197,6 +199,7 @@ export default function CreateTree() {
             {...field}
             label={t('tree:createTree.sections.common.firstName')}
             variant="outlined"
+            InputLabelProps={{ shrink: true }} 
             fullWidth
             required
           />
@@ -213,6 +216,7 @@ export default function CreateTree() {
             {...field}
             label={t('tree:createTree.sections.common.lastName')}
             variant="outlined"
+            InputLabelProps={{ shrink: true }} 
             fullWidth
             required
           />
@@ -288,6 +292,7 @@ export default function CreateTree() {
             {...field}
             label={t('tree:createTree.sections.common.firstName')}
             variant="outlined"
+            InputLabelProps={{ shrink: true }} 
             fullWidth
           />
         )}
@@ -300,6 +305,7 @@ export default function CreateTree() {
             {...field}
             label={t('tree:createTree.sections.common.lastName')}
             variant="outlined"
+            InputLabelProps={{ shrink: true }} 
             fullWidth
           />
         )}
@@ -372,6 +378,7 @@ export default function CreateTree() {
             {...field}
             label={t('tree:createTree.sections.common.firstName')}
             variant="outlined"
+            InputLabelProps={{ shrink: true }} 
             fullWidth
           />
         )}
@@ -384,6 +391,7 @@ export default function CreateTree() {
             {...field}
             label={t('tree:createTree.sections.common.lastName')}
             variant="outlined"
+            InputLabelProps={{ shrink: true }} 
             fullWidth
           />
         )}

@@ -183,28 +183,28 @@ export default function EditFamilyMember({
                 name="first_name"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label="First Name" fullWidth />
+                  <TextField {...field} label="First Name" fullWidth  InputLabelProps={{ shrink: true }} />
                 )}
               />
               <Controller
                 name="middle_name"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label="Middle Name" fullWidth />
+                  <TextField {...field} label="Middle Name" fullWidth InputLabelProps={{ shrink: true }}  />
                 )}
               />
               <Controller
                 name="last_name"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label="Last Name" fullWidth />
+                  <TextField {...field} label="Last Name" fullWidth InputLabelProps={{ shrink: true }}  />
                 )}
               />
               <Controller
                 name="last_name_at_birth"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label="Last Name at Birth" fullWidth />
+                  <TextField {...field} label="Last Name at Birth" fullWidth InputLabelProps={{ shrink: true }}  />
                 )}
               />
               <Controller
@@ -294,6 +294,7 @@ export default function EditFamilyMember({
                   <TextField
                     {...field}
                     label="Place of Birth"
+                    InputLabelProps={{ shrink: true }} 
                     fullWidth
                     sx={{ mt: 2 }}
                   />
@@ -306,6 +307,7 @@ export default function EditFamilyMember({
                   <TextField
                     {...field}
                     label="Bio"
+                    InputLabelProps={{ shrink: true }} 
                     fullWidth
                     multiline
                     rows={3}
