@@ -539,11 +539,18 @@ async def delete_tree(
             )
 
         # Batch delete all members of the tree
-        batch = db.batch()
+        people_batch = db.batch()
         people_query = db.collection(PEOPLE).where("tree_id", "==", tree_id).stream()
         for person in people_query:
-            batch.delete(person.reference)
-        batch.commit()
+            people_batch.delete(person.reference)
+        people_batch.commit()
+
+        # Delete stories
+        story_batch = db.batch()
+        story_query = db.collection(FAMILY_STORY).where("tree_id", "==", tree_id).stream()
+        for story in story_query:
+            story_batch.delete(story.reference)
+        story_batch.commit()
 
         # Delete the tree
         tree_ref.delete()
