@@ -15,6 +15,7 @@ import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { useAuth } from '../auth/AuthProvider';
 import { decodeToken } from '../../utils';
 import { useEffect, useState } from 'react';
+import { Box, Divider } from '@mui/material';
 
 const mainListItems = [
   { text: 'Dashboard', icon: <SpaceDashboardIcon />, path: '/app' },
@@ -82,42 +83,45 @@ export default function MenuContent() {
           </ListItem>
         ))}
       </List>
-      <List dense>
-        {secondaryListItems
-          .filter((item) => !item.isAdmin || isAdmin)
-          .map((item, index) => (
-            <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                onClick={() => {
-                  if (item.nextPage) {
-                    return navigateToNewTab(item.path);
-                  }
-                  return navigate(item.path);
-                }}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+      <Box>
+        <Divider />
+        <List dense>
+          {secondaryListItems
+            .filter((item) => !item.isAdmin || isAdmin)
+            .map((item, index) => (
+              <ListItem key={index} disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  onClick={() => {
+                    if (item.nextPage) {
+                      return navigateToNewTab(item.path);
+                    }
+                    return navigate(item.path);
+                  }}
+                >
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          {
+            <ListItem sx={{ display: 'block' }} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <CreateNewFolderIcon />
+                </ListItemIcon>
+                <a
+                  data-canny-link
+                  href="https://onetree.canny.io"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Feature requests
+                </a>
               </ListItemButton>
             </ListItem>
-          ))}
-        {
-          <ListItem sx={{ display: 'block' }} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <CreateNewFolderIcon />
-              </ListItemIcon>
-              <a
-                data-canny-link
-                href="https://onetree.canny.io"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Feature requests
-              </a>
-            </ListItemButton>
-          </ListItem>
-        }
-      </List>
+          }
+        </List>
+      </Box>
     </Stack>
   );
 }
