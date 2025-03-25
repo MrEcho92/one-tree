@@ -596,7 +596,7 @@ export default function MigrationPage() {
                       bgcolor={palette.grey[100]}
                     >
                       <HourglassEmptyIcon
-                        sx={{ fontSize: 40, color: palette.text.secondary }}
+                        sx={{ fontSize: 40, color: palette.primary.main }}
                       />
                     </Box>
 
@@ -654,7 +654,7 @@ export default function MigrationPage() {
                     bgcolor={palette.grey[100]}
                   >
                     <RocketLaunchIcon
-                      sx={{ fontSize: 40, color: palette.text.secondary }}
+                      sx={{ fontSize: 40, color: palette.primary.main }}
                     />
                   </Box>
 
