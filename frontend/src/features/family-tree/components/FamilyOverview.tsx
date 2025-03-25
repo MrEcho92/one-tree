@@ -75,7 +75,13 @@ export default function FamilyTreeOverview({
                 name="name"
                 control={control}
                 render={({ field }) => (
-                  <TextField {...field} label="Name" fullWidth margin="dense" InputLabelProps={{ shrink: true }}  />
+                  <TextField
+                    {...field}
+                    label="Name"
+                    fullWidth
+                    margin="dense"
+                    InputLabelProps={{ shrink: true }}
+                  />
                 )}
               />
               <Controller
@@ -85,7 +91,7 @@ export default function FamilyTreeOverview({
                   <TextField
                     {...field}
                     label="Description"
-                    InputLabelProps={{ shrink: true }} 
+                    InputLabelProps={{ shrink: true }}
                     fullWidth
                     margin="dense"
                     multiline

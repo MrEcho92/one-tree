@@ -17,6 +17,7 @@ import {
   Paper,
   TextField,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Header } from '../../dashbord/components';
@@ -25,6 +26,8 @@ import { Button, CircularProgress } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import PlaceIcon from '@mui/icons-material/Place';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -48,6 +51,7 @@ import ErrorDisplay from '../../../components/common/ErrorDisplay';
 export default function MigrationPage() {
   const { recordId } = useParams();
   const { currentUser } = useAuth();
+  const { palette } = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const { openModal, closeModal } = useModal();
   const navigate = useNavigate();
@@ -368,7 +372,7 @@ export default function MigrationPage() {
                 startIcon={isEditing ? <SaveIcon /> : <AddIcon />}
                 onClick={() => setIsEditing(!isEditing)}
               >
-                {isEditing ? 'Save' : 'Add'}
+                {isEditing ? 'Save' : 'Add timeline'}
               </Button>
               <Tooltip title="Delete migration record">
                 <IconButton
@@ -566,14 +570,53 @@ export default function MigrationPage() {
               )}
 
               {migrationRecord?.timeline?.length === 0 ? (
-                <Box
-                  sx={{
-                    height: '100vh',
-                    p: 1,
-                  }}
-                >
-                  No timeline available
-                </Box>
+                !isEditing ? (
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                    p={6}
+                    borderRadius={4}
+                    bgcolor={palette.background.paper}
+                    boxShadow={1}
+                    maxWidth={400}
+                    mx="auto"
+                    my={8}
+                  >
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      width={72}
+                      height={72}
+                      mb={3}
+                      borderRadius="50%"
+                      bgcolor={palette.grey[100]}
+                    >
+                      <HourglassEmptyIcon
+                        sx={{ fontSize: 40, color: palette.primary.main }}
+                      />
+                    </Box>
+
+                    <Typography variant="h6" gutterBottom color="text.primary">
+                      No timeline available
+                    </Typography>
+
+                    <Typography variant="body2" color="text.secondary" mb={3}>
+                      You can add timeline to get started.
+                    </Typography>
+
+                    <Button
+                      variant="contained"
+                      size="medium"
+                      onClick={() => setIsEditing(!isEditing)}
+                    >
+                      Add timeline
+                    </Button>
+                  </Box>
+                ) : null
               ) : (
                 <TimeLineView />
               )}
@@ -586,7 +629,43 @@ export default function MigrationPage() {
                 }}
               >
                 {false && <MapView />}
-                <Typography>Map view feature coming soon!</Typography>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  textAlign="center"
+                  p={6}
+                  my={6}
+                  maxWidth={480}
+                  mx="auto"
+                  borderRadius={4}
+                  bgcolor={palette.background.paper}
+                  boxShadow={1}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    width={72}
+                    height={72}
+                    mb={3}
+                    borderRadius="50%"
+                    bgcolor={palette.grey[100]}
+                  >
+                    <RocketLaunchIcon
+                      sx={{ fontSize: 40, color: palette.primary.main }}
+                    />
+                  </Box>
+
+                  <Typography variant="h5" color="text.primary" gutterBottom>
+                    New Feature Incoming!
+                  </Typography>
+
+                  <Typography variant="body1" color="text.secondary" mb={3}>
+                    We’re working hard to bring this to you soon.
+                  </Typography>
+                </Box>
               </Box>
             </TabPanel>
           </TabContext>
