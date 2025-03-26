@@ -485,13 +485,13 @@ export default function EditFamilyMember({
                 Reset to root user
               </Button>
             ) : null}
-            {rootId !== defaultValues.id ? (
+            {rootId !== defaultValues?.id ? (
               <Button
                 color="warning"
                 variant="outlined"
                 size="small"
                 onClick={() => {
-                  if (setRootId) setRootId(defaultValues.id);
+                  if (setRootId) setRootId(defaultValues?.id);
                   closeDrawer();
                 }}
               >

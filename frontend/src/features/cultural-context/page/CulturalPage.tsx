@@ -78,22 +78,6 @@ export function CulturalPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          mt: '64px',
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   if (isError) {
     return <ErrorDisplay error={error} onRetry={refetch} />;
   }
@@ -241,35 +225,51 @@ export function CulturalPage() {
             />
           </Box>
         </Box>
-        {latestPosts.length > 0 && <Latest posts={latestPosts} />}
-        {remainingPosts.length > 0 && <HubList posts={remainingPosts} />}
-        {Posts && Posts.total_pages > 1 && (
+        {!isLoading ? (
+          <>
+            {latestPosts.length > 0 && <Latest posts={latestPosts} />}
+            {remainingPosts.length > 0 && <HubList posts={remainingPosts} />}
+            {Posts && Posts.total_pages > 1 && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  pt: 2,
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                }}
+              >
+                <Pagination
+                  count={Posts.total_pages}
+                  page={page}
+                  onChange={handlePageChange}
+                  variant="outlined"
+                  color="primary"
+                  size="large"
+                  siblingCount={1}
+                  boundaryCount={1}
+                />
+              </Box>
+            )}
+            {Posts && Posts?.cultural_contexts?.length === 0 && (
+              <Box sx={{ textAlign: 'center', py: 2 }}>
+                <Typography variant="h6">
+                  No post found {searchQuery && `for ${searchQuery}`}
+                </Typography>
+              </Box>
+            )}
+          </>
+        ) : (
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'row',
-              pt: 2,
-              justifyContent: 'space-around',
+              justifyContent: 'center',
               alignItems: 'center',
+              height: '100vh',
+              mt: '64px',
             }}
           >
-            <Pagination
-              count={Posts.total_pages}
-              page={page}
-              onChange={handlePageChange}
-              variant="outlined"
-              color="primary"
-              size="large"
-              siblingCount={1}
-              boundaryCount={1}
-            />
-          </Box>
-        )}
-        {Posts && Posts?.cultural_contexts?.length === 0 && (
-          <Box sx={{ textAlign: 'center', py: 2 }}>
-            <Typography variant="h6">
-              No post found {searchQuery && `for ${searchQuery}`}
-            </Typography>
+            <CircularProgress />
           </Box>
         )}
       </Container>

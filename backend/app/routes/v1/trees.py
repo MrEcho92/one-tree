@@ -547,7 +547,9 @@ async def delete_tree(
 
         # Delete stories
         story_batch = db.batch()
-        story_query = db.collection(FAMILY_STORY).where("tree_id", "==", tree_id).stream()
+        story_query = (
+            db.collection(FAMILY_STORY).where("tree_id", "==", tree_id).stream()
+        )
         for story in story_query:
             story_batch.delete(story.reference)
         story_batch.commit()
@@ -560,7 +562,10 @@ async def delete_tree(
         )
 
 
-@router.delete("/trees/{tree_id}/member", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/trees/{tree_id}/member",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
 async def delete_tree_member(
     tree_id: str,
     item: DeleteMemberSchema,
@@ -658,10 +663,7 @@ async def delete_tree_member(
 
         # Finally, delete the user document
         user_ref.delete()
-        return {
-            "message": "User deleted successfully",
-            "deleted_user_id": item.delete_member_id,
-        }
+        return None
     except Exception as e:
         logging.error(f"Unexpected error when deleting user: {str(e)}")
         raise HTTPException(
