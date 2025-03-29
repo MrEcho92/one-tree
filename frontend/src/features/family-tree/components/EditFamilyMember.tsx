@@ -34,6 +34,7 @@ import { stringAvatar } from '../../../utils/transformTree';
 import { capitalize } from '../../../utils';
 import { useAuth } from '../../../components/auth/AuthProvider';
 import { MaxFamilyMembers } from '../../../core';
+import { MemberType } from '../../../types/tree';
 
 type EditFamilyMemberProps = {
   defaultValues: Person;
@@ -430,22 +431,30 @@ export default function EditFamilyMember({
                 }}
               >
                 {!updatedData?.father_id && (
-                  <MenuItem onClick={() => handleOpenAddMember('father')}>
+                  <MenuItem
+                    onClick={() => handleOpenAddMember(MemberType.FATHER)}
+                  >
                     Father
                   </MenuItem>
                 )}
                 {!updatedData?.mother_id && (
-                  <MenuItem onClick={() => handleOpenAddMember('mother')}>
+                  <MenuItem
+                    onClick={() => handleOpenAddMember(MemberType.MOTHER)}
+                  >
                     Mother
                   </MenuItem>
                 )}
-                <MenuItem onClick={() => handleOpenAddMember('spouse')}>
+                <MenuItem
+                  onClick={() => handleOpenAddMember(MemberType.SPOUSE)}
+                >
                   Spouse/ Ex
                 </MenuItem>
-                <MenuItem onClick={() => handleOpenAddMember('sibling')}>
+                <MenuItem
+                  onClick={() => handleOpenAddMember(MemberType.SIBLING)}
+                >
                   Sibling
                 </MenuItem>
-                <MenuItem onClick={() => handleOpenAddMember('child')}>
+                <MenuItem onClick={() => handleOpenAddMember(MemberType.CHILD)}>
                   Child
                 </MenuItem>
               </Menu>
@@ -619,8 +628,9 @@ export default function EditFamilyMember({
         familyType={familyType}
         handleAddMember={handleAddMember}
         selectedPerson={defaultValues}
-        spouseMembers={treeMembers}
+        treeMembers={treeMembers}
         loading={loading}
+        memberName={MemberName}
       />
     </Box>
   );

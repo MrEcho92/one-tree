@@ -4,6 +4,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import HomeIcon from '@mui/icons-material/Home';
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
@@ -13,9 +15,7 @@ import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { useAuth } from '../auth/AuthProvider';
-import { decodeToken } from '../../utils';
-import { useEffect, useState } from 'react';
-import { Box, Divider } from '@mui/material';
+import useIsAdmin from '../../hooks/useIsAdmin';
 
 const mainListItems = [
   { text: 'Dashboard', icon: <SpaceDashboardIcon />, path: '/app' },
@@ -53,21 +53,7 @@ const secondaryListItems = [
 export default function MenuContent() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      if (!currentUser) {
-        return;
-      }
-      const token = await currentUser.getIdToken(true);
-      const decodedToken = decodeToken(token);
-
-      setIsAdmin(decodedToken.roles?.includes('admin')); // Check if "admin" is in roles
-    };
-    fetchUserRole();
-  }, [currentUser]);
-
+  const { isAdmin } = useIsAdmin(currentUser);
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>
       <List dense>

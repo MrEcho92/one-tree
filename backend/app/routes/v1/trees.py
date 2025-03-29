@@ -361,7 +361,7 @@ async def add_member_tree(
             # Update new member's relationship with the primary user
             update_relation(person.id, primary_user_field, relation.primary_user_id)
 
-        # Additional logic for SIBLINGS - Assign parents
+        # SIBLINGS - Assign parents
         if relation.rel == RelationType.SIBLING:
             primary_user_ref = db.collection(PEOPLE).document(relation.primary_user_id)
             primary_user_doc = primary_user_ref.get()
@@ -378,7 +378,7 @@ async def add_member_tree(
                 if mother_id:
                     update_relation(mother_id, "children_id", person.id)
 
-        # Additional logic for CHILD - Update spouse children_id field
+        # Update spouse children_id field
         if relation.rel == RelationType.CHILD:
             if relation.primary_spouse_id:
                 update_relation(relation.primary_spouse_id, "children_id", person.id)
@@ -411,6 +411,12 @@ async def add_member_tree(
                     # update spouse fields
                     update_relation(person.id, "spouse_id", spouse_id)
                     update_relation(spouse_id, "spouse_id", person.id)
+        
+        # Update parent field of children for when adding spouse
+        if relation.rel == RelationType.SPOUSE:
+            parent_gender = 'father_id' if member.gender == 'male' else 'mother_id'
+            for child_id in member.children_id:
+                update_relation(child_id, parent_gender, person.id)   
 
         # Fetch updated tree members
         tree_data = tree_ref.get().to_dict()

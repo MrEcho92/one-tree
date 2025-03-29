@@ -23,7 +23,9 @@ export function LandingPage() {
       <Hero />
       <SectionTwo />
       <Features />
+      <Features />
       <Instructions />
+      <Feedbacks />
       <Feedbacks />
       <Heritage />
     </Box>

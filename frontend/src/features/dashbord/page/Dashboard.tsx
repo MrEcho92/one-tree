@@ -46,6 +46,7 @@ import {
 } from '../../../core';
 import { AppConfig } from '../../../core';
 import { ContextStatus } from '../../../types';
+import useIsAdmin from '../../../hooks/useIsAdmin';
 
 const data = [
   {
@@ -79,6 +80,7 @@ export function DashboardPage() {
   const { t } = useTranslation('dashboard');
   const { enqueueSnackbar } = useSnackbar();
   const { currentUser } = useAuth();
+  const { isAdmin, loading } = useIsAdmin(currentUser);
 
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -115,7 +117,7 @@ export function DashboardPage() {
 
   const deleteMutation = useDeleteCulturalPost(itemToDelete);
 
-  if (isLoading || isPostsLoading || isRecordsLoading) {
+  if (loading || isLoading || isPostsLoading || isRecordsLoading) {
     return (
       <Box
         sx={{
@@ -231,66 +233,191 @@ export function DashboardPage() {
           <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
             {t('dashboard:labels.overview')}
           </Typography>
+          {/* <Grid
+            container
+            spacing={3}
+            columns={12}
+            sx={{ mb: (theme) => theme.spacing(2) }}
+          >
+            {data.map((data, index) => {
+              if (!isAdmin && data.id === 'hub') {
+                return (
+                  <Grid
+                    key={`dashboard_${index}`}
+                    size={{ xs: 12, sm: 6, lg: 3 }}
+                  >
+                    <Card
+                      variant="outlined"
+                      sx={{ height: '100%', flexGrow: 1, borderRadius: 4 }}
+                    >
+                      <CardContent>
+                        {data?.icon}
+                        <Typography
+                          component="h2"
+                          variant="subtitle2"
+                          gutterBottom
+                          sx={{ fontWeight: '600' }}
+                        >
+                          {data?.title}
+                        </Typography>
+                        <Typography sx={{ color: 'text.secondary', mb: '8px' }}>
+                          {data?.description}
+                        </Typography>
+                        {isCulturalLimitReached && data.id === 'hub' ? (
+                          renderMaxFeature(data?.id, data?.btnTitle)
+                        ) : (
+                          <Button
+                            variant="contained"
+                            size="small"
+                            color="primary"
+                            endIcon={<ChevronRightRoundedIcon />}
+                            fullWidth={isSmallScreen}
+                            onClick={() => {
+                              switch (data.id) {
+                                case 'hub':
+                                  openModal(<CreateCulturalPost />);
+                                  break;
+                                default:
+                                  break;
+                              }
+                            }}
+                          >
+                            {data?.btnTitle}
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              }
+              return (
+                <Grid
+                  key={`dashboard_${index}`}
+                  size={{ xs: 12, sm: 6, lg: 3 }}
+                >
+                  <Card
+                    variant="outlined"
+                    sx={{ height: '100%', flexGrow: 1, borderRadius: 4 }}
+                  >
+                    <CardContent>
+                      {data?.icon}
+                      <Typography
+                        component="h2"
+                        variant="subtitle2"
+                        gutterBottom
+                        sx={{ fontWeight: '600' }}
+                      >
+                        {data?.title}
+                      </Typography>
+                      <Typography sx={{ color: 'text.secondary', mb: '8px' }}>
+                        {data?.description}
+                      </Typography>
+                      {(isTreeLimitReached && data.id === 'family-tree') ||
+                      (isMigrationLimitReached &&
+                        data.id === 'migration-tracker') ? (
+                        renderMaxFeature(data?.id, data?.btnTitle)
+                      ) : (
+                        <Button
+                          variant="contained"
+                          size="small"
+                          color="primary"
+                          endIcon={<ChevronRightRoundedIcon />}
+                          fullWidth={isSmallScreen}
+                          onClick={() => {
+                            switch (data.id) {
+                              case 'family-tree':
+                                openModal(<CreateTree />);
+                                break;
+                              case 'migration-tracker':
+                                openModal(<CreateMigrationRecord />);
+                                break;
+                              default:
+                                break;
+                            }
+                          }}
+                        >
+                          {data?.btnTitle}
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
+            })}
+          </Grid> */}
           <Grid
             container
             spacing={3}
             columns={12}
             sx={{ mb: (theme) => theme.spacing(2) }}
           >
-            {data.map((data, index) => (
-              <Grid key={`dashboard_${index}`} size={{ xs: 12, sm: 6, lg: 3 }}>
-                <Card
-                  variant="outlined"
-                  sx={{ height: '100%', flexGrow: 1, borderRadius: 4 }}
+            {data
+              .filter((item) => isAdmin || item.id !== 'hub')
+              .map((item, index) => (
+                <Grid
+                  key={`dashboard_${index}`}
+                  size={{ xs: 12, sm: 6, lg: 3 }}
                 >
-                  <CardContent>
-                    {data?.icon}
-                    <Typography
-                      component="h2"
-                      variant="subtitle2"
-                      gutterBottom
-                      sx={{ fontWeight: '600' }}
-                    >
-                      {data?.title}
-                    </Typography>
-                    <Typography sx={{ color: 'text.secondary', mb: '8px' }}>
-                      {data?.description}
-                    </Typography>
-                    {(isTreeLimitReached && data.id === 'family-tree') ||
-                    (isMigrationLimitReached &&
-                      data.id === 'migration-tracker') ||
-                    (isCulturalLimitReached && data.id === 'hub') ? (
-                      renderMaxFeature(data?.id, data?.btnTitle)
-                    ) : (
-                      <Button
-                        variant="contained"
-                        size="small"
-                        color="primary"
-                        endIcon={<ChevronRightRoundedIcon />}
-                        fullWidth={isSmallScreen}
-                        onClick={() => {
-                          switch (data.id) {
-                            case 'family-tree':
-                              openModal(<CreateTree />);
-                              break;
-                            case 'hub':
-                              openModal(<CreateCulturalPost />);
-                              break;
-                            case 'migration-tracker':
-                              openModal(<CreateMigrationRecord />);
-                              break;
-                            default:
-                              break;
-                          }
-                        }}
+                  <Card
+                    variant="outlined"
+                    sx={{ height: '100%', flexGrow: 1, borderRadius: 4 }}
+                  >
+                    <CardContent>
+                      {item?.icon}
+                      <Typography
+                        component="h2"
+                        variant="subtitle2"
+                        gutterBottom
+                        sx={{ fontWeight: '600' }}
                       >
-                        {data?.btnTitle}
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+                        {item?.title}
+                      </Typography>
+                      <Typography sx={{ color: 'text.secondary', mb: '8px' }}>
+                        {item?.description}
+                      </Typography>
+
+                      {isAdmin &&
+                      item.id === 'hub' &&
+                      isCulturalLimitReached ? (
+                        renderMaxFeature(item?.id, item?.btnTitle)
+                      ) : !isAdmin &&
+                        item.id === 'family-tree' &&
+                        isTreeLimitReached ? (
+                        renderMaxFeature(item?.id, item?.btnTitle)
+                      ) : !isAdmin &&
+                        item.id === 'migration-tracker' &&
+                        isMigrationLimitReached ? (
+                        renderMaxFeature(item?.id, item?.btnTitle)
+                      ) : (
+                        <Button
+                          variant="contained"
+                          size="small"
+                          color="primary"
+                          endIcon={<ChevronRightRoundedIcon />}
+                          fullWidth={isSmallScreen}
+                          onClick={() => {
+                            switch (item.id) {
+                              case 'hub':
+                                openModal(<CreateCulturalPost />);
+                                break;
+                              case 'family-tree':
+                                openModal(<CreateTree />);
+                                break;
+                              case 'migration-tracker':
+                                openModal(<CreateMigrationRecord />);
+                                break;
+                              default:
+                                break;
+                            }
+                          }}
+                        >
+                          {item?.btnTitle}
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
           </Grid>
 
           <Divider />

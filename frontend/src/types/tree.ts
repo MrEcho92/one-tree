@@ -1,3 +1,11 @@
+export enum MemberType {
+  CHILD = 'child',
+  SPOUSE = 'spouse',
+  SIBLING = 'sibling',
+  FATHER = 'father',
+  MOTHER = 'mother',
+}
+
 export interface CreateTreeFormValues {
   name: string;
   description?: string;
