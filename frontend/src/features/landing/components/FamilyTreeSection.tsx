@@ -2,11 +2,8 @@ import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Grid from '@mui/material/Grid2';
 import Avatar from '@mui/material/Avatar';
 
@@ -125,28 +122,32 @@ export function FamilyTreeSection() {
                 </Typography>
               </Box>
             </Box>
-          </Box>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              pt: 3,
-              gap: 2,
-            }}
-          >
-            <Button
-              variant="contained"
-              color="info"
-              disableElevation
-              onClick={() => navigate('/app')}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                py: 3,
+                gap: 2,
+              }}
             >
-              Start your family tree
-            </Button>
-            <Button variant="outlined" color="secondary">
-              View sample tree
-            </Button>
+              <Button
+                variant="contained"
+                color="info"
+                disableElevation
+                onClick={() => navigate('/app')}
+              >
+                Start your family tree
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => navigate('/app')}
+              >
+                View sample tree
+              </Button>
+            </Box>
           </Box>
         </Grid>
       </Grid>

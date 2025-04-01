@@ -22,27 +22,6 @@ export function TrackerSection() {
         flexDirection: { xs: 'column', md: 'row' },
       }}
     >
-      <Box
-        sx={{
-          flexBasis: { xs: '100%', md: '50%' },
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 400,
-          py: { xs: 2, md: 0 },
-        }}
-      >
-        <img
-          src={familyLogo}
-          alt="beautiful family smiling"
-          loading="lazy"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      </Box>
       <Stack
         spacing={3}
         useFlexGap

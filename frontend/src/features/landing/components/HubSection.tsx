@@ -20,29 +20,9 @@ export function HubSection() {
         alignItems: 'center',
         justifyContent: 'space-between',
         flexDirection: { xs: 'column', md: 'row' },
+        bgcolor: palette.primary.main,
       }}
     >
-      <Box
-        sx={{
-          flexBasis: { xs: '100%', md: '50%' },
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 400,
-          py: { xs: 2, md: 0 },
-        }}
-      >
-        <img
-          src={familyLogo}
-          alt="beautiful family smiling"
-          loading="lazy"
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      </Box>
       <Stack
         spacing={3}
         useFlexGap
@@ -67,8 +47,10 @@ export function HubSection() {
             color: palette.text.primary,
           }}
         >
-          {t('landing:sectionTwo.title')}
+        Search for stories in our newspaper archives 
         </Typography>
+        <Typography>Millions of Historical Records</Typography>
+        <Typography>We’ve gathered one of the world’s largest collections of important British genealogical records.</Typography>
         <Button
           variant="contained"
           color="secondary"

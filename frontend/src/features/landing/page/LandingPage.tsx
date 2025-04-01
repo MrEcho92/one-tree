@@ -4,9 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import {
   FamilyTreeSection,
   WhyUS,
-  SectionTwo,
   Features,
-  Instructions,
   Feedbacks,
   Heritage,
   HubSection,
@@ -31,9 +29,7 @@ export function LandingPage() {
       <FamilyTreeSection />
       <HubSection />
       <TrackerSection />
-      <SectionTwo />
       <Features />
-      <Instructions />
       <Feedbacks />
       <Heritage />
     </Box>

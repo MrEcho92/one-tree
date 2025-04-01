@@ -112,9 +112,9 @@ export function Hero() {
               color: palette.primary.main,
             }}
             disableElevation
-            onClick={() => scrollToSection('tracker')}
+            onClick={() => scrollToSection('hub')}
           >
-            Start your migration tracker
+            Search cultural hub
           </Button>
           <Button
             variant="contained"
@@ -127,9 +127,9 @@ export function Hero() {
               color: palette.primary.main,
             }}
             disableElevation
-            onClick={() => scrollToSection('hub')}
+            onClick={() => scrollToSection('tracker')}
           >
-            Search cultural hub
+            Build migration tracker
           </Button>
         </Box>
       </Container>
