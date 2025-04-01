@@ -7,13 +7,13 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import familyLogo from '../assets/black-family.png';
 
-export function SectionTwo() {
+export function TrackerSection() {
   const { palette, typography } = useTheme();
   const { t } = useTranslation('landing');
   const navigate = useNavigate();
   return (
     <Box
-      id="family-tree"
+      id="tracker"
       sx={{
         width: '100%',
         display: 'flex',

@@ -60,6 +60,7 @@ export function Heritage() {
           <Button
             variant="contained"
             color="secondary"
+            disableElevation
             onClick={() => navigate('/app')}
           >
             {t('landing:heritage.btnTitle')}
