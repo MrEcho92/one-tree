@@ -8,7 +8,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
 export function Feedbacks() {
-  const { typography } = useTheme();
+  const { palette, typography } = useTheme();
   const { t } = useTranslation('landing');
   return (
     <Box id="feedbacks">
@@ -34,14 +34,14 @@ export function Feedbacks() {
             variant="h4"
             gutterBottom
             sx={{
-              color: 'text.primary',
               fontSize: {
                 xs: typography.h3.fontSize,
                 md: typography.h2.fontSize,
               },
               fontWeight: {
-                xs: typography.h3.fontWeight,
+                md: typography.h2.fontWeight,
               },
+              color: palette.primary.main,
             }}
           >
             {t('landing:feedbacks.title')}

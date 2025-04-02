@@ -79,19 +79,21 @@ export function HubSection() {
               traditions, and stories passed down through generations. Discover
               recipes, languages, and customs that keep our heritage alive.
             </Typography>
-            <Button
-              variant="contained"
-              color="secondary"
-              sx={{
-                alignSelf: 'center',
-                width: 'auto',
-                color: palette.primary.main,
-              }}
-              onClick={() => navigate('/hub')}
-              disableElevation
-            >
-              Search our records
-            </Button>
+            <div>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{
+                  alignSelf: 'center',
+                  width: 'auto',
+                  color: palette.primary.main,
+                }}
+                onClick={() => navigate('/hub')}
+                disableElevation
+              >
+                Search our records
+              </Button>
+            </div>
           </Box>
           <Box
             sx={{
