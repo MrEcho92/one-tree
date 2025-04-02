@@ -66,6 +66,7 @@ export function FamilyTreeSection() {
               flexDirection: 'column',
               alignItems: 'center',
               backgroundColor: palette.background.default,
+              mx: { xs: 2 },
             }}
           >
             <Typography

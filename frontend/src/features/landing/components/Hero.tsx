@@ -4,7 +4,8 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 
 export function Hero() {
   const { palette, typography } = useTheme();
@@ -113,6 +114,7 @@ export function Hero() {
             }}
             disableElevation
             onClick={() => scrollToSection('hub')}
+            endIcon={<ContentPasteSearchIcon />}
           >
             Search cultural hub
           </Button>
@@ -129,7 +131,7 @@ export function Hero() {
             disableElevation
             onClick={() => scrollToSection('tracker')}
           >
-            Build migration tracker
+            Build your migration tracker
           </Button>
         </Box>
       </Container>
