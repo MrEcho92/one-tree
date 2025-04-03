@@ -94,7 +94,7 @@ export function CulturalPage() {
     remainingPosts = Posts?.cultural_contexts?.slice(3) || [];
   }
   return (
-    <Box mt="64px" sx={{height: '80vh'}}>
+    <Box mt="64px" sx={{ height: '80vh' }}>
       <Helmet>
         <title>Cultural Hub | {AppConfig.appName}</title>
         <meta
@@ -273,7 +273,7 @@ export function CulturalPage() {
             )}
             {Posts && Posts?.cultural_contexts?.length === 0 && (
               <Box sx={{ textAlign: 'center', py: 2 }}>
-                <Typography variant="h6" color='text.secondary'>
+                <Typography variant="h6" color="text.secondary">
                   No record found {searchQuery && `for ${searchQuery}`}
                 </Typography>
               </Box>

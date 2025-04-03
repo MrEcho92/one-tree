@@ -34,7 +34,7 @@ export function transformNodeData(data: Person[]): Node[] {
 
 export function stringAvatar(data: any) {
   let children: string = '';
-  if (data.first_name && data.last_name) {
+  if (data?.first_name && data?.last_name) {
     const newName = `${data.first_name} ${data.last_name}`;
     children = `${newName.split(' ')[0][0]}${newName.split(' ')[1][0]}`;
   }

@@ -612,9 +612,9 @@ export default function EditFamilyMember({
                   variant="subtitle1"
                   sx={{ color: (theme) => theme.palette.text.secondary }}
                 >
-                  Bio
+                  Biography
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="body2" lineHeight={1.8}>
                   {updatedData?.bio || 'No bio available.'}
                 </Typography>
               </Box>

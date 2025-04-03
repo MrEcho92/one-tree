@@ -8,6 +8,7 @@ import About from '../features/landing/page/About';
 import Privacy from '../features/landing/page/Privacy';
 import TermsAndConditions from '../features/landing/page/Terms';
 import CookiesPolicy from '../features/landing/page/Cookies';
+import PublicTreePage from '../features/family-tree/page/PublicTreePage';
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -17,6 +18,10 @@ export const publicRoutes: RouteObject[] = [
       {
         index: true,
         element: <LandingRoutes />,
+      },
+      {
+        path: '/sample-trees',
+        element: <PublicTreePage />,
       },
       {
         path: 'hub/*',
