@@ -589,6 +589,7 @@ export default function EditFamilyMember({
                 >
                   Living status
                 </Typography>
+                <Typography>Deceased</Typography>
                 <Typography>Death date</Typography>
                 <Typography>
                   {transformDate(updatedData?.death_date)}

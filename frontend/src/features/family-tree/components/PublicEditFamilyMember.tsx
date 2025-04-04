@@ -231,6 +231,7 @@ export default function PublicEditFamilyMember({
               >
                 Living status
               </Typography>
+              <Typography>Deceased</Typography>
               <Typography>Death date</Typography>
               <Typography>{transformDate(updatedData?.death_date)}</Typography>
             </Box>
