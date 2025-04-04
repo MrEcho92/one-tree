@@ -359,7 +359,7 @@ export function DashboardPage() {
                                   </Typography>
                                   {userId && tree.created_by !== userId ? (
                                     <Chip
-                                      label={'Collaborator on tree'}
+                                      label="Collaborator on tree"
                                       size="small"
                                       color="success"
                                       variant="outlined"

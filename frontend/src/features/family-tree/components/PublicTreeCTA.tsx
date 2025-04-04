@@ -21,7 +21,7 @@ export default function PublicTreeCTA({ closeModal }: PublicTreeCTAProps) {
         }}
       >
         <Typography variant="h6" fontWeight={600}>
-          Family is more than a title; it&apos;s a bond built over time.
+          Family is about bond built over time
         </Typography>
         <IconButton onClick={closeModal}>
           <ClearIcon />
