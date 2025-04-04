@@ -40,7 +40,7 @@ export function FamilyTreeSection() {
             py: 2,
           }}
         >
-          Build your tree to connect your family&apos;s history.
+          Build your tree to connect your family&apos;s history
         </Typography>
         <Typography
           sx={{
