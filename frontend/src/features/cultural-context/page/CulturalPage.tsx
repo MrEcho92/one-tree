@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
 import { debounce } from 'lodash';
 import { Helmet } from 'react-helmet-async';
 import Box from '@mui/material/Box';
@@ -46,6 +47,7 @@ export function Search({ value, onSearch, placeholder }: SearchProps) {
 }
 
 export function CulturalPage() {
+  const { palette, typography } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [tempSearch, setTempSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -78,22 +80,6 @@ export function CulturalPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (isLoading) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          mt: '64px',
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   if (isError) {
     return <ErrorDisplay error={error} onRetry={refetch} />;
   }
@@ -108,7 +94,7 @@ export function CulturalPage() {
     remainingPosts = Posts?.cultural_contexts?.slice(3) || [];
   }
   return (
-    <Box mt="64px">
+    <Box mt="64px" sx={{ height: '80vh' }}>
       <Helmet>
         <title>Cultural Hub | {AppConfig.appName}</title>
         <meta
@@ -127,29 +113,47 @@ export function CulturalPage() {
       <Container
         maxWidth="xl"
         component="main"
-        sx={{ display: 'flex', flexDirection: 'column', my: 14, gap: 4 }}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          my: 14,
+          gap: 4,
+          px: { xs: 3, sm: 8 },
+        }}
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <Box display="flex" flexDirection={'column'} gap={2}>
-            <Typography variant="h1" gutterBottom>
-              Cultural Hub - Preserving African Heritage
+            <Typography
+              sx={{
+                fontSize: {
+                  xs: typography.h3.fontSize,
+                  md: typography.h2.fontSize,
+                },
+                fontWeight: {
+                  xs: typography.h3.fontWeight,
+                  md: typography.h1.fontWeight,
+                },
+                color: palette.primary.main,
+              }}
+              gutterBottom
+            >
+              Cultural Hub - African History Collections
             </Typography>
             <Typography
               sx={{
-                color: (theme) => theme.palette.text.secondary,
-                lineHeight: 1.5,
+                color: palette.text.primary,
+                fontSize: {
+                  xs: typography.body1.fontSize,
+                  md: '18px',
+                },
+                lineHeight: '1.8',
               }}
             >
-              Explore and celebrate the rich traditions of Africa! Read and
-              share stories, recipes, and customs that keep your heritage alive.
-              The Cultural Hub is a space dedicated to preserving and showcasing
-              the beauty of African traditions, from ancestral rituals and
-              folklore to culinary heritage and storytelling. Discover the depth
-              of African art, music, literature, and history, and contribute
-              your own experiences to keep these traditions alive for future
-              generations. Whether you&apos;re reconnecting with your roots or
-              learning something new, the Cultural Hub is your gateway to the
-              richness and diversity of African culture. 🌍✨
+              Discover and share the traditions that keep our culture alive.
+              From ancestral stories and folklore to music, art, and cuisine,
+              the Cultural Hub is a space to explore Africa&apos;s rich
+              heritage. Preserve history, pass down traditions, and reconnect
+              with your roots—all in one place. 🌍✨
             </Typography>
           </Box>
         </Box>
@@ -241,35 +245,51 @@ export function CulturalPage() {
             />
           </Box>
         </Box>
-        {latestPosts.length > 0 && <Latest posts={latestPosts} />}
-        {remainingPosts.length > 0 && <HubList posts={remainingPosts} />}
-        {Posts && Posts.total_pages > 1 && (
+        {!isLoading ? (
+          <>
+            {latestPosts.length > 0 && <Latest posts={latestPosts} />}
+            {remainingPosts.length > 0 && <HubList posts={remainingPosts} />}
+            {Posts && Posts.total_pages > 1 && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  pt: 2,
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                }}
+              >
+                <Pagination
+                  count={Posts.total_pages}
+                  page={page}
+                  onChange={handlePageChange}
+                  variant="outlined"
+                  color="primary"
+                  size="large"
+                  siblingCount={1}
+                  boundaryCount={1}
+                />
+              </Box>
+            )}
+            {Posts && Posts?.cultural_contexts?.length === 0 && (
+              <Box sx={{ textAlign: 'center', py: 2 }}>
+                <Typography variant="h6" color="text.secondary">
+                  No record found {searchQuery && `for ${searchQuery}`}
+                </Typography>
+              </Box>
+            )}
+          </>
+        ) : (
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'row',
-              pt: 2,
-              justifyContent: 'space-around',
+              justifyContent: 'center',
               alignItems: 'center',
+              height: '100vh',
+              mt: '64px',
             }}
           >
-            <Pagination
-              count={Posts.total_pages}
-              page={page}
-              onChange={handlePageChange}
-              variant="outlined"
-              color="primary"
-              size="large"
-              siblingCount={1}
-              boundaryCount={1}
-            />
-          </Box>
-        )}
-        {Posts && Posts?.cultural_contexts?.length === 0 && (
-          <Box sx={{ textAlign: 'center', py: 2 }}>
-            <Typography variant="h6">
-              No post found {searchQuery && `for ${searchQuery}`}
-            </Typography>
+            <CircularProgress />
           </Box>
         )}
       </Container>

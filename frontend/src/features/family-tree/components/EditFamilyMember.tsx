@@ -34,6 +34,7 @@ import { stringAvatar } from '../../../utils/transformTree';
 import { capitalize } from '../../../utils';
 import { useAuth } from '../../../components/auth/AuthProvider';
 import { MaxFamilyMembers } from '../../../core';
+import { MemberType } from '../../../types/tree';
 
 type EditFamilyMemberProps = {
   defaultValues: Person;
@@ -430,22 +431,30 @@ export default function EditFamilyMember({
                 }}
               >
                 {!updatedData?.father_id && (
-                  <MenuItem onClick={() => handleOpenAddMember('father')}>
+                  <MenuItem
+                    onClick={() => handleOpenAddMember(MemberType.FATHER)}
+                  >
                     Father
                   </MenuItem>
                 )}
                 {!updatedData?.mother_id && (
-                  <MenuItem onClick={() => handleOpenAddMember('mother')}>
+                  <MenuItem
+                    onClick={() => handleOpenAddMember(MemberType.MOTHER)}
+                  >
                     Mother
                   </MenuItem>
                 )}
-                <MenuItem onClick={() => handleOpenAddMember('spouse')}>
+                <MenuItem
+                  onClick={() => handleOpenAddMember(MemberType.SPOUSE)}
+                >
                   Spouse/ Ex
                 </MenuItem>
-                <MenuItem onClick={() => handleOpenAddMember('sibling')}>
+                <MenuItem
+                  onClick={() => handleOpenAddMember(MemberType.SIBLING)}
+                >
                   Sibling
                 </MenuItem>
-                <MenuItem onClick={() => handleOpenAddMember('child')}>
+                <MenuItem onClick={() => handleOpenAddMember(MemberType.CHILD)}>
                   Child
                 </MenuItem>
               </Menu>
@@ -485,13 +494,13 @@ export default function EditFamilyMember({
                 Reset to root user
               </Button>
             ) : null}
-            {rootId !== defaultValues.id ? (
+            {rootId !== defaultValues?.id ? (
               <Button
                 color="warning"
                 variant="outlined"
                 size="small"
                 onClick={() => {
-                  if (setRootId) setRootId(defaultValues.id);
+                  if (setRootId) setRootId(defaultValues?.id);
                   closeDrawer();
                 }}
               >
@@ -580,6 +589,7 @@ export default function EditFamilyMember({
                 >
                   Living status
                 </Typography>
+                <Typography>Deceased</Typography>
                 <Typography>Death date</Typography>
                 <Typography>
                   {transformDate(updatedData?.death_date)}
@@ -603,9 +613,9 @@ export default function EditFamilyMember({
                   variant="subtitle1"
                   sx={{ color: (theme) => theme.palette.text.secondary }}
                 >
-                  Bio
+                  Biography
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="body2" lineHeight={1.8}>
                   {updatedData?.bio || 'No bio available.'}
                 </Typography>
               </Box>
@@ -619,8 +629,9 @@ export default function EditFamilyMember({
         familyType={familyType}
         handleAddMember={handleAddMember}
         selectedPerson={defaultValues}
-        spouseMembers={treeMembers}
+        treeMembers={treeMembers}
         loading={loading}
+        memberName={MemberName}
       />
     </Box>
   );

@@ -4,10 +4,24 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 
 export function Hero() {
   const { palette, typography } = useTheme();
   const { t } = useTranslation('landing');
+  const scrollToSection = (sectionId: string) => {
+    const sectionElement = document.getElementById(sectionId);
+    const offset = 128;
+    if (sectionElement) {
+      const targetScroll = sectionElement.offsetTop - offset;
+      sectionElement.scrollIntoView({ behavior: 'smooth' });
+      window.scrollTo({
+        top: targetScroll,
+        behavior: 'smooth',
+      });
+    }
+  };
   return (
     <Box
       id="hero"
@@ -21,8 +35,9 @@ export function Hero() {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          pt: { xs: 14, sm: 20 },
+          pt: { xs: 14, sm: 28 },
           pb: { xs: 8, sm: 12 },
+          gap: { xs: 2, sm: 5 },
         }}
       >
         <Stack spacing={3} useFlexGap sx={{ width: { xs: '100%', sm: '70%' } }}>
@@ -65,6 +80,60 @@ export function Hero() {
             {t('landing:hero.subTitle')}
           </Typography>
         </Stack>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: { xs: 2, md: 4 },
+          }}
+        >
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{
+              fontSize: {
+                xs: '0.625rem',
+                md: typography.body1.fontSize,
+              },
+              color: palette.primary.main,
+            }}
+            disableElevation
+            onClick={() => scrollToSection('family-tree')}
+          >
+            Start your family tree
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{
+              fontSize: {
+                xs: '0.625rem',
+                md: typography.body1.fontSize,
+              },
+              color: palette.primary.main,
+            }}
+            disableElevation
+            onClick={() => scrollToSection('hub')}
+            endIcon={<ContentPasteSearchIcon />}
+          >
+            Search cultural hub
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{
+              fontSize: {
+                xs: '0.625rem',
+                md: typography.body1.fontSize,
+              },
+              color: palette.primary.main,
+            }}
+            disableElevation
+            onClick={() => scrollToSection('tracker')}
+          >
+            Build your migration tracker
+          </Button>
+        </Box>
       </Container>
     </Box>
   );

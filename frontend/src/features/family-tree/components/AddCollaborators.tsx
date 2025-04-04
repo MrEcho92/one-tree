@@ -38,7 +38,9 @@ export default function AddCollaborators({
       </Box>
       <Box pt={1}>
         <Typography variant="body1">
-          Invite someone to collaborate on this family tree.
+          Enter the email address of the person you’d like to invite to
+          collaborate on this family tree. Let them know they’ll be joining as a
+          collaborator.
         </Typography>
         <Box py={2}>
           <form onSubmit={handleSubmit(handleOnAddCollaborators)}>

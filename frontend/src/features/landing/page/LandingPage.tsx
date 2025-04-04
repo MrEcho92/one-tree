@@ -1,11 +1,14 @@
 import Box from '@mui/material/Box';
 import { Hero } from '../components/Hero';
 import { Helmet } from 'react-helmet-async';
-import { SectionTwo } from '../components/SectionTwo';
-import { Features } from '../components/Features';
-import { Instructions } from '../components/Instruction';
-import { Feedbacks } from '../components/Feedbacks';
-import { Heritage } from '../components/Heritage';
+import {
+  FamilyTreeSection,
+  WhyUS,
+  Feedbacks,
+  Heritage,
+  HubSection,
+  TrackerSection,
+} from '../components';
 import { AppConfig } from '../../../core';
 
 export function LandingPage() {
@@ -21,9 +24,10 @@ export function LandingPage() {
         />
       </Helmet>
       <Hero />
-      <SectionTwo />
-      <Features />
-      <Instructions />
+      <WhyUS />
+      <FamilyTreeSection />
+      <HubSection />
+      <TrackerSection />
       <Feedbacks />
       <Heritage />
     </Box>

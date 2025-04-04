@@ -18,7 +18,7 @@ export function NotFoundPage() {
           }}
         >
           <Typography variant="h3" sx={{ mb: 2 }}>
-            Page not found!
+            Error 404 Not Found!
           </Typography>
 
           <Typography sx={{ color: 'text.secondary' }}>
@@ -26,7 +26,7 @@ export function NotFoundPage() {
             mistyped the URL? Be sure to check your spelling.
           </Typography>
 
-          <Button href="/" variant="text">
+          <Button href="/" variant="contained" disableElevation>
             Go back to homepage
           </Button>
 

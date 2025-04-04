@@ -405,7 +405,21 @@ export default function FamilyTreePage() {
                     </TransformWrapper>
                   </Box>
                 ) : (
-                  <Box>No tree</Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: '100%',
+                      flexDirection: 'column',
+                      textAlign: 'center',
+                      color: palette.text.secondary,
+                    }}
+                  >
+                    <Typography variant="h6" gutterBottom>
+                      No family tree data available
+                    </Typography>
+                  </Box>
                 )}
               </Box>
             </TabPanel>

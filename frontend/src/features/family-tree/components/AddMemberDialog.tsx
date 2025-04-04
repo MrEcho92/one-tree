@@ -29,6 +29,7 @@ import { getMemberNames } from '../../../utils/getMembers';
 import { MemberId } from '../../../types/tree';
 import { Person } from '../../../types/tree';
 import { useAuth } from '../../../components/auth/AuthProvider';
+import { MemberType } from '../../../types/tree';
 
 type AddMemberDialogProps = {
   isAddMemberOpen: boolean;
@@ -36,8 +37,9 @@ type AddMemberDialogProps = {
   familyType?: string;
   handleAddMember: (data: any) => void;
   selectedPerson: Person;
-  spouseMembers: any;
+  treeMembers: any;
   loading: boolean;
+  memberName: string;
 };
 
 export default function AddMemberDialog({
@@ -45,9 +47,10 @@ export default function AddMemberDialog({
   setIsAddMemberOpen,
   familyType,
   handleAddMember,
-  spouseMembers,
+  treeMembers,
   selectedPerson,
   loading,
+  memberName,
 }: AddMemberDialogProps) {
   const { currentUser } = useAuth();
   const { control, handleSubmit, register, reset } = useForm<AddMemberTreeForm>(
@@ -61,7 +64,7 @@ export default function AddMemberDialog({
   useEffect(() => {
     if (familyType) {
       reset({
-        gender: familyType === 'mother' ? 'female' : 'male',
+        gender: familyType === MemberType.MOTHER ? 'female' : 'male',
       });
     }
     if (selectedPerson) {
@@ -73,6 +76,8 @@ export default function AddMemberDialog({
 
   const [spouseNames, setSpouseNames] = useState<MemberId[]>([]);
   const [selectedSpouse, setSelectedSpouse] = useState<MemberId | null>(null);
+  const [childrenNames, setChildrenNames] = useState<MemberId[]>([]);
+  const [selectedChildren, setSelectedChildren] = useState<MemberId[]>([]);
 
   function onSubmit(data: AddMemberTreeForm) {
     const payload = {
@@ -82,12 +87,19 @@ export default function AddMemberDialog({
         date_of_birth: data.date_of_birth,
         gender: data.gender,
         created_by: currentUser?.uid,
+        // Add children when adding spouse
+        ...(familyType === MemberType.SPOUSE
+          ? {
+              children_id: selectedChildren.map((child: MemberId) => child.id),
+            }
+          : null),
       },
       relation: {
         primary_user_id: selectedPerson?.id,
         primary_user_gender: selectedPerson?.gender,
         rel: familyType,
-        ...(familyType === 'child'
+        // update parent with children
+        ...(familyType === MemberType.CHILD
           ? {
               primary_spouse_id: selectedSpouse?.id,
               primary_spouse_gender: selectedSpouse?.gender,
@@ -104,23 +116,28 @@ export default function AddMemberDialog({
       last_name: '',
       date_of_birth: null,
       gender:
-        familyType === 'father'
+        familyType === MemberType.FATHER
           ? 'male'
-          : familyType === 'mother'
+          : familyType === MemberType.MOTHER
             ? 'female'
             : 'male',
     } as any);
   }
 
   useEffect(() => {
-    if (spouseMembers && isAddMemberOpen) {
+    if (treeMembers && isAddMemberOpen) {
       const spouse = getMemberNames(
-        spouseMembers,
+        treeMembers,
         selectedPerson?.spouse_id || [],
       );
       setSpouseNames(spouse);
+      const children = getMemberNames(
+        treeMembers,
+        selectedPerson?.children_id || [],
+      );
+      setChildrenNames(children);
     }
-  }, [spouseMembers, isAddMemberOpen, selectedPerson?.spouse_id]);
+  }, [treeMembers, isAddMemberOpen, selectedPerson?.spouse_id]);
 
   if (loading) {
     return (
@@ -206,7 +223,7 @@ export default function AddMemberDialog({
                 )}
               />
             </FormControl>
-            {familyType === 'child' && (
+            {familyType === MemberType.CHILD && (
               <>
                 <Divider />
                 <FormControl sx={{ my: 1 }}>
@@ -239,6 +256,48 @@ export default function AddMemberDialog({
                       <em>None</em>
                     </MenuItem>
                     {spouseNames.map((member: MemberId) => (
+                      <MenuItem key={member.id} value={member.id}>
+                        {member.fullName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
+            )}
+            {familyType === MemberType.SPOUSE && (
+              <>
+                <Divider />
+                <FormControl sx={{ my: 1 }}>
+                  <FormLabel
+                    sx={{ color: (theme) => theme.palette.text.primary }}
+                  >
+                    Select the children with {memberName} (optional)
+                  </FormLabel>
+                  <Typography variant="body2" py={1}>
+                    If no child is selected, the spouse will be added with no
+                    children.
+                  </Typography>
+                  <Select
+                    input={<OutlinedInput label="" />}
+                    labelId="add-member-select-small-label"
+                    id="add-member-multiple-checkbox"
+                    multiple
+                    value={selectedChildren?.map((member) => member.id) ?? []}
+                    label="Children"
+                    onChange={(event: SelectChangeEvent<string[]>) => {
+                      const value = event.target.value;
+                      const selectedIds =
+                        typeof value === 'string' ? value.split(',') : value;
+                      const selectedMembers = childrenNames.filter((member) =>
+                        selectedIds.includes(member.id),
+                      );
+                      setSelectedChildren(selectedMembers);
+                    }}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {childrenNames.map((member: MemberId) => (
                       <MenuItem key={member.id} value={member.id}>
                         {member.fullName}
                       </MenuItem>

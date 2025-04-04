@@ -151,14 +151,14 @@ export default function FamilyTreeOverview({
                     <EditIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Delete tree">
-                  <IconButton onClick={openDeleteTreeModal}>
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
                 <Tooltip title="Add a collaborator">
                   <IconButton onClick={openAddCollaboratorsModal}>
                     <PersonAddIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete tree">
+                  <IconButton onClick={openDeleteTreeModal}>
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </Box>

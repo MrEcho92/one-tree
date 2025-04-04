@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSnackbar } from 'notistack';
 import Box from '@mui/material/Box';
 import { Helmet } from 'react-helmet-async';
@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Header } from '../../dashbord/components';
 import { useAuth } from '../../../components/auth/AuthProvider';
-import { decodeToken } from '../../../utils';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import FormControl from '@mui/material/FormControl';
@@ -30,14 +29,14 @@ import {
 } from '../../../hooks';
 import CulturalAdminPanel from '../components/CulturalAdminPanel';
 import queryClient from '../../../core/http/react-query';
+import useIsAdmin from '../../../hooks/useIsAdmin';
 
 const AVAILABLE_ROLES = ['admin', 'user'];
 
 export default function AdminPage() {
   const { currentUser } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { isAdmin, loading } = useIsAdmin(currentUser);
   const [value, setValue] = useState('1');
 
   const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
@@ -62,22 +61,6 @@ export default function AdminPage() {
   const postsData = Posts as any;
 
   const updateMutation = useUpdateCulturalPostByAdmin();
-
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      if (!currentUser) {
-        setLoading(false);
-        return;
-      }
-
-      const token = await currentUser.getIdToken(true);
-      const decodedToken = decodeToken(token);
-
-      setIsAdmin(decodedToken.roles?.includes('admin')); // Check if "admin" is in roles
-      setLoading(false);
-    };
-    fetchUserRole();
-  }, [currentUser]);
 
   if (loading || isLoading) {
     return (

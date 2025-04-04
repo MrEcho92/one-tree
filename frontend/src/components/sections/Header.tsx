@@ -30,20 +30,6 @@ export function Header() {
     setOpenMenu(newOpen);
   };
 
-  const scrollToSection = (sectionId: string) => {
-    const sectionElement = document.getElementById(sectionId);
-    const offset = 128;
-    if (sectionElement) {
-      const targetScroll = sectionElement.offsetTop - offset;
-      sectionElement.scrollIntoView({ behavior: 'smooth' });
-      window.scrollTo({
-        top: targetScroll,
-        behavior: 'smooth',
-      });
-      setOpenMenu(false);
-    }
-  };
-
   return (
     <AppBar className="header-container">
       <Container maxWidth="xl">
@@ -70,32 +56,6 @@ export function Header() {
             {AppConfig.appName}
           </Typography>
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 4 }}>
-            <Button
-              variant="text"
-              size="small"
-              onClick={() => navigate('/')}
-              sx={{
-                color() {
-                  return theme.palette.primary.contrastText;
-                },
-              }}
-            >
-              {t('header:home')}
-            </Button>
-            <Button
-              variant="text"
-              size="small"
-              onClick={() => {
-                scrollToSection('features');
-              }}
-              sx={{
-                color() {
-                  return theme.palette.primary.contrastText;
-                },
-              }}
-            >
-              {t('header:ourFeatures')}
-            </Button>
             <Button
               variant="text"
               size="small"
@@ -149,7 +109,7 @@ export function Header() {
               </>
             ) : (
               <Button
-                variant="text"
+                variant="outlined"
                 color="secondary"
                 size="small"
                 onClick={() => navigate('/app')}
@@ -198,9 +158,6 @@ export function Header() {
                   }}
                 >
                   {t('header:home')}
-                </MenuItem>
-                <MenuItem onClick={() => scrollToSection('features')}>
-                  {t('header:ourFeatures')}
                 </MenuItem>
                 <MenuItem
                   onClick={() => {

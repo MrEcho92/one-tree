@@ -27,11 +27,12 @@
         }
     },
     "instructions": {
-        "gettingStarted": "Getting Started is Simple",
+        "gettingStarted": "Getting Started is Simple and Free",
         "steps": {
-            "stepOne": "Sign up with your credentials and verify your email account." ,
-            "stepTwo": "Build your family tree: Start mapping relationships, adding photos, and recording stories.",
-            "stepThree": "Share and collaborate: Work with family members to enrich your heritage archive."
+            "stepOne": "Sign in and start with what you know - Add your name, birth date, parents, and key details." ,
+            "stepTwo": "Expand your tree - Include grandparents, aunts, uncles, and extended family. Gather and add details from family records, photos, or stories.",
+            "stepThree": "Share and collaborate - Collaborate by inviting relatives to contribute. Share memories, documents, and updates.",
+            "stepFour": "Protect privacy - Choose to make your tree public or private."
         }
     }, 
     "feedbacks": {

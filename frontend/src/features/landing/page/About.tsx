@@ -110,76 +110,6 @@ export default function About() {
               py: 2,
             }}
           >
-            Who We Serve
-          </Typography>
-          <Typography
-            textAlign="center"
-            sx={{ lineHeight: { xs: 1.5, md: 2 } }}
-          >
-            We are building this platform for African diaspora families
-            worldwide who want to explore their roots, share cultural knowledge,
-            and stay connected across generations—no matter the distance.
-          </Typography>
-        </Container>
-      </Box>
-      <Box
-        id="about-section-4"
-        sx={{
-          width: '100%',
-          bgcolor: palette.primary.main,
-          py: 6,
-        }}
-      >
-        <Container maxWidth="md" sx={{ py: 6 }}>
-          <Typography
-            textAlign="center"
-            sx={{
-              color: palette.secondary.main,
-              fontSize: {
-                xs: typography.h4.fontSize,
-                md: typography.h3.fontSize,
-              },
-              fontWeight: { xs: 'none', md: typography.h1.fontWeight },
-              py: 2,
-            }}
-          >
-            Why It Matters
-          </Typography>
-          <Typography
-            textAlign="center"
-            sx={{
-              color: palette.primary.contrastText,
-              lineHeight: { xs: 1.5, md: 2 },
-            }}
-          >
-            Staying connected to family and culture can be challenging for many
-            in the African diaspora. Our platform provides a space to preserve
-            history, strengthen family bonds, and celebrate cultural
-            identity—all in one place.
-          </Typography>
-        </Container>
-      </Box>
-      <Box
-        id="about-section-5"
-        sx={{
-          width: '100%',
-          bgcolor: palette.primary.contrastText,
-          py: 6,
-        }}
-      >
-        <Container maxWidth="md" sx={{ py: 6 }}>
-          <Typography
-            textAlign="center"
-            sx={{
-              color: palette.primary.main,
-              fontSize: {
-                xs: typography.h4.fontSize,
-                md: typography.h3.fontSize,
-              },
-              fontWeight: { xs: 'none', md: typography.h1.fontWeight },
-              py: 2,
-            }}
-          >
             Our Team
           </Typography>
           <Typography
@@ -195,7 +125,7 @@ export default function About() {
         </Container>
       </Box>
       <Box
-        id="about-section-6"
+        id="about-section-4"
         sx={{
           width: '100%',
           py: 6,
