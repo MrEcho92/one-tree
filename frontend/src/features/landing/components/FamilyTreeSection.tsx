@@ -146,7 +146,7 @@ export function FamilyTreeSection() {
                 color="primary"
                 onClick={() => navigate('/sample-tree')}
               >
-                View sample trees
+                View Bob Marley's tree
               </Button>
             </Box>
           </Box>
