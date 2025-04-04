@@ -1,5 +1,4 @@
 import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -9,7 +8,6 @@ import { AppConfig } from '../../../core';
 
 export function WhyUS() {
   const { palette, typography } = useTheme();
-  const { t } = useTranslation(['common', 'landing']);
   return (
     <Box id="why-us">
       <Container

@@ -1,5 +1,4 @@
 import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -9,7 +8,6 @@ import Container from '@mui/material/Container';
 
 export function HubSection() {
   const { palette, typography } = useTheme();
-  const { t } = useTranslation('landing');
   const navigate = useNavigate();
   return (
     <Box

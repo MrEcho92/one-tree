@@ -137,7 +137,12 @@ export default function AddMemberDialog({
       );
       setChildrenNames(children);
     }
-  }, [treeMembers, isAddMemberOpen, selectedPerson?.spouse_id]);
+  }, [
+    treeMembers,
+    isAddMemberOpen,
+    selectedPerson?.spouse_id,
+    selectedPerson?.children_id,
+  ]);
 
   if (loading) {
     return (

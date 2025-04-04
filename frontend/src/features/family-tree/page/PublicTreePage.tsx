@@ -52,7 +52,7 @@ export default function PublicTreePage() {
       setFirstRootId(rootId);
       setRootId(rootId);
     }
-  }, []);
+  }, [membersData]);
 
   const resetRootHandler = useCallback(
     () => setRootId(firstRootId),
