@@ -1,9 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { useTheme } from '@mui/material';
+import { Button, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Drawer } from '@mui/material';
 import ReactFamilyTree from 'react-family-tree';
 import type { Node, ExtNode } from 'relatives-tree/lib/types';
@@ -27,6 +29,7 @@ import { AppConfig } from '../../../core/constants/constants';
 export default function PublicTreePage() {
   const { palette } = useTheme();
   const { openModal, closeModal } = useModal();
+  const navigate = useNavigate();
 
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -38,6 +41,7 @@ export default function PublicTreePage() {
 
   useEffect(() => {
     if (membersData) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       const tree = membersData as any;
       const members = tree ?? [];
       const nodesData = transformNodeData(members);
@@ -95,6 +99,16 @@ export default function PublicTreePage() {
           py: 3,
         }}
       >
+        <Box display="flex" sx={{ position: 'absolute', left: 20 }}>
+          <Button
+            variant="text"
+            startIcon={<ArrowBackIcon />}
+            sx={{ color: palette.primary.contrastText }}
+            onClick={() => navigate('/')}
+          >
+            Back
+          </Button>
+        </Box>
         <Typography color="primary.contrastText" fontWeight={600}>
           You are viewing Bob Marley's family tree
         </Typography>

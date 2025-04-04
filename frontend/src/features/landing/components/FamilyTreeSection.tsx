@@ -144,7 +144,7 @@ export function FamilyTreeSection() {
               <Button
                 variant="outlined"
                 color="primary"
-                onClick={() => navigate('/sample-trees')}
+                onClick={() => navigate('/sample-tree')}
               >
                 View sample trees
               </Button>

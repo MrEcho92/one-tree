@@ -20,7 +20,7 @@ export const publicRoutes: RouteObject[] = [
         element: <LandingRoutes />,
       },
       {
-        path: '/sample-trees',
+        path: '/sample-tree',
         element: <PublicTreePage />,
       },
       {
