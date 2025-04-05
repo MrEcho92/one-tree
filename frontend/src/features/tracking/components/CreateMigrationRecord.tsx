@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,8 @@ export default function CreateMigrationRecord() {
   const navigate = useNavigate();
   const mutation = useCreateMigrationRecord();
 
+  const [loading, setLoading] = useState<boolean>(false);
+  
   const onSubmit = async (data: CreateMigrationRecordFormType) => {
     if (!currentUser) {
       return;
@@ -34,9 +37,10 @@ export default function CreateMigrationRecord() {
       description: data.description,
       created_by: currentUser.uid,
     };
-
+    setLoading(true);
     mutation.mutate(payload, {
       onSuccess: (response: ApiResponse<{ id: string }>) => {
+        setLoading(false);
         enqueueSnackbar('Migration record added successfully', {
           variant: 'success',
         });
@@ -49,6 +53,7 @@ export default function CreateMigrationRecord() {
         closeModal?.();
       },
       onError: (error) => {
+        setLoading(false);
         console.error('Error creating migration record:', error);
         enqueueSnackbar(`Error creating migration record: ${error.message}`, {
           variant: 'error',
@@ -119,7 +124,7 @@ export default function CreateMigrationRecord() {
           />
         )}
       />
-      <Button type="submit" variant="contained" color="primary" fullWidth>
+      <Button type="submit" variant="contained" color="primary" fullWidth loading={loading}>
         Create Record
       </Button>
     </Box>
