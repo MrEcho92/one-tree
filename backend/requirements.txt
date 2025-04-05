@@ -7,6 +7,7 @@ mypy==0.910
 pydantic-settings==2.2.1
 pydantic[email]
 python-multipart
+slowapi==0.1.9
 
 # dev packages
 pytest==7.4.3

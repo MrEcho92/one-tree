@@ -10,6 +10,7 @@ from fastapi import (
     Form,
     HTTPException,
     Query,
+    Request,
     UploadFile,
     status,
 )
@@ -41,6 +42,7 @@ bucket_name = os.getenv("FIREBASE_STORAGE_BUCKET")
     status_code=status.HTTP_200_OK,
 )
 async def get_contexts(
+    request: Request,
     q: Optional[str] = Query(None, description="Search query for title and tags"),
     latest: bool = Query(False, description="Get latest posts first"),
     limit: int = Query(10, ge=1, le=100, description="Number of items per page"),
@@ -121,6 +123,7 @@ async def get_contexts(
     status_code=status.HTTP_200_OK,
 )
 async def get_cultural_posts_admin(
+    request: Request,
     current_user=Depends(check_roles(["admin"])),
     db=Depends(get_db),
 ) -> list[CulturalContextAdminResponse]:
@@ -143,7 +146,10 @@ async def get_cultural_posts_admin(
     status_code=status.HTTP_200_OK,
 )
 async def get_user_contexts(
-    user_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+    request: Request,
+    user_id: str,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> List[CulturalContext]:
     """Get all cultural contexts by a user"""
     try:
@@ -173,6 +179,7 @@ async def get_user_contexts(
     status_code=status.HTTP_200_OK,
 )
 async def get_context_by_id(
+    request: Request,
     context_id: str,
     db=Depends(get_db),
     current_user: Optional[dict] = Depends(verify_firebase_token),
@@ -206,6 +213,7 @@ async def get_context_by_id(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_context(
+    request: Request,
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
     name: str = Form(...),
@@ -288,6 +296,7 @@ async def create_context(
     status_code=status.HTTP_200_OK,
 )
 async def update_context(
+    request: Request,
     context_id: str,
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
@@ -389,6 +398,7 @@ async def update_context(
     status_code=status.HTTP_200_OK,
 )
 async def update_context_admin(
+    request: Request,
     current_user=Depends(check_roles(["admin"])),
     db=Depends(get_db),
     updated_by: str = Form(...),
@@ -431,7 +441,10 @@ async def update_context_admin(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_context(
-    context_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+    request: Request,
+    context_id: str,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> None:
     """Delete a cultural context by ID"""
     try:

@@ -1,6 +1,4 @@
-from typing import Optional
-
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from firebase_admin import firestore
 
 from app.common.firebase import verify_firebase_token
@@ -22,6 +20,7 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
 )
 async def create_migration_record(
+    request: Request,
     record: CreateMigrationRecordSchema,
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
@@ -61,6 +60,7 @@ async def create_migration_record(
     status_code=status.HTTP_200_OK,
 )
 async def get_migration_records(
+    request: Request,
     user_id: str,
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
@@ -93,6 +93,7 @@ async def get_migration_records(
     status_code=status.HTTP_200_OK,
 )
 async def get_migration_records(
+    request: Request,
     record_id: str,
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
@@ -129,6 +130,7 @@ async def get_migration_records(
     status_code=status.HTTP_200_OK,
 )
 async def update_migration_record(
+    request: Request,
     record_id: str,
     record_update: MigrationRecordUpdateSchema,
     current_user=Depends(verify_firebase_token),
@@ -167,7 +169,10 @@ async def update_migration_record(
 
 @router.delete("/migration-records/{record_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_migration_record(
-    record_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+    request: Request,
+    record_id: str,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> None:
     try:
         record_ref = db.collection(MIGRATION_RECORDS).document(record_id)
