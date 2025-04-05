@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import {
@@ -106,6 +107,23 @@ export default function HubDetails() {
   }
   return (
     <Box mt="64px">
+      <Helmet>
+        <title>
+          {postDetails.title} | {AppConfig.appName}
+        </title>
+        <meta
+          name="description"
+          content={`View cultural post for ${postDetails.title}`}
+        />
+        <meta
+          property="og:title"
+          content={`${AppConfig.appName} | ${postDetails.title} - Cultural post`}
+        />
+        <meta
+          property="og:description"
+          content={`View cultural post for ${postDetails.title}`}
+        />
+      </Helmet>
       <Container
         maxWidth="lg"
         component="main"
