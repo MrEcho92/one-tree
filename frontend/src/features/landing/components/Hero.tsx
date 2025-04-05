@@ -92,7 +92,7 @@ export function Hero() {
             color="secondary"
             sx={{
               fontSize: {
-                xs: '0.625rem',
+                xs: '0.6rem',
                 md: typography.body1.fontSize,
               },
               color: palette.primary.main,
@@ -107,7 +107,7 @@ export function Hero() {
             color="secondary"
             sx={{
               fontSize: {
-                xs: '0.625rem',
+                xs: '0.6rem',
                 md: typography.body1.fontSize,
               },
               color: palette.primary.main,
@@ -123,7 +123,7 @@ export function Hero() {
             color="secondary"
             sx={{
               fontSize: {
-                xs: '0.625rem',
+                xs: '0.6rem',
                 md: typography.body1.fontSize,
               },
               color: palette.primary.main,

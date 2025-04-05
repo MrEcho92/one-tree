@@ -65,6 +65,7 @@ export function AppNavBar() {
             spacing={1}
             sx={{ justifyContent: 'center', mr: 'auto' }}
           >
+            {/* TODO: Replace icon with logo */}
             <CustomIcon />
             <Typography
               variant="h4"

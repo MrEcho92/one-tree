@@ -27,7 +27,7 @@ import PublicTreeCTA from '../components/PublicTreeCTA';
 import { AppConfig } from '../../../core/constants/constants';
 
 export default function PublicTreePage() {
-  const { palette } = useTheme();
+  const { palette, typography } = useTheme();
   const { openModal, closeModal } = useModal();
   const navigate = useNavigate();
 
@@ -99,7 +99,7 @@ export default function PublicTreePage() {
           py: 3,
         }}
       >
-        <Box display="flex" sx={{ position: 'absolute', left: 20 }}>
+        <Box sx={{ position: 'absolute', left: { xs: 5, md: 20 } }}>
           <Button
             variant="text"
             startIcon={<ArrowBackIcon />}
@@ -109,7 +109,17 @@ export default function PublicTreePage() {
             Back
           </Button>
         </Box>
-        <Typography color="primary.contrastText" fontWeight={600}>
+        <Typography
+          color="primary.contrastText"
+          sx={{
+            fontSize: {
+              xs: typography.body2.fontSize,
+              md: typography.body1.fontSize,
+            },
+            fontWeight: { xs: 'none', md: typography.h1.fontWeight },
+            mr: { xs: '-40px' },
+          }}
+        >
           You are viewing Bob Marley's family tree
         </Typography>
       </Box>

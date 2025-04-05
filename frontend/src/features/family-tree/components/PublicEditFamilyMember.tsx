@@ -101,7 +101,7 @@ export default function PublicEditFamilyMember({
                   </IconButton>
                 </Tooltip>
               </Box>
-              <Typography variant="caption"> Add family member</Typography>
+              <Typography variant="caption">Add family member</Typography>
             </Box>
           </Box>
         </Box>
@@ -145,7 +145,7 @@ export default function PublicEditFamilyMember({
             size="small"
             color="info"
             disableElevation
-            onClick={() => navigate('/auth/signup')}
+            onClick={() => navigate('/app')}
           >
             Sign up for more
           </Button>
