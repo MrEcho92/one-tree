@@ -1,7 +1,7 @@
 import logging
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from firebase_admin import firestore
 
 from app.common.firebase import verify_firebase_token
@@ -31,6 +31,7 @@ from app.schemas.tree_schemas import (
 )
 
 router = APIRouter()
+
 logger = logging.getLogger(__name__)
 
 
@@ -49,6 +50,7 @@ def fetch_members(members_data: List[str], db: Any):
     status_code=status.HTTP_200_OK,
 )
 async def get_user_trees(
+    request: Request,
     user_id: str,
     collaborator: Optional[str] = Query(None),
     current_user=Depends(verify_firebase_token),
@@ -91,7 +93,10 @@ async def get_user_trees(
     status_code=status.HTTP_200_OK,
 )
 async def get_family_tree(
-    tree_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+    request: Request,
+    tree_id: str,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> FamilyTree:
     """Get a family tree by ID"""
     try:
@@ -123,6 +128,7 @@ async def get_family_tree(
 
 @router.post("/trees", response_model=FamilyTree, status_code=status.HTTP_201_CREATED)
 async def create_tree_with_members(
+    request: Request,
     family_tree: CreateFamilyTreeSchema,
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
@@ -216,6 +222,7 @@ async def create_tree_with_members(
     status_code=status.HTTP_200_OK,
 )
 async def add_collaborator(
+    request: Request,
     tree_id: str,
     data: AddCollaboratorSchema,
     current_user=Depends(verify_firebase_token),
@@ -266,6 +273,7 @@ async def add_collaborator(
     status_code=status.HTTP_201_CREATED,
 )
 async def add_member_tree(
+    request: Request,
     tree_id: str,
     member: AddPersonSchema,
     relation: RelationToMemberSchema,
@@ -411,12 +419,12 @@ async def add_member_tree(
                     # update spouse fields
                     update_relation(person.id, "spouse_id", spouse_id)
                     update_relation(spouse_id, "spouse_id", person.id)
-        
+
         # Update parent field of children for when adding spouse
         if relation.rel == RelationType.SPOUSE:
-            parent_gender = 'father_id' if member.gender == 'male' else 'mother_id'
+            parent_gender = "father_id" if member.gender == "male" else "mother_id"
             for child_id in member.children_id:
-                update_relation(child_id, parent_gender, person.id)   
+                update_relation(child_id, parent_gender, person.id)
 
         # Fetch updated tree members
         tree_data = tree_ref.get().to_dict()
@@ -435,6 +443,7 @@ async def add_member_tree(
     status_code=status.HTTP_200_OK,
 )
 async def update_tree(
+    request: Request,
     tree_id: str,
     tree_data: UpdateTreeSchema,
     current_user=Depends(verify_firebase_token),
@@ -478,6 +487,7 @@ async def update_tree(
     status_code=status.HTTP_200_OK,
 )
 async def update_member(
+    request: Request,
     member: UpdatePersonSchema,
     person_id: str,
     current_user=Depends(verify_firebase_token),
@@ -525,7 +535,10 @@ async def update_member(
 
 @router.delete("/trees/{tree_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tree(
-    tree_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+    request: Request,
+    tree_id: str,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> None:
     """Delete a family tree"""
     try:
@@ -573,6 +586,7 @@ async def delete_tree(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_tree_member(
+    request: Request,
     tree_id: str,
     item: DeleteMemberSchema,
     current_user=Depends(verify_firebase_token),
@@ -684,7 +698,10 @@ async def delete_tree_member(
     status_code=status.HTTP_200_OK,
 )
 async def get_family_stories(
-    tree_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+    request: Request,
+    tree_id: str,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> List[FamilyStoriesSchema]:
     """Get all family stories for a specific family tree"""
     try:
@@ -718,7 +735,10 @@ async def get_family_stories(
     status_code=status.HTTP_200_OK,
 )
 async def get_family_tree_by_id(
-    story_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+    request: Request,
+    story_id: str,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> FamilyStory:
     """Get a family story by ID"""
     try:
@@ -758,6 +778,7 @@ async def get_family_tree_by_id(
     "/stories", response_model=FamilyStory, status_code=status.HTTP_201_CREATED
 )
 async def add_family_story(
+    request: Request,
     story: AddFamilyStorySchema,
     current_user=Depends(verify_firebase_token),
     db=Depends(get_db),
@@ -811,6 +832,7 @@ async def add_family_story(
     status_code=status.HTTP_200_OK,
 )
 async def update_family_story(
+    request: Request,
     story_id: str,
     updated_data: UpdatedFamilyStorySchema,
     current_user=Depends(verify_firebase_token),
@@ -847,7 +869,10 @@ async def update_family_story(
 
 @router.delete("/stories/{story_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_family_story(
-    story_id: str, current_user=Depends(verify_firebase_token), db=Depends(get_db)
+    request: Request,
+    story_id: str,
+    current_user=Depends(verify_firebase_token),
+    db=Depends(get_db),
 ) -> None:
     """Delete a family story"""
     try:

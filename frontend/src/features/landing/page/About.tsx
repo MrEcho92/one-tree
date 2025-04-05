@@ -63,17 +63,23 @@ export default function About() {
       >
         <Container
           maxWidth="md"
-          sx={{ bgcolor: palette.secondary.main, p: 8, my: 2, borderRadius: 2 }}
+          sx={{
+            bgcolor: palette.primary.light,
+            p: 8,
+            my: 2,
+            borderRadius: 5,
+            color: palette.primary.contrastText,
+          }}
         >
           <Typography
             textAlign="center"
             sx={{
-              color: palette.primary.dark,
               fontSize: {
                 xs: typography.h4.fontSize,
                 md: typography.h3.fontSize,
               },
               fontWeight: { xs: 'none', md: typography.h1.fontWeight },
+              mb: 2,
             }}
           >
             Our Mission
@@ -164,7 +170,7 @@ export default function About() {
           <Button
             sx={{ mt: 2 }}
             variant="text"
-            onClick={() => navigate('/auth/signup')}
+            onClick={() => navigate('/app')}
           >
             START YOUR JOURNEY
           </Button>
