@@ -94,7 +94,7 @@ export function CulturalPage() {
     remainingPosts = Posts?.cultural_contexts?.slice(3) || [];
   }
   return (
-    <Box mt="64px" sx={{ height: '80vh' }}>
+    <Box mt="64px" sx={{ height: '100vh' }}>
       <Helmet>
         <title>Cultural Hub | {AppConfig.appName}</title>
         <meta

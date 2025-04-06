@@ -41,179 +41,185 @@ export function Header() {
             display: 'flex',
           }}
         >
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            {AppConfig.appName}
-          </Typography>
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 4 }}>
-            <Button
-              variant="text"
-              size="small"
-              onClick={() => navigate('/hub')}
+          <Box>
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href="/"
               sx={{
-                color() {
-                  return theme.palette.primary.contrastText;
-                },
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
               }}
             >
-              {t('header:hub')}
-            </Button>
-            <Button
-              variant="text"
-              size="small"
-              onClick={() => navigate('/about')}
-              sx={{
-                color() {
-                  return theme.palette.primary.contrastText;
-                },
-              }}
-            >
-              {t('header:aboutUs')}
-            </Button>
+              {AppConfig.appName}
+            </Typography>
           </Box>
-          <Box
-            sx={{
-              display: { xs: 'none', md: 'flex' },
-              gap: 1,
-              alignItems: 'center',
-            }}
-          >
-            {!isAuthenticated ? (
-              <>
-                <Button
-                  variant="text"
-                  color="secondary"
-                  size="small"
-                  onClick={() => navigate('/auth/login')}
-                >
-                  {t('common:login')}
-                </Button>
+          <Box>
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 4 }}>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => navigate('/hub')}
+                sx={{
+                  color() {
+                    return theme.palette.primary.contrastText;
+                  },
+                }}
+              >
+                {t('header:hub')}
+              </Button>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => navigate('/about')}
+                sx={{
+                  color() {
+                    return theme.palette.primary.contrastText;
+                  },
+                }}
+              >
+                {t('header:aboutUs')}
+              </Button>
+            </Box>
+          </Box>
+          <Box>
+            <Box
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+                gap: 1,
+                alignItems: 'center',
+              }}
+            >
+              {!isAuthenticated ? (
+                <>
+                  <Button
+                    variant="text"
+                    color="secondary"
+                    size="small"
+                    onClick={() => navigate('/auth/login')}
+                  >
+                    {t('common:login')}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    size="small"
+                    onClick={() => navigate('/auth/signup')}
+                  >
+                    {t('common:signUp')}
+                  </Button>
+                </>
+              ) : (
                 <Button
                   variant="outlined"
                   color="secondary"
                   size="small"
-                  onClick={() => navigate('/auth/signup')}
+                  onClick={() => navigate('/app')}
+                  startIcon={<DashboardCustomizeIcon />}
                 >
-                  {t('common:signUp')}
+                  {t('common:GoToDashboard')}
                 </Button>
-              </>
-            ) : (
-              <Button
-                variant="outlined"
-                color="secondary"
-                size="small"
-                onClick={() => navigate('/app')}
-                startIcon={<DashboardCustomizeIcon />}
-              >
-                {t('common:GoToDashboard')}
-              </Button>
-            )}
-          </Box>
+              )}
+            </Box>
 
-          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <Button
-              variant="text"
-              color="secondary"
-              aria-label="menu"
-              onClick={toggleDrawer(true)}
-              sx={{ minWidth: '30px', p: '4px' }}
-            >
-              <MenuIcon />
-            </Button>
-            <Drawer
-              anchor="right"
-              open={openMenu}
-              onClose={toggleDrawer(false)}
-            >
-              <Box
-                sx={{
-                  minWidth: '60dvw',
-                  p: 2,
-                  backgroundColor: 'background.paper',
-                  flexGrow: 1,
-                }}
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <Button
+                variant="text"
+                color="secondary"
+                aria-label="menu"
+                onClick={toggleDrawer(true)}
+                sx={{ minWidth: '30px', p: '4px' }}
+              >
+                <MenuIcon />
+              </Button>
+              <Drawer
+                anchor="right"
+                open={openMenu}
+                onClose={toggleDrawer(false)}
               >
                 <Box
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'end',
+                    minWidth: '60dvw',
+                    p: 2,
+                    backgroundColor: 'background.paper',
                     flexGrow: 1,
                   }}
-                ></Box>
-                <MenuItem
-                  onClick={() => {
-                    navigate('/');
-                    setOpenMenu(false);
-                  }}
                 >
-                  {t('header:home')}
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    navigate('/hub');
-                    setOpenMenu(false);
-                  }}
-                >
-                  {t('header:hub')}
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    navigate('/about');
-                    setOpenMenu(false);
-                  }}
-                >
-                  {t('header:aboutUs')}
-                </MenuItem>
-                <Divider />
-                {!isAuthenticated ? (
-                  <>
-                    <MenuItem>
-                      <Button
-                        color="primary"
-                        variant="contained"
-                        sx={{ width: '100%' }}
-                        onClick={() => navigate('/auth/signup')}
-                      >
-                        {t('common:signUp')}
-                      </Button>
-                    </MenuItem>
-                    <MenuItem>
-                      <Button
-                        color="primary"
-                        variant="outlined"
-                        sx={{ width: '100%' }}
-                        onClick={() => navigate('/auth/login')}
-                      >
-                        {t('common:login')}
-                      </Button>
-                    </MenuItem>
-                  </>
-                ) : (
-                  <MenuItem>
-                    <Button
-                      color="primary"
-                      variant="text"
-                      sx={{ width: '100%' }}
-                      onClick={() => navigate('/app')}
-                      startIcon={<DashboardCustomizeIcon />}
-                    >
-                      {t('common:GoToDashboard')}
-                    </Button>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'end',
+                      flexGrow: 1,
+                    }}
+                  ></Box>
+                  <MenuItem
+                    onClick={() => {
+                      navigate('/');
+                      setOpenMenu(false);
+                    }}
+                  >
+                    {t('header:home')}
                   </MenuItem>
-                )}
-              </Box>
-            </Drawer>
+                  <MenuItem
+                    onClick={() => {
+                      navigate('/hub');
+                      setOpenMenu(false);
+                    }}
+                  >
+                    {t('header:hub')}
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      navigate('/about');
+                      setOpenMenu(false);
+                    }}
+                  >
+                    {t('header:aboutUs')}
+                  </MenuItem>
+                  <Divider />
+                  {!isAuthenticated ? (
+                    <>
+                      <MenuItem>
+                        <Button
+                          color="primary"
+                          variant="contained"
+                          sx={{ width: '100%' }}
+                          onClick={() => navigate('/auth/signup')}
+                        >
+                          {t('common:signUp')}
+                        </Button>
+                      </MenuItem>
+                      <MenuItem>
+                        <Button
+                          color="primary"
+                          variant="outlined"
+                          sx={{ width: '100%' }}
+                          onClick={() => navigate('/auth/login')}
+                        >
+                          {t('common:login')}
+                        </Button>
+                      </MenuItem>
+                    </>
+                  ) : (
+                    <MenuItem>
+                      <Button
+                        color="primary"
+                        variant="text"
+                        sx={{ width: '100%' }}
+                        onClick={() => navigate('/app')}
+                        startIcon={<DashboardCustomizeIcon />}
+                      >
+                        {t('common:GoToDashboard')}
+                      </Button>
+                    </MenuItem>
+                  )}
+                </Box>
+              </Drawer>
+            </Box>
           </Box>
         </Toolbar>
       </Container>

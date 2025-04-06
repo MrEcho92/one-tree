@@ -83,7 +83,9 @@ export function Hero() {
         <Box
           sx={{
             display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
             justifyContent: 'center',
+            alignItems: 'center',
             gap: { xs: 2, md: 4 },
           }}
         >
@@ -92,9 +94,11 @@ export function Hero() {
             color="secondary"
             sx={{
               fontSize: {
-                xs: '0.6rem',
+                xs: '0.8rem',
+                sm: '0.9rem',
                 md: typography.body1.fontSize,
               },
+              width: { xs: '100%', sm: 'auto' },
               color: palette.primary.main,
             }}
             disableElevation
@@ -107,9 +111,11 @@ export function Hero() {
             color="secondary"
             sx={{
               fontSize: {
-                xs: '0.6rem',
+                xs: '0.8rem',
+                sm: '0.9rem',
                 md: typography.body1.fontSize,
               },
+              width: { xs: '100%', sm: 'auto' },
               color: palette.primary.main,
             }}
             disableElevation
@@ -123,9 +129,11 @@ export function Hero() {
             color="secondary"
             sx={{
               fontSize: {
-                xs: '0.6rem',
+                xs: '0.8rem',
+                sm: '0.9rem',
                 md: typography.body1.fontSize,
               },
+              width: { xs: '100%', sm: 'auto' },
               color: palette.primary.main,
             }}
             disableElevation

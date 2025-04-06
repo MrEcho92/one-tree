@@ -6,10 +6,14 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { AppConfig } from '../../../core';
 import Button from '@mui/material/Button';
+import { useEffect } from 'react';
 
 export default function About() {
   const { palette, typography } = useTheme();
   const navigate = useNavigate();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
   return (
     <Box
       sx={{
