@@ -28,6 +28,7 @@ if ENV == "prod":
     ALLOWED_ORIGINS = [
         "https://one-tree-2025.web.app",
         "https://one-tree-2025.firebaseapp.com",
+        "https://legacy-ties.com",
     ]
 else:  # Development mode
     ALLOWED_ORIGINS = [
