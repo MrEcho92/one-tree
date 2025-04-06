@@ -1,7 +1,7 @@
 export const AppConfig = {
-  appName: 'Onetree',
-  SITE_NAME: 'OneTree',
-  appContactEmail: 'onetree@mail.com',
+  appName: 'Legacy Ties',
+  SITE_NAME: 'legacy-ties',
+  appContactEmail: 'contact@legacy-ties.com',
 };
 
 export const envVariables = {

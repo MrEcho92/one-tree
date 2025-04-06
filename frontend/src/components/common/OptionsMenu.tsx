@@ -13,6 +13,7 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MenuButton from './MenuButton';
 import { useAuth } from '../auth/AuthProvider';
+import { AppConfig } from '../../core';
 
 const MenuItem = styled(MuiMenuItem)({
   margin: '2px 0',
@@ -66,7 +67,7 @@ export default function OptionsMenu() {
             handleClose();
           }}
         >
-          Onetree
+          {AppConfig.appName}
         </MenuItem>
         <MenuItem
           onClick={() => {

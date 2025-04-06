@@ -103,7 +103,7 @@ export function CulturalPage() {
         />
         <meta
           property="og:title"
-          content={`${AppConfig.appName} - Dashboard`}
+          content={`${AppConfig.appName} - Cultural Hub`}
         />
         <meta
           property="og:description"

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import {
@@ -38,6 +40,7 @@ import ErrorDisplay from '../../../components/common/ErrorDisplay';
 export default function HubDetails() {
   const { contextId } = useParams();
   const navigate = useNavigate();
+  const { typography } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
 
   const [url, setUrl] = useState('');
@@ -106,6 +109,23 @@ export default function HubDetails() {
   }
   return (
     <Box mt="64px">
+      <Helmet>
+        <title>
+          {postDetails.title} | {AppConfig.appName}
+        </title>
+        <meta
+          name="description"
+          content={`View cultural post for ${postDetails.title}`}
+        />
+        <meta
+          property="og:title"
+          content={`${AppConfig.appName} | ${postDetails.title} - Cultural post`}
+        />
+        <meta
+          property="og:description"
+          content={`View cultural post for ${postDetails.title}`}
+        />
+      </Helmet>
       <Container
         maxWidth="lg"
         component="main"
@@ -128,7 +148,16 @@ export default function HubDetails() {
             }}
           >
             <Box>
-              <Typography variant="h1" gutterBottom>
+              <Typography
+                sx={{
+                  fontSize: {
+                    xs: typography.h3.fontSize,
+                    md: typography.h2.fontSize,
+                  },
+                  fontWeight: typography.h1.fontWeight,
+                }}
+                gutterBottom
+              >
                 {postDetails?.title}
               </Typography>
               <Box display="flex" gap={1}>
@@ -151,12 +180,15 @@ export default function HubDetails() {
                 alt="cultural details image"
                 image={postDetails?.image_url}
                 sx={{
-                  aspectRatio: '16 / 9',
+                  aspectRatio: { sm: '16 / 9', md: '1 / 1' },
+                  objectFit: 'cover',
                   borderBottom: '1px solid',
                   borderColor: 'divider',
                   width: '100%',
                   maxWidth: '600px',
+                  maxHeight: { xs: 300, md: 500 },
                   margin: '0 auto',
+                  display: 'block',
                 }}
               />
             )}
