@@ -27,7 +27,7 @@ export default function CreateMigrationRecord() {
   const mutation = useCreateMigrationRecord();
 
   const [loading, setLoading] = useState<boolean>(false);
-  
+
   const onSubmit = async (data: CreateMigrationRecordFormType) => {
     if (!currentUser) {
       return;
@@ -124,7 +124,13 @@ export default function CreateMigrationRecord() {
           />
         )}
       />
-      <Button type="submit" variant="contained" color="primary" fullWidth loading={loading}>
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        loading={loading}
+      >
         Create Record
       </Button>
     </Box>
