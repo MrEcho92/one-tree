@@ -341,9 +341,15 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                         value={field.value}
                         onChange={field.onChange}
                         style={{ height: 'calc(100vh - 400px)' }}
+                        placeholder="Write something"
                         modules={{
                           toolbar: [
-                            [{ header: '1' }, { header: '2' }],
+                            [
+                              { header: '1' },
+                              { header: '2' },
+                              { header: '3' },
+                              { header: '4' },
+                            ],
                             [{ size: [] }],
                             [
                               'bold',
@@ -373,8 +379,9 @@ export default function CreateCulturalPost({ post }: CreateCulturalPostProps) {
                           'blockquote',
                           'list',
                           'indent',
-                          // 'image',
-                          // 'video',
+                          'color',
+                          'image',
+                          'video',
                         ]}
                       />
                     )}
