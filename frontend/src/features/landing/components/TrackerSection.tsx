@@ -124,7 +124,7 @@ export function TrackerSection() {
                 onClick={() => navigate('/app')}
                 disableElevation
               >
-                Build a migration timeline
+                Build your migration timeline
               </Button>
             </div>
           </Box>

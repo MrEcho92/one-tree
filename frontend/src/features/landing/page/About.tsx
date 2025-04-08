@@ -12,7 +12,10 @@ export default function About() {
   const { palette, typography } = useTheme();
   const navigate = useNavigate();
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    scrollToTop();
   }, []);
   return (
     <Box
