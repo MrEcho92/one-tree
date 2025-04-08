@@ -347,40 +347,46 @@ async def update_context(
         if link_url:
             updated_context_data["link_url"] = link_url
 
-        for file_key in ["image_url", "video_url", "audio_url"]:
-            old_url = context_data.get(file_key)
-            if old_url:
-                updated_context_data[file_key] = None
-                parsed_url = urlparse(old_url)
-                path_parts = parsed_url.path.lstrip("/").split("/")
-
-                if bucket_name in path_parts:
-                    index = path_parts.index(bucket_name) + 1
-                    blob_name = "/".join(path_parts[index:])
-                    delete_blob(blob_name)
-                else:
-                    raise Exception(f"Invalid Storage URL format: {old_url}")
-
-        if video_file:
-            video_url = upload_to_gcs(
-                video_file,
-                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/videos/{video_file.filename}",
-            )
-            updated_context_data["video_url"] = video_url
+        new_file = None
+        new_file_type = None
 
         if image_file:
-            image_url = upload_to_gcs(
-                image_file,
-                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/images/{image_file.filename}",
-            )
-            updated_context_data["image_url"] = image_url
+            new_file = image_file
+            new_file_type = "image"
+        elif video_file:
+            new_file = video_file
+            new_file_type = "video"
+        elif audio_file:
+            new_file = audio_file
+            new_file_type = "audio"
 
-        if audio_file:
-            audio_url = upload_to_gcs(
-                audio_file,
-                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/audio/{audio_file.filename}",
+        if new_file:
+            for field in ["image_url", "video_url", "audio_url"]:
+                old_url = context_data.get(field)
+                if old_url:
+                    try:
+                        parsed_url = urlparse(old_url)
+                        path_parts = parsed_url.path.lstrip("/").split("/")
+
+                        if bucket_name in path_parts:
+                            index = path_parts.index(bucket_name) + 1
+                            blob_name = "/".join(path_parts[index:])
+                            delete_blob(blob_name)
+                        else:
+                            raise Exception(
+                                f"Warning: Invalid Storage URL format: {old_url}"
+                            )
+                    except Exception as e:
+                        print(f"Error deleting old file: {str(e)}")
+                        raise Exception(f"Error deleting old file: {str(e)}")
+
+                    updated_context_data[field] = None
+
+            new_url = upload_to_gcs(
+                new_file,
+                f"{CULTURAL_CONTEXT_GCP_PATH}/{context_id}/{new_file_type}s/{new_file.filename}",
             )
-            updated_context_data["audio_url"] = audio_url
+            updated_context_data[f"{new_file_type}_url"] = new_url
 
         context_ref.update(updated_context_data)
 
