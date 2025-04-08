@@ -2,8 +2,6 @@ import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid2';
-import familyLogo from '../assets/black-family.png';
 import { AppConfig } from '../../../core';
 
 export function WhyUS() {
@@ -57,65 +55,39 @@ export function WhyUS() {
             and who we are.
           </Typography>
         </Box>
-        <Grid container spacing={3} alignItems="center" justifyContent="center">
-          <Grid size={{ xs: 12, sm: 12, md: 6 }}>
-            <Box
+        <Container maxWidth="md">
+          <Box
+            sx={{
+              p: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
+              textAlign: 'center',
+            }}
+          >
+            <Typography
               sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 4,
-                textAlign: 'center',
+                fontSize: {
+                  xs: typography.h4.fontSize,
+                  md: typography.h2.fontSize,
+                },
+                fontWeight: {
+                  xs: typography.h3.fontWeight,
+                  md: typography.h1.fontWeight,
+                },
+                color: palette.primary.main,
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: {
-                    xs: typography.h4.fontSize,
-                    md: typography.h2.fontSize,
-                  },
-                  fontWeight: {
-                    xs: typography.h3.fontWeight,
-                    md: typography.h1.fontWeight,
-                  },
-                  color: palette.primary.main,
-                }}
-              >
-                We protect your privacy.
-              </Typography>
-              <Typography lineHeight={1.75}>
-                Your personal and family data is never sold. Information about
-                living relatives stays private unless you share it or make it
-                public. We protect your data with encryption, secure login, and
-                regular security updates.
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid size={{ sm: 12, md: 6 }}>
-            <Box
-              sx={{
-                flexBasis: { xs: '100%', md: '50%' },
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100%',
-                py: { xs: 2, md: 0 },
-              }}
-            >
-              <img
-                src={familyLogo}
-                alt="beautiful family smiling"
-                loading="lazy"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'fill',
-                  borderRadius: '50%',
-                }}
-              />
-            </Box>
-          </Grid>
-        </Grid>
+              We protect your privacy
+            </Typography>
+            <Typography lineHeight={1.75}>
+              Your personal and family data is never sold. Information about
+              living relatives stays private unless you share it or make it
+              public. We protect your data with encryption, secure login, and
+              regular security updates.
+            </Typography>
+          </Box>
+        </Container>
       </Container>
     </Box>
   );

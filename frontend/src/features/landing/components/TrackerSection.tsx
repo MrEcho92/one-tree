@@ -121,10 +121,10 @@ export function TrackerSection() {
                   width: 'auto',
                   color: palette.primary.main,
                 }}
-                onClick={() => navigate('/hub')}
+                onClick={() => navigate('/app')}
                 disableElevation
               >
-                Build a migration timeline
+                Build your migration timeline
               </Button>
             </div>
           </Box>
