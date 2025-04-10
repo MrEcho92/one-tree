@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { Box, Container, Link, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import TwitterIcon from '@mui/icons-material/X';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import XIcon from '@mui/icons-material/X';
 import { AppConfig } from '../../core/constants';
 
 function Copyright() {
@@ -76,20 +77,29 @@ export function Footer() {
           <IconButton
             color="inherit"
             size="small"
-            href="/"
+            href={`${AppConfig.socials.X}`}
             aria-label="X"
             sx={{ alignSelf: 'center' }}
           >
-            <TwitterIcon />
+            <XIcon />
           </IconButton>
           <IconButton
             color="inherit"
             size="small"
-            href="/"
-            aria-label="LinkedIn"
+            href={`${AppConfig.socials.facebook}`}
+            aria-label="Facebook"
             sx={{ alignSelf: 'center' }}
           >
-            <LinkedInIcon />
+            <FacebookIcon />
+          </IconButton>
+          <IconButton
+            color="inherit"
+            size="small"
+            href={`${AppConfig.socials.instagram}`}
+            aria-label="Instagram"
+            sx={{ alignSelf: 'center' }}
+          >
+            <InstagramIcon />
           </IconButton>
         </Stack>
       </Box>
