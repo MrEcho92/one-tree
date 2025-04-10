@@ -297,14 +297,14 @@ export default function HubDetails() {
                   Share
                 </Typography>
                 <Box display="flex" gap={1}>
-                  <FacebookShareButton url={url} hashtag={AppConfig.SITE_NAME}>
+                  <FacebookShareButton url={url} hashtag={AppConfig.siteName}>
                     <FacebookIcon size={32} round />
                   </FacebookShareButton>
 
                   <TwitterShareButton
                     url={url}
                     title={postDetails?.title}
-                    hashtags={[AppConfig.SITE_NAME]}
+                    hashtags={[AppConfig.siteName]}
                   >
                     <XIcon size={32} round />
                   </TwitterShareButton>

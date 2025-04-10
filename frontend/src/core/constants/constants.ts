@@ -1,7 +1,12 @@
 export const AppConfig = {
-  appName: 'Legacy Ties',
-  SITE_NAME: 'legacy-ties',
+  appName: 'LegacyTies',
+  siteName: 'legacy-ties',
   appContactEmail: 'contact@legacy-ties.com',
+  socials: {
+    X: 'https://x.com/legacyties_1',
+    facebook: 'https://www.facebook.com/people/LegacyTies/61575078722118/',
+    instagram: 'https://www.instagram.com/legacyties_official/'
+  }
 };
 
 export const envVariables = {
